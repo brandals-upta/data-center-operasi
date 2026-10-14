@@ -1045,7 +1045,7 @@ var chfSections = [
   /* ---------- stored in this browser: SR/WO edits (localStorage), photos + folder files (IndexedDB) ---------- */
   var SRKEY='pku-chf-srwo-v1',DAY=86400000,T0=Date.now();
   var SR={added:{},deleted:{},closed:{},moved:{}};try{var s0=JSON.parse(localStorage.getItem(SRKEY)||'null');if(s0)SR=Object.assign(SR,s0)}catch(e){}
-  function saveSR(){try{localStorage.setItem(SRKEY,JSON.stringify(SR));flashSaved()}catch(e){flashSaved(false)}}
+  function saveSR(){try{localStorage.setItem(SRKEY,JSON.stringify(SR));flashSaved()}catch(e){flashSaved(false)}try{if(window.woSoon)window.woSoon()}catch(e2){}}
   function srKey(no,desc){return no+'|'+desc}
   function symTxt(d,a){return (String(d||'')+' '+String(a||'')).toUpperCase().replace(/TRANSFER TOWER\s*(\d)/g,'TT$1').replace(/\bTT\s+(\d)/g,'TT$1')}
   function baseItems(name){var out=[];Object.keys(woData).forEach(function(en){(woData[en]||[]).forEach(function(it){var sr0=String(it[7]||''),legacy=srKey(it[0],it[2]),key=sr0?(/^WO/i.test(sr0)?sr0:'SR:'+sr0):legacy,mv=SR.moved&&(SR.moved[key]||SR.moved[legacy]),eff=mv?mv.eq:en;if(eff!==name)return;var d=parseInt(it[1],10);
@@ -1097,8 +1097,28 @@ var chfSections = [
       need.forEach(function(k){chain=chain.then(function(){return getJSON(fotoUrl('foto=get&k='+encodeURIComponent(k))).then(function(g){if(g&&g.data){PH_USER[k]=g.data;FSTAMP[k]=remote[k];return tx('photos','readwrite',function(s){return s.put(g.data,k)})}}).catch(function(){})})});
       return chain.then(function(){lsSet(FSKEY,FSTAMP);if(need.length||gone.length)renderPhoto(cur())})})
     .catch(function(){}).then(function(){FBUSY=false})}
-  window.addEventListener('pku-tick',function(){fotoSync()});
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)fotoSync()});
+  /* ---------- WO yang di-close dibagikan ke semua perangkat (database: tab "Tutup WO") ---------- */
+  var WSKEY='pku-chf-wosnap-v1',WSNAP=lsGet(WSKEY),WBUSY=false,WTM=null;
+  function woLocal(){var m={};Object.keys(SR.closed||{}).forEach(function(eq){(SR.closed[eq]||[]).forEach(function(c){if(c&&c.key&&!c.user)m[c.key]={eq:eq,c:c}})});return m}
+  function woDropLocal(k){Object.keys(SR.closed||{}).forEach(function(eq){SR.closed[eq]=(SR.closed[eq]||[]).filter(function(x){return x.key!==k})})}
+  function woSync(){if(!LOGBOOK_URL||WBUSY)return Promise.resolve();WBUSY=true;
+    return getJSON(fotoUrl('wo=list')).then(function(j){if(!j||!Array.isArray(j.items))return;
+      var R={},L=woLocal(),jobs=[],changed=false;j.items.forEach(function(x){R[x.k]=x});
+      Object.keys(L).forEach(function(k){var r=R[k];
+        if(!(k in WSNAP)){if(r&&r.st==='c'){WSNAP[k]=r.ts;return}
+          var c=L[k].c;jobs.push({op:'close',key:k,eq:L[k].eq,no:c.no,desc:c.desc,opened:c.opened,closedAt:c.closedAt,shift:c.shift||'',cat:c.cat||'',crew:!!c.crew})}
+        else if(r&&r.st==='r'&&r.ts>WSNAP[k]){woDropLocal(k);delete WSNAP[k];changed=true}});
+      Object.keys(WSNAP).forEach(function(k){if(!(k in woLocal())&&(!R[k]||R[k].st==='c'))jobs.push({op:'reopen',key:k})});
+      Object.keys(R).forEach(function(k){var r=R[k];if(r.st!=='c'||k in L||k in WSNAP)return;
+        (SR.closed[r.eq]=SR.closed[r.eq]||[]).push({key:k,no:r.no,desc:r.desc,opened:r.opened,closedAt:r.closedAt,shift:r.shift||'',cat:r.cat||undefined,crew:r.crew||undefined});WSNAP[k]=r.ts;changed=true});
+      var chain=Promise.resolve();
+      jobs.forEach(function(o){chain=chain.then(function(){o.act='wo';return fotoPost(o).then(function(g){if(g&&g.ok){if(o.op==='close')WSNAP[o.key]=g.ts||Date.now();else delete WSNAP[o.key]}}).catch(function(){})})});
+      return chain.then(function(){lsSet(WSKEY,WSNAP);if(changed){try{localStorage.setItem(SRKEY,JSON.stringify(SR))}catch(e){}rerenderSR()}})})
+    .catch(function(){}).then(function(){WBUSY=false})}
+  window.woSoon=function(){clearTimeout(WTM);WTM=setTimeout(woSync,1500)};
+  window.woSync=woSync;
+  window.addEventListener('pku-tick',function(){fotoSync();woSync()});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){fotoSync();woSync()}});
 
 
   /* undo / redo for actions in these cards */
@@ -1589,7 +1609,7 @@ var chfSections = [
   stage.addEventListener('mousemove',function(e){tilt(e.clientX,e.clientY)});stage.addEventListener('mouseleave',resetTilt);
   stage.addEventListener('touchmove',function(e){var t=e.touches[0];tilt(t.clientX,t.clientY)},{passive:true});stage.addEventListener('touchend',resetTilt);
   try{var U=JSON.parse(localStorage.getItem(UIKEY)||'null');if(U){if(U.tree)TREEOPEN=U.tree;if(U.all===false)setAll(false);if(U.mode)TMODE=U.mode;if(U.sel)SELCAT=U.sel;if(U.sr==='aktif'||U.sr==='riwayat'||U.sr==='note')srView=U.sr;if(U.tab&&root.querySelector('.ed-tab-btn[data-tab="'+U.tab+'"]')){currentTab=U.tab;root.querySelectorAll('.ed-tab-btn').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-tab')===U.tab)})}if(U.eq){var k=equipList.findIndex(function(e){return e.name===U.eq});if(k>=0)currentIndex=k}}}catch(e){}
-  renderEquip();loadPhotos().then(function(){renderPhoto(cur());fotoSync()});
+  renderEquip();loadPhotos().then(function(){renderPhoto(cur());fotoSync();woSync()});
 })();
 </script>
 
