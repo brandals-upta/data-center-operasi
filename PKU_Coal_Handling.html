@@ -890,7 +890,7 @@ var chfSections = [
        Kolom pertama = nomor (SR berupa angka saja, WO berawalan "WO"), kolom lain = summary.
        Aturan: nomor sudah ada -> pakai data lama; summary sama persis -> pakai judul lama; selain itu baru. */
     var LOGSNAP=[{"no":"779950","text":"CARRYING ROLL C3B N0 213 ANJLOK","date":"2026-10-01","blk":1},{"no":"780064","text":"RUBBER SKIRT C3A SISI TIMUR SOBEK","date":"2026-10-01","blk":2},{"no":"780069","text":"KEBOCORAN VALVE REUSE AREA C3A TAIL","date":"2026-10-01","blk":2},{"no":"780117","text":"SKIRTBOARD C6B BERLUBANG SISI BEKAS BAUT RUBBER SKIRT","date":"2026-10-01","blk":2},{"no":"780153","text":"LAMPU BUOY HIJAU SISI LUAR PADAM","date":"2026-10-01","blk":2},{"no":"780421","text":"PROXIMITY GATE DOWN SU2 FEED BACK AKTIF TERUS","date":"2026-10-02","blk":2},{"no":"780937","text":"bel sirine c3a head tidak bunyi","date":"2026-10-03","blk":2},{"no":"780990","text":"LINE FIRE FIGHTING TRANSFER TOWER 2 BOCOR MAYOR","date":"2026-10-03","blk":2},{"no":"780983","text":"SPARE BREAKER 380KV AREA C6 BANYAK YANG RUSAK","date":"2026-10-03","blk":2},{"no":"780981","text":"LEVEL OLI REUSE NO 3 HABIS","date":"2026-10-03","blk":2},{"no":"781110","text":"RETURN ROLLER C3B AUS. POSISI DI BAWAH ROLLER 139","date":"2026-10-03","blk":3},{"no":"781118","text":"BELT C6A TERSAYAT","date":"2026-10-03","blk":3},{"no":"781121","text":"REL SR2 AMBLES. LOKASI SISI UTARA AREA BOX 6KV","date":"2026-10-03","blk":3},{"no":"WO302265","text":"C3B AREA TAIL MISSTRACK BERGESEKAN DENGAN PONDASI","date":"2026-10-03","blk":3},{"no":"781368","text":"HANDEL TANGGA TRIPPER SR2 PATAH","date":"2026-10-04","blk":2},{"no":"781409","text":"MUR CLAMP RUBBER SKIRT C6A SISI UTARA HILANG","date":"2026-10-04","blk":2},{"no":"781413","text":"FLM PENGAMANAN BAUT TERSELIP DI BC 6A SISI UTARA","date":"2026-10-04","blk":2},{"no":"781420","text":"BESSI SUPPORT GRB SU2 LEPAS","date":"2026-10-04","blk":2}];
-    var LOGBOOK_URL='https://script.google.com/macros/s/AKfycbyp0qisTmISx80HOqk0VAeqJqiwFjIwRiS09iXUmyhqWM06AQrfjBbOlYdSL1ktV79-/exec';
+    var LOGBOOK_URL='https://script.google.com/macros/s/AKfycbx0kmAQh_ala6dqKrKPcIAEJYiZX756CNwfZ5JrGqmLJQXLlp-uLvkq9MXR14u2gAw/exec';
     var LOGKEY='pku-logbook-v1',TITKEY='pku-titles-v1',FULLKEY='pku-logbook-full';
     function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){return{}}}
     function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
@@ -908,7 +908,7 @@ var chfSections = [
     var PKULOG=(function(){
       var C={sheetId:'17HFjUVMLDXVtrl546OU7SxSQ5a6j32ha2-7B58FvH1k',mulai:'2026-10-01',rentang:['BS98:DP102','BS163:DP167','BS227:DP231'],autoMenit:5,hariMaks:90};
       function nsum(t){return PKUENG.cleanDesc(t).replace(/\s+/g,' ').trim().toUpperCase()}
-      function parseRow(row,date,blk){if(!row||!row.length)return null;var no=String(row[0]==null?'':row[0]).trim().toUpperCase();if(!/^(WO)?\d{5,}$/.test(no))return null;
+      function parseRow(row,date,blk){if(!row||!row.length)return null;var no=String(row[0]==null?'':row[0]).trim().toUpperCase().replace(/^SR[\s:.#-]*/,'').replace(/^WO[\s:.#-]*/,'WO');if(!/^(WO)?\d{5,}$/.test(no))return null;
         var tx=row.slice(1).map(function(c){return String(c==null?'':c).trim()}).filter(Boolean).join(' ').replace(/\s+/g,' ').trim();if(!tx)return null;return{no:no,text:tx,date:date,blk:blk}}
       function infer(t){var D=' '+String(t).toUpperCase().replace(/[^A-Z0-9 ]/g,' ')+' ',m;
         if((m=/\bC\s?(\d)\s?([AB])\b/.exec(D))||(m=/\bBC\s*(\d)\s*([AB])\b/.exec(D))||(m=/\bCONVEYOR\s*(\d)\s*([AB])\b/.exec(D)))return 'Conveyor '+m[1]+m[2];
@@ -1053,7 +1053,7 @@ var chfSections = [
   function activeItems(name){var del=SR.deleted[name]||[],cl=(SR.closed[name]||[]).map(function(c){return c.key});
     return baseItems(name).concat(SR.added[name]||[]).filter(function(x){return del.indexOf(x.key)<0&&cl.indexOf(x.key)<0&&!(x.legacy&&(del.indexOf(x.legacy)>=0||cl.indexOf(x.legacy)>=0))}).sort(function(a,b){return b.opened-a.opened})}
   function histItems(name){return (SR.closed[name]||[]).slice().sort(function(a,b){return b.closedAt-a.closedAt})}
-  function sod(ms){var d=new Date(ms);return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()}function days(ms){return Math.max(0,Math.round((sod(Date.now())-sod(ms))/DAY))}
+  function days(ms){return Math.max(0,Math.floor((Date.now()-ms)/DAY))}
   function fmtD(ms){var d=new Date(ms);return d.getDate()+' '+['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][d.getMonth()]+' '+d.getFullYear()}
   var srView='aktif',formOpen=false,NKEY2='pku-chf-notes-v1',NOTES={};try{NOTES=JSON.parse(localStorage.getItem(NKEY2)||'{}')||{}}catch(e){NOTES={}}
   function saveNotes(){try{localStorage.setItem(NKEY2,JSON.stringify(NOTES));flashSaved()}catch(e){flashSaved(false)}}
@@ -1069,12 +1069,36 @@ var chfSections = [
     document.getElementById('edPhotoDel').disabled=!src}
   function shrink(file){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){var im=new Image();im.onload=function(){var k=Math.min(1,1400/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.82))};im.onerror=rej;im.src=fr.result};fr.onerror=rej;fr.readAsDataURL(file)})}
   document.getElementById('edPhotoIn').addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;var name=photoKey();
-    shrink(f).then(function(u){PH_USER[name]=u;renderPhoto(cur());return tx('photos','readwrite',function(s){return s.put(u,name)})}).catch(function(){alertBox('Foto gagal disimpan di browser ini.')})});
+    shrink(f).then(function(u){PH_USER[name]=u;renderPhoto(cur());return tx('photos','readwrite',function(s){return s.put(u,name)}).then(function(){return fotoPush(name,u)})}).catch(function(){alertBox('Foto gagal disimpan di browser ini.')})});
   document.querySelector('#eqDetail .ed-photo-actions label').addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();document.getElementById('edPhotoIn').click()}});
   var delArm=0;document.getElementById('edPhotoDel').addEventListener('click',function(){var b=this,name=photoKey();
     if(Date.now()-delArm>3000){delArm=Date.now();b.textContent='Yakin hapus?';setTimeout(function(){b.textContent='Hapus foto'},3000);return}
-    delArm=0;b.textContent='Hapus foto';PH_USER[name]='__deleted__';renderPhoto(cur());tx('photos','readwrite',function(s){return s.put('__deleted__',name)}).catch(function(){})});
+    delArm=0;b.textContent='Hapus foto';PH_USER[name]='__deleted__';renderPhoto(cur());tx('photos','readwrite',function(s){return s.put('__deleted__',name)}).catch(function(){});fotoDel(name)});
   function alertBox(m){var n=document.getElementById('edSrMsg');if(n){n.textContent=m}}
+
+  /* ---------- FOTO: database bersama (folder Google Drive lewat skrip Pembaca versi 7) ----------
+     Unggah foto di dashboard -> dikirim ke database -> siapa pun yang membuka dashboard melihat foto terbaru (yang terakhir menimpa). */
+  var FSKEY='pku-foto-stamp',FSTAMP=lsGet(FSKEY),FBUSY=false;
+  function fotoUrl(q){var u=LOGBOOK_URL;return u+(u.indexOf('?')<0?'?':'&')+q+'&_t='+Date.now()}
+  function fotoPost(obj){return fetch(LOGBOOK_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(obj)}).then(function(r){return r.json()})}
+  function fotoPush(k,dataUrl){if(!LOGBOOK_URL)return Promise.resolve();alertBox('Mengirim foto ke database...');
+    return fotoPost({act:'put',k:k,data:dataUrl}).then(function(j){
+      if(j&&j.ok){FSTAMP[k]=j.stamp;lsSet(FSKEY,FSTAMP);alertBox('✓ Foto tersimpan di database (Google Drive). Semua pengguna akan melihat foto ini.')}
+      else alertBox('Foto tersimpan di browser ini saja. Database menolak: '+((j&&j.error)||'balasan tidak dikenal')+'. Pastikan skrip Pembaca sudah versi 7.')})
+    .catch(function(){alertBox('Foto tersimpan di browser ini saja. Database tidak bisa dihubungi (periksa koneksi, atau buka dashboard dari file di komputer / GitHub Pages).')})}
+  function fotoDel(k){if(!LOGBOOK_URL)return Promise.resolve();
+    return fotoPost({act:'del',k:k}).then(function(j){if(j&&j.ok){delete FSTAMP[k];lsSet(FSKEY,FSTAMP)}}).catch(function(){})}
+  function fotoSync(){if(!LOGBOOK_URL||FBUSY)return Promise.resolve();FBUSY=true;
+    return getJSON(fotoUrl('foto=list')).then(function(j){if(!j||!Array.isArray(j.items))return;
+      var remote={};j.items.forEach(function(x){remote[x.k]=x.stamp});
+      var need=Object.keys(remote).filter(function(k){return FSTAMP[k]!==remote[k]}),gone=Object.keys(FSTAMP).filter(function(k){return !(k in remote)});
+      gone.forEach(function(k){delete FSTAMP[k];delete PH_USER[k];tx('photos','readwrite',function(s){return s['delete'](k)}).catch(function(){})});
+      var chain=Promise.resolve();
+      need.forEach(function(k){chain=chain.then(function(){return getJSON(fotoUrl('foto=get&k='+encodeURIComponent(k))).then(function(g){if(g&&g.data){PH_USER[k]=g.data;FSTAMP[k]=remote[k];return tx('photos','readwrite',function(s){return s.put(g.data,k)})}}).catch(function(){})})});
+      return chain.then(function(){lsSet(FSKEY,FSTAMP);if(need.length||gone.length)renderPhoto(cur())})})
+    .catch(function(){}).then(function(){FBUSY=false})}
+  window.addEventListener('pku-tick',function(){fotoSync()});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)fotoSync()});
 
 
   /* undo / redo for actions in these cards */
@@ -1325,7 +1349,7 @@ var chfSections = [
   /* API sambungan logbook: PKUEngine.ingest(rows) membaca kolom SR (header Maximo atau array [SR,Summary,Status,WO,Asset,Tanggal,NeedDT]) */
   function afterData(){renderEquip();crewRefresh();if(window.dcsRender)window.dcsRender()}
   function ymd(d){function p(n){return n<10?'0'+n:''+n}return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())}
-  function failCode(e){if(e&&e.name==='AbortError')return 'timeout';if(e&&e.code)return e.code;var n=e&&e.name,m=String((e&&e.message)||'');if(n==='AbortError')return 'timeout';if(n==='TypeError'&&/failed to fetch|networkerror|load failed|network request failed|fetch/i.test(m))return 'diblokir';return 'proses:'+(m||n||'tidak diketahui').slice(0,140)}
+  function failCode(e){if(e&&e.code)return e.code;var n=e&&e.name,m=String((e&&e.message)||'');if(n==='AbortError')return 'timeout';if(n==='TypeError'&&/failed to fetch|networkerror|load failed|network request failed|fetch/i.test(m))return 'diblokir';return 'proses:'+(m||n||'tidak diketahui').slice(0,140)}
   function codeErr(c){var e=new Error(c);e.code=c;return e}
   /* jalur cadangan (JSONP): tetap bisa jalan walau browser menolak fetch karena aturan CORS. Butuh skrip versi 6. */
   function jsonp(url,ms){return new Promise(function(res,rej){var cb='pkucb'+Date.now().toString(36)+Math.floor(Math.random()*1e6).toString(36),sc=document.createElement('script'),done=false,tm;
@@ -1348,7 +1372,7 @@ var chfSections = [
     return getJSON(url).then(function(j){var items=[];
       if(!j||!j.sheets)throw codeErr((j&&j.error)?'skrip':'format');
       j.sheets.forEach(function(sh){(sh.blocks||[]).forEach(function(vals,bi){(vals||[]).forEach(function(row){var it=PKULOG.parseRow(row,sh.date,bi+1);if(it)items.push(it)})})});
-      window.PKUEngine.logbook.apply(items,full,(full||!j.sheets.length)?null:ymd(new Date(Date.now()-5*86400000)));window.__logFull=true;return window.PKUEngine.logbook.last}).catch(function(e){return{ok:false,reason:failCode(e)}}).then(function(x){window.__logBusy=false;return x})}
+      window.PKUEngine.logbook.apply(items,full);window.__logFull=true;return window.PKUEngine.logbook.last}).catch(function(e){return{ok:false,reason:failCode(e)}}).then(function(x){window.__logBusy=false;return x})}
   function syncDataSR(){var u=LOGBOOK_URL;if(!u||window.__srBusy)return Promise.resolve(null);window.__srBusy=true;
     return getJSON(u+(u.indexOf('?')<0?'?':'&')+'data=sr&_t='+Date.now()).then(function(j){
       if(!j||j.error||!Array.isArray(j.values))return{ok:false,reason:(j&&j.error)?'tab':'belum'};
@@ -1363,15 +1387,14 @@ var chfSections = [
     ingest:function(rows){BASEROWS=rows||[];woData=buildAll();afterData();return PKUENG.stat},
     report:function(){var st=PKUENG.stat||{};var u=Object.keys(st.unmatched||{}).map(function(a){return{asset:a||'(tanpa alamat)',jumlah:st.unmatched[a]}}).sort(function(a,b){return b.jumlah-a.jumlah});return{total:st.total,aktif:st.active,masukCakupan:st.inScope,diLuarCakupan:st.outOfScope,assetBelumDipetakan:u}},
     logbook:{config:PKULOG.config,items:function(){return LOGRAW.slice()},
-      apply:function(items,replace,pruneFrom){var bakS=LOGSTORE,bakR=LOGRAW,added=0,c=logCutoff(),inc=(items||[]).slice().sort(byDate).filter(function(it){return it&&it.date>=c});
+      apply:function(items,replace){var bakS=LOGSTORE,bakR=LOGRAW,added=0,c=logCutoff(),inc=(items||[]).slice().sort(byDate).filter(function(it){return it&&it.date>=c});
         if(replace){var old=LOGSTORE,nw={};inc.forEach(function(it){if(it.no&&!nw[it.no]){if(old[it.no])nw[it.no]=old[it.no];else{nw[it.no]={no:it.no,text:it.text,date:it.date,blk:it.blk};added++}}});LOGSTORE=nw}
-        else{inc.forEach(function(it){if(storeAdd(it))added++});if(pruneFrom){var keep={};(items||[]).forEach(function(it){if(it&&it.no)keep[it.no]=1});Object.keys(LOGSTORE).forEach(function(k){if(LOGSTORE[k].date>=pruneFrom&&!keep[k])delete LOGSTORE[k]})}}
+        else inc.forEach(function(it){if(storeAdd(it))added++});
         try{storePurge();LOGRAW=storeItems();woData=buildAll()}catch(err){LOGSTORE=bakS;LOGRAW=bakR;try{woData=buildAll()}catch(e2){}throw err}lsSet(LOGKEY,LOGSTORE);try{afterData()}catch(e3){}
         window.PKUEngine.logbook.last={ok:true,n:LOGRAW.length,added:added,full:!!replace,from:c};return PKUENG.stat},last:null,
       setUrl:function(u){LOGBOOK_URL=u||'';return syncLogbook()},sync:syncLogbook,url:function(){return LOGBOOK_URL},probe:netProbe}};
   /* ===== Riwayat Service Request (untuk menu History Service Request) ===== */
   function shiftNm(t){var d=new Date(t),m=d.getHours()*60+d.getMinutes();return(m>=1380||m<450)?'Malam':(m<930?'Pagi':'Sore')}
-  function sod0(ms){var d=new Date(ms);return new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()}
   function historyList(){var delSet={},clMap={},now=Date.now(),out=[];
     Object.keys(SR.deleted||{}).forEach(function(n){(SR.deleted[n]||[]).forEach(function(k){delSet[k]=1})});
     Object.keys(SR.closed||{}).forEach(function(n){(SR.closed[n]||[]).forEach(function(c){clMap[c.key]=c})});
@@ -1383,10 +1406,10 @@ var chfSections = [
       var raw=String(o.status||'').toUpperCase(),xl=raw==='CLOSED'||raw==='RESOLVED'||raw==='CAN',c=clMap[key]||clMap[legacy],cl=PKUENG.classify(o),aktif=!(xl||c);
       push({sr:isW?'':sr,wo:wo||(isW?sr:''),status:raw,aktif:aktif,summary:desc,created:t,approx:Array.isArray(r)&&r[7]!=null,eq:cl?cl.raw:'',asset:String(o.asset||''),
         shift:t?shiftNm(t):'',group:(t&&window.shiftGroupAt)?window.shiftGroupAt(t):'',closedAt:c?c.closedAt:null,closedBy:c?(c.crew?'Maintenance Crew':(c.shift||'')):'',
-        days:t==null?null:(aktif?Math.max(0,Math.round((sod0(now)-sod0(t))/DAY)):(c&&c.closedAt?Math.floor((c.closedAt-t)/DAY):null))})});
+        days:t==null?null:(aktif?Math.floor((now-t)/DAY):(c&&c.closedAt?Math.floor((c.closedAt-t)/DAY):null))})});
     Object.keys(SR.added||{}).forEach(function(n){(SR.added[n]||[]).forEach(function(x){var c=clMap[x.key],t=x.opened||null,aktif=!c;
       push({sr:String(x.no||''),wo:'',status:'MANUAL',aktif:aktif,summary:x.desc,created:t,approx:false,eq:n,asset:'',shift:t?shiftNm(t):'',group:(t&&window.shiftGroupAt)?window.shiftGroupAt(t):'',
-        closedAt:c?c.closedAt:null,closedBy:c?(c.crew?'Maintenance Crew':(c.shift||'')):'',days:t==null?null:(aktif?Math.max(0,Math.round((sod0(now)-sod0(t))/DAY)):(c&&c.closedAt?Math.floor((c.closedAt-t)/DAY):null))})})});
+        closedAt:c?c.closedAt:null,closedBy:c?(c.crew?'Maintenance Crew':(c.shift||'')):'',days:t==null?null:(aktif?Math.floor((now-t)/DAY):(c&&c.closedAt?Math.floor((c.closedAt-t)/DAY):null))})})});
     out.sort(function(a,b){var ta=a.created==null?-1:a.created,tb=b.created==null?-1:b.created;if(tb!==ta)return tb-ta;return String(b.sr||b.wo).localeCompare(String(a.sr||a.wo))});
     return out}
   window.PKUHistory={list:historyList};
@@ -1467,7 +1490,7 @@ var chfSections = [
       Promise.all([syncLogbook(),syncDataSR()]).then(function(r){try{window.dispatchEvent(new CustomEvent('pku-tick',{detail:{time:p2t(rt.getHours())+':'+p2t(rt.getMinutes()),logbook:r[0],data:r[1]}}))}catch(e){}})};
     var nextMs=function(){var n=new Date();return 300000-((n.getMinutes()%5)*60000+n.getSeconds()*1000+n.getMilliseconds())+300};
     var loop=function(){setTimeout(function(){tick();loop()},nextMs())};
-    tick();loop();
+    syncLogbook();syncDataSR();loop();
     document.addEventListener('visibilitychange',function(){if(!document.hidden&&Date.now()-lastTick>360000){lastTick=Date.now();syncLogbook();syncDataSR()}});
   }
   window.edShow=function(name,id){dcsId=id||null;var k=equipList.findIndex(function(e){return e.name===name});if(k>=0){extra=null;currentIndex=k}else{extra={name:name,pct:null}}renderEquip()};
@@ -1566,7 +1589,7 @@ var chfSections = [
   stage.addEventListener('mousemove',function(e){tilt(e.clientX,e.clientY)});stage.addEventListener('mouseleave',resetTilt);
   stage.addEventListener('touchmove',function(e){var t=e.touches[0];tilt(t.clientX,t.clientY)},{passive:true});stage.addEventListener('touchend',resetTilt);
   try{var U=JSON.parse(localStorage.getItem(UIKEY)||'null');if(U){if(U.tree)TREEOPEN=U.tree;if(U.all===false)setAll(false);if(U.mode)TMODE=U.mode;if(U.sel)SELCAT=U.sel;if(U.sr==='aktif'||U.sr==='riwayat'||U.sr==='note')srView=U.sr;if(U.tab&&root.querySelector('.ed-tab-btn[data-tab="'+U.tab+'"]')){currentTab=U.tab;root.querySelectorAll('.ed-tab-btn').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-tab')===U.tab)})}if(U.eq){var k=equipList.findIndex(function(e){return e.name===U.eq});if(k>=0)currentIndex=k}}}catch(e){}
-  renderEquip();loadPhotos().then(function(){renderPhoto(cur())});
+  renderEquip();loadPhotos().then(function(){renderPhoto(cur());fotoSync()});
 })();
 </script>
 
@@ -2449,7 +2472,7 @@ render();
   window.addEventListener('pku-tick',function(e){var d=e.detail||{},L=d.logbook,D=d.data;
     var l1=L&&L.ok?'Logbook: '+L.n+' SR sejak '+fmtFrom(L.from)+(L.added?' \u00b7 '+L.added+' baru':' \u00b7 tidak ada SR baru'):(L&&L.reason==='sibuk'?'Logbook: pembacaan masih berjalan':'Logbook: gagal dihubungi ('+failMsg(L&&L.reason)+'), memakai data terakhir');
     var l2=D&&D.ok?'DATA_SR: '+(D.changed?'diperbarui ('+D.n+' baris)':'tanpa perubahan'):(D&&D.reason==='skip'?'DATA_SR: ditolak (baris terlalu sedikit)':(D&&D.reason==='tab'?'DATA_SR: tab belum ada':(D&&D.reason&&D.reason!=='belum'&&D.reason!=='kosong'?'DATA_SR: gagal dihubungi ('+failMsg(D.reason)+')':'DATA_SR: belum tersambung')));
-    sy.innerHTML='<b>\ud83d\udd52 '+esc(d.time)+'</b><span>'+esc(l1)+'</span><span>'+esc(l2)+'</span>';sy.hidden=false;clearTimeout(syT);syT=setTimeout(function(){sy.hidden=true},20000)});
+    sy.innerHTML='<b>\ud83d\udd52 '+esc(d.time)+'</b><span>'+esc(l1)+'</span><span>'+esc(l2)+'</span>';sy.hidden=false;clearTimeout(syT);syT=setTimeout(function(){sy.hidden=true},6000)});
   window.addEventListener('pku-data',function(e){var d=e.detail||{};if(d.type==='skip')showToast('<b>Data DATA_SR tidak diterapkan</b><span>Hanya '+d.n+' baris terbaca (sebelumnya '+d.had+'). Periksa tab DATA_SR.</span>',9000)});
 })();
 </script>
