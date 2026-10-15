@@ -1107,7 +1107,7 @@ var chfSections = [
       Object.keys(L).forEach(function(k){var r=R[k];
         if(!(k in WSNAP)){if(r&&r.st==='c'){WSNAP[k]=r.ts;return}
           var c=L[k].c;jobs.push({op:'close',key:k,eq:L[k].eq,no:c.no,desc:c.desc,opened:c.opened,closedAt:c.closedAt,shift:c.shift||'',cat:c.cat||'',crew:!!c.crew})}
-        else if(r&&r.st==='r'&&r.ts>WSNAP[k]){woDropLocal(k);delete WSNAP[k];changed=true}});
+        else if(!r||(r.st==='r'&&r.ts>WSNAP[k])){woDropLocal(k);delete WSNAP[k];changed=true}});
       Object.keys(WSNAP).forEach(function(k){if(!(k in woLocal())&&(!R[k]||R[k].st==='c'))jobs.push({op:'reopen',key:k})});
       Object.keys(R).forEach(function(k){var r=R[k];if(r.st!=='c'||k in L||k in WSNAP)return;
         (SR.closed[r.eq]=SR.closed[r.eq]||[]).push({key:k,no:r.no,desc:r.desc,opened:r.opened,closedAt:r.closedAt,shift:r.shift||'',cat:r.cat||undefined,crew:r.crew||undefined});WSNAP[k]=r.ts;changed=true});
