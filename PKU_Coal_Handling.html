@@ -574,6 +574,22 @@ body.crewonly #crewBack{display:none}
 .tw-ds{color:#e6eaf5;margin-top:1px;word-break:break-word}
 .tw-more{margin-top:7px;color:#9aa3b8;font-size:11.5px;text-align:center}
 .tw-none{margin-top:8px;color:#6ee7b7;font-weight:700}
+.tip.rich.two{max-width:min(780px,calc(100vw - 24px))}
+.tw-cols{display:flex;gap:14px;align-items:flex-start}
+.tw-col{flex:1 1 0;min-width:230px;max-width:380px}
+.tw-flm{border-left:1px solid rgba(255,255,255,.12);padding-left:14px;min-width:210px;max-width:290px}
+.tw-mon{flex:none;color:#9aa3b8;font-size:11.5px;font-weight:700}
+.tw-n.tw-nf{background:#3b82f6}
+.tw-sh{margin-top:6px;border-radius:9px;background:rgba(255,255,255,.06);overflow:hidden}
+.tw-shh{display:flex;align-items:center;gap:9px;padding:7px 10px;font-weight:800}
+.tw-shh i{width:9px;height:9px;border-radius:50%;flex:none}
+.tw-shh span{flex:1}.tw-shh b{min-width:16px;text-align:right}
+.tw-shh em{font-style:normal;color:#9aa3b8;width:12px;text-align:center}
+.tw-fl{padding:0 8px 8px;display:flex;flex-direction:column;gap:4px}
+.tw-fr{border-left:3px solid var(--c);background:rgba(255,255,255,.05);border-radius:7px;padding:4px 8px}
+.tw-fd{display:block;color:var(--c);font-size:11px;font-weight:800}
+.tw-ft{display:block;color:#e6eaf5;word-break:break-word}
+.tw-fm{color:#9aa3b8;font-size:11.5px;text-align:center}
 @media (prefers-reduced-motion:reduce){.tip.rich{animation:none}.tw-row{animation:none;opacity:1}}
 .pcard .cbg{transition:stroke .2s,filter .25s}
 .pcard:hover .cbg{stroke:var(--cc,#00C6FF);filter:drop-shadow(0 0 9px var(--cc,#00C6FF))}
@@ -1366,6 +1382,16 @@ var chfSections = [
   // called from the DCS map above
   window.edAddItems=function(names){names.forEach(function(n){if(!equipList.some(function(e){return e.name===n}))equipList.push({name:n,pct:null})})};
   window.edWOList=function(name){return ((window.PKU.modeled(name)||woData[name]!==undefined)?activeItems(name):symItems(name)).map(function(x){return{no:x.no,desc:x.desc,days:days(x.opened)}})};
+  /* ---------- FLM (5S): disimpan terpisah dari SR/WO, tidak ikut menghitung PKU ---------- */
+  var FLMKEY='pku-chf-flm-v1',FLMROWS=[],FLMMETA={},woFlm={};
+  function flmApply(rows){FLMROWS=rows||[];FLMMETA={};FLMROWS.forEach(function(r){FLMMETA[String(r[0])]={shift:String(r[7]||'').toUpperCase()}});
+    try{woFlm=PKUENG.build(FLMROWS.map(function(r){return [r[0],r[1],'FLM',r[3],r[4],r[5],r[6]]})).woData}catch(e){woFlm={}}}
+  try{var f0=JSON.parse(localStorage.getItem(FLMKEY)||'null');if(f0&&Array.isArray(f0.rows))flmApply(f0.rows)}catch(e){}
+  window.PKUFLM={n:function(){return FLMROWS.length},set:function(rows){flmApply(rows);try{localStorage.setItem(FLMKEY,JSON.stringify({rows:FLMROWS,at:Date.now()}))}catch(e){}}};
+  window.edFLMList=function(name){var save=woData,out=[];woData=woFlm;
+    try{out=((window.PKU.modeled(name)||woData[name]!==undefined)?activeItems(name):symItems(name))}catch(e){out=[]}finally{woData=save}
+    var nw=new Date(),m0=new Date(nw.getFullYear(),nw.getMonth(),1).getTime();
+    return out.filter(function(x){return x.opened>=m0}).map(function(x){var meta=FLMMETA[String(x.key||'').replace(/^SR:/,'')]||{};return{no:x.no,desc:x.desc,opened:x.opened,days:days(x.opened),shift:meta.shift||'?'}}).sort(function(a,b){return b.opened-a.opened})};
   /* API sambungan logbook: PKUEngine.ingest(rows) membaca kolom SR (header Maximo atau array [SR,Summary,Status,WO,Asset,Tanggal,NeedDT]) */
   function afterData(){renderEquip();crewRefresh();if(window.dcsRender)window.dcsRender()}
   function ymd(d){function p(n){return n<10?'0'+n:''+n}return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())}
@@ -1397,6 +1423,7 @@ var chfSections = [
     return getJSON(u+(u.indexOf('?')<0?'?':'&')+'data=sr&_t='+Date.now()).then(function(j){
       if(!j||j.error||!Array.isArray(j.values))return{ok:false,reason:(j&&j.error)?'tab':'belum'};
       var p=mapRows(j.values);if(!p.header||!p.rows.length)return{ok:false,reason:'kosong'};
+      if(p.flm&&window.PKUFLM){try{window.PKUFLM.set(p.flm)}catch(e){}}
       if(j.asOf)lsSet('pku-asof',{v:String(j.asOf)});
       var had=BASEROWS.length;
       if(had>50&&p.rows.length<had*0.3){window.dispatchEvent(new CustomEvent('pku-data',{detail:{type:'skip',n:p.rows.length,had:had}}));return{ok:false,reason:'skip'}}
@@ -1473,16 +1500,18 @@ var chfSections = [
       else cur+=ch}
     if(cur!==''||row.length){row.push(cur);rows.push(row)}
     return rows.filter(function(r){return r.some(function(c){return String(c).trim()!==''})})}
-  function mapRows(tab){var hi=-1,i,col={sr:0,summary:1,status:2,wo:3,asset:6,date:15,dt:16};
+  function mapRows(tab){var hi=-1,i,col={sr:0,summary:1,status:2,wo:3,asset:6,date:15,dt:16},csh=-1,cft=-1;
     for(i=0;i<Math.min(tab.length,8);i++){var nn=tab[i].map(function(c){return String(c).toLowerCase().replace(/[^a-z0-9]/g,'')});if(nn.indexOf('servicerequest')>=0||nn.indexOf('summary')>=0){hi=i;break}}
     if(hi>=0){var H=tab[hi].map(function(c){return String(c).toLowerCase().replace(/[^a-z0-9]/g,'')});
       var f=function(names){for(var k=0;k<names.length;k++){var p=H.indexOf(names[k]);if(p>=0)return p}return -1};
-      col={sr:f(['servicerequest','srnumber','sr','ticketid']),summary:f(['summary']),status:f(['status']),wo:f(['wonumber','wonum','wo','workorder','workordernumber']),asset:f(['assetdescription','assetdesc']),date:f(['reporteddate','reportdate','datereported']),dt:f(['needdowntime'])}}
-    var out={};
+      col={sr:f(['servicerequest','srnumber','sr','ticketid']),summary:f(['summary']),status:f(['status']),wo:f(['wonumber','wonum','wo','workorder','workordernumber']),asset:f(['assetdescription','assetdesc']),date:f(['reporteddate','reportdate','datereported']),dt:f(['needdowntime'])};csh=f(['shift']);cft=f(['faulttype'])}
+    var out={},flmO={};
     tab.slice(hi+1).forEach(function(r){var g=function(k){return col[k]>=0&&col[k]<r.length?String(r[col[k]]).trim():''};
       var sr=g('sr').replace(/\.0+$/,'');if(!/^\d{4,}$/.test(sr))return;var wo=g('wo').toUpperCase();if(/^\d+$/.test(wo))wo='WO'+wo;
+      var ft=cft>=0&&cft<r.length?String(r[cft]).trim().toUpperCase():'';
+      if(ft==='FLM'){flmO[sr]=[sr,g('summary'),'FLM',wo,g('asset'),normDate(g('date')),g('dt').toUpperCase(),(csh>=0&&csh<r.length?String(r[csh]).trim().toUpperCase():'')];return}
       out[sr]=[sr,g('summary'),g('status').toUpperCase()||'QUEUED',wo,g('asset'),normDate(g('date')),g('dt').toUpperCase()]});
-    return{rows:Object.keys(out).map(function(k){return out[k]}),header:hi>=0,kosong:hi>=0?Object.keys(col).filter(function(k){return col[k]<0}):[]}}
+    return{rows:Object.keys(out).map(function(k){return out[k]}),header:hi>=0,kosong:hi>=0?Object.keys(col).filter(function(k){return col[k]<0}):[],flm:cft>=0?Object.keys(flmO).map(function(k){return flmO[k]}):null}}
   function isClosed(st){st=String(st||'').toUpperCase();return st==='CLOSED'||st==='RESOLVED'||st==='CAN'}
   function mxDiff(rows){var old={},oldAct=0,res={total:rows.length,aktifLama:0,aktifBaru:0,toWO:[],baru:[],selesai:[],hilang:[]},seen={};
     BASEROWS.forEach(function(r){var o=PKUENG.norm(r),k=String(o.sr).trim(),act=!isClosed(o.status);old[k]={wo:String(o.wo||'').trim(),act:act,summary:TITLES[k]||o.summary};if(act)oldAct++});res.aktifLama=oldAct;
@@ -2264,13 +2293,21 @@ const tipEsc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt
 function tipHide(){tip.style.display='none';tipKey=''}
 function tipPos(ev){const w=tip.offsetWidth,h=tip.offsetHeight;let x=ev.clientX+16,y=ev.clientY+16;if(x+w>innerWidth-8)x=Math.max(8,ev.clientX-16-w);if(y+h>innerHeight-8)y=Math.max(8,innerHeight-8-h);tip.style.left=x+'px';tip.style.top=y+'px'}
 function tipFit(){const rows=tip.querySelectorAll('.tw-row'),more=tip.querySelector('.tw-more');let hid=0;while(more&&tip.offsetHeight>innerHeight-24&&hid<rows.length-1){rows[rows.length-1-hid].style.display='none';hid++;more.hidden=false;more.textContent='+'+hid+' lagi · klik peralatan untuk melihat semua'}}
-function tipShow(ev,key,html,rich){if(key!==tipKey){tipKey=key;tip.className='tip'+(rich?' rich':'');tip.innerHTML=html;tip.style.display='block';if(rich)tipFit()}else tip.style.display='block';tipPos(ev)}
-function woTipHTML(name,chip,note){const L=(window.edWOList&&window.edWOList(name))||[];const sev=d=>d>90?'s4':d>60?'s3':d>30?'s2':'s1';
+function tipShow(ev,key,html,rich){if(key!==tipKey){tipKey=key;tip.className='tip'+(rich?' rich':'')+(rich&&html.indexOf('tw-cols')>=0?' two':'');tip.innerHTML=html;tip.style.display='block';if(rich)tipFit()}else tip.style.display='block';tipPos(ev)}
+function woTipLeft(name,chip,note){const L=(window.edWOList&&window.edWOList(name))||[];const sev=d=>d>90?'s4':d>60?'s3':d>30?'s2':'s1';
   let h='<div class="tw-head"><b>'+tipEsc(name)+'</b>'+chip+'</div>';
   if(note)h+='<div class="tw-note">'+tipEsc(note.slice(0,90))+'</div>';
   if(!L.length)return h+'<div class="tw-none">✓ Tidak ada SR/WO aktif</div>';
   return h+'<div class="tw-sub"><span>SR/WO aktif</span><span class="tw-n">'+L.length+'</span></div><div class="tw-list">'+L.map((x,i)=>'<div class="tw-row '+sev(x.days)+'" style="--i:'+i+'"><div class="tw-l1"><span class="tw-no">'+tipEsc(x.no)+'</span><span class="tw-d">'+x.days+' Hari</span></div><div class="tw-ds">'+tipEsc(x.desc)+'</div></div>').join('')+'</div><div class="tw-more" hidden></div>'}
-const tipN=name=>((window.edWOList&&window.edWOList(name))||[]).length;
+const tipN=name=>((window.edWOList&&window.edWOList(name))||[]).length+'/'+((window.PKUFLM&&window.PKUFLM.n()&&window.edFLMList)?window.edFLMList(name).length:0);
+const FLC={A:'#F0554E',B:'#4C8DFF',C:'#FFC93D',D:'#3ECF7E'},BLN3=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+function flmWhen(ms){const d=new Date(ms),p=n=>n<10?'0'+n:n;return p(d.getDate())+' '+BLN3[d.getMonth()]+' '+p(d.getHours())+':'+p(d.getMinutes())}
+function flmPanel(name){const L=(window.edFLMList&&window.edFLMList(name))||[],by={A:[],B:[],C:[],D:[]};const nodata=!(window.PKUFLM&&window.PKUFLM.n()>0);L.forEach(x=>{if(by[x.shift])by[x.shift].push(x)});
+  const nw=new Date();let h='<div class="tw-col tw-flm"><div class="tw-head"><b>FLM · 5S</b><span class="tw-mon">'+BLN3[nw.getMonth()]+' '+nw.getFullYear()+'</span></div><div class="tw-sub"><span>Per shift</span><span class="tw-n tw-nf">'+L.length+'</span></div>';
+  ['A','B','C','D'].forEach(s=>{const a=by[s];h+='<div class="tw-sh"><div class="tw-shh"><i style="background:'+FLC[s]+'"></i><span>Shift '+s+'</span><b>'+(a.length||'')+'</b><em>'+(a.length?'\u25BE':'')+'</em></div>'+(a.length?'<div class="tw-fl">'+a.slice(0,3).map(x=>'<div class="tw-fr" style="--c:'+FLC[s]+'"><span class="tw-fd">'+flmWhen(x.opened)+'</span><span class="tw-ft">'+tipEsc(x.desc)+'</span></div>').join('')+(a.length>3?'<div class="tw-fm">+'+(a.length-3)+' lagi</div>':'')+'</div>':'')+'</div>'});
+  if(nodata)h+='<div class="tw-fm" style="margin-top:8px">Belum ada data FLM. Tempel CM & FLM ke sheet Service Request.</div>';
+  return h+'</div>'}
+function woTipHTML(name,chip,note){const l=woTipLeft(name,chip,note);return '<div class="tw-cols"><div class="tw-col">'+l+'</div>'+flmPanel(name)+'</div>'}
 /* ---------- kartu ringkasan PKU di area kiri ---------- */
 const CHN=['Ship Unloader 1','Ship Unloader 2','Stacker Reclaimer 1','Stacker Reclaimer 2','Conveyor 1A','Conveyor 1B','Conveyor 2A','Conveyor 2B','Conveyor 3A','Conveyor 3B','Conveyor 4A','Conveyor 4B','Crusher A','Crusher B','Conveyor 5A','Conveyor 5B','Conveyor 6A','Conveyor 6B','Conveyor 7'];
 const HV=[['Excavator','Excavator Komatsu PC200'],['Bulldozer D9','Bulldozer CAT D9'],['Bulldozer 1','Bulldozer XGMA 1'],['Bulldozer 2','Bulldozer XGMA 2'],['Bulldozer 3','Bulldozer 3'],['Dump Truck 4','Dump Truck 4'],['Dump Truck 5','Dump Truck 5'],['Bobcat 1','Bobcat 1'],['Bobcat 2','Bobcat 2']];
