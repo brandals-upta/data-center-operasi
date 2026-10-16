@@ -590,6 +590,21 @@ body.crewonly #crewBack{display:none}
 .tw-fd{display:block;color:var(--c);font-size:11px;font-weight:800}
 .tw-ft{display:block;color:#e6eaf5;word-break:break-word}
 .tw-fm{color:#9aa3b8;font-size:11.5px;text-align:center}
+/* gaya kartu Maintenance Crew */
+.tw-flm{min-width:250px;max-width:300px}
+.tw-fhead{display:flex;align-items:center;gap:8px;padding:10px 13px;border-radius:13px;color:#fff;font-weight:800;background:linear-gradient(135deg,#2196f3,#1565d8);box-shadow:0 5px 14px rgba(21,101,216,.4)}
+.tw-fhead b{flex:1}.tw-fhead .tw-mon{color:#dbeafe;font-size:11px}
+.tw-fcnt{min-width:22px;padding:1px 7px;border-radius:999px;background:#fff;color:#1565d8;font-weight:800;text-align:center}
+.tw-sh{margin-top:8px;border-radius:13px;background:none;overflow:visible}
+.tw-shh{border-radius:13px;padding:9px 13px;color:#e6eaf5;background:linear-gradient(135deg,#2c3348,#232a3d);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.tw-sh.has .tw-shh{color:#fff;background:linear-gradient(135deg,#fbbf24,#d97706);box-shadow:0 5px 14px rgba(217,119,6,.35)}
+.tw-shh b{min-width:20px;padding:0 6px;border-radius:999px;text-align:center;background:#fff;color:#b91c1c}
+.tw-shh b:empty{display:none}
+.tw-shh em{color:#fff}
+.tw-fl{padding:6px 0 0 14px;gap:6px;border-left:2px solid #4a5578;margin-left:10px}
+.tw-fr{background:#fff;border-left:3px solid var(--c);border-radius:12px;padding:6px 10px;box-shadow:0 1px 4px rgba(60,72,88,.15)}
+.tw-ft{color:#111;font-weight:600}
+.tw-fm{padding:2px 0}
 @media (prefers-reduced-motion:reduce){.tip.rich{animation:none}.tw-row{animation:none;opacity:1}}
 .pcard .cbg{transition:stroke .2s,filter .25s}
 .pcard:hover .cbg{stroke:var(--cc,#00C6FF);filter:drop-shadow(0 0 9px var(--cc,#00C6FF))}
@@ -2303,8 +2318,8 @@ const tipN=name=>((window.edWOList&&window.edWOList(name))||[]).length+'/'+((win
 const FLC={A:'#F0554E',B:'#4C8DFF',C:'#FFC93D',D:'#3ECF7E'},BLN3=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 function flmWhen(ms){const d=new Date(ms),p=n=>n<10?'0'+n:n;return p(d.getDate())+' '+BLN3[d.getMonth()]+' '+p(d.getHours())+':'+p(d.getMinutes())}
 function flmPanel(name){const L=(window.edFLMList&&window.edFLMList(name))||[],by={A:[],B:[],C:[],D:[]};const nodata=!(window.PKUFLM&&window.PKUFLM.n()>0);L.forEach(x=>{if(by[x.shift])by[x.shift].push(x)});
-  const nw=new Date();let h='<div class="tw-col tw-flm"><div class="tw-head"><b>FLM · 5S</b><span class="tw-mon">'+BLN3[nw.getMonth()]+' '+nw.getFullYear()+'</span></div><div class="tw-sub"><span>Per shift</span><span class="tw-n tw-nf">'+L.length+'</span></div>';
-  ['A','B','C','D'].forEach(s=>{const a=by[s];h+='<div class="tw-sh"><div class="tw-shh"><i style="background:'+FLC[s]+'"></i><span>Shift '+s+'</span><b>'+(a.length||'')+'</b><em>'+(a.length?'\u25BE':'')+'</em></div>'+(a.length?'<div class="tw-fl">'+a.slice(0,3).map(x=>'<div class="tw-fr" style="--c:'+FLC[s]+'"><span class="tw-fd">'+flmWhen(x.opened)+'</span><span class="tw-ft">'+tipEsc(x.desc)+'</span></div>').join('')+(a.length>3?'<div class="tw-fm">+'+(a.length-3)+' lagi</div>':'')+'</div>':'')+'</div>'});
+  const nw=new Date();let h='<div class="tw-col tw-flm"><div class="tw-fhead"><b>FLM · 5S</b><span class="tw-mon">'+BLN3[nw.getMonth()]+' '+nw.getFullYear()+'</span><span class="tw-fcnt">'+L.length+'</span></div>';
+  ['A','B','C','D'].forEach(s=>{const a=by[s];h+='<div class="tw-sh'+(a.length?' has':'')+'"><div class="tw-shh"><i style="background:'+FLC[s]+'"></i><span>Shift '+s+'</span><b>'+(a.length||'')+'</b><em>'+(a.length?'\u25BE':'')+'</em></div>'+(a.length?'<div class="tw-fl">'+a.slice(0,3).map(x=>'<div class="tw-fr" style="--c:'+FLC[s]+'"><span class="tw-fd">'+flmWhen(x.opened)+'</span><span class="tw-ft">'+tipEsc(x.desc)+'</span></div>').join('')+(a.length>3?'<div class="tw-fm">+'+(a.length-3)+' lagi</div>':'')+'</div>':'')+'</div>'});
   if(nodata)h+='<div class="tw-fm" style="margin-top:8px">Belum ada data FLM. Tempel CM & FLM ke sheet Service Request.</div>';
   return h+'</div>'}
 function woTipHTML(name,chip,note){const l=woTipLeft(name,chip,note);return '<div class="tw-cols"><div class="tw-col">'+l+'</div>'+flmPanel(name)+'</div>'}
