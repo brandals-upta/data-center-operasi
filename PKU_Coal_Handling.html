@@ -556,6 +556,11 @@ body.crewonly #crewBack{display:none}
 @keyframes edSmoke{from{background-position:0% 0%}to{background-position:100% 100%}}
 @media (prefers-reduced-motion:reduce){#eqDetail{animation:none}}
 
+/* ===== mode layar penuh (monitoring) ===== */
+:fullscreen body{overflow-y:auto}
+:fullscreen .stagewrap{height:calc(100vh - var(--toolsH,76px));background:#2a2a2a}
+:fullscreen .stage{height:100%;overflow:hidden;background:linear-gradient(180deg,#262626,#3b3b3b 55%,#4f4f4f);display:flex;align-items:center;justify-content:center}
+:fullscreen .stage svg{min-width:0;width:100%;height:100%}
 /* ===== DOCK setengah layar ===== */
 #dock{text-transform:uppercase;position:fixed;z-index:30;display:flex;flex-direction:column;gap:10px;opacity:0;pointer-events:none;transition:opacity .18s ease,transform .22s cubic-bezier(.2,.8,.2,1);font:11.5px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#e6eaf5}
 #dock.l{transform:translateX(-18px)}#dock.r{transform:translateX(18px)}
@@ -1797,7 +1802,7 @@ function T(x,y,txt,a,p){const e=E('text',Object.assign({x,y},a||{}),p);e.textCon
 const TAGS=[],VL=[],PL=[];function R(k,x,y){TAGS.push([k,x,y])}
 const d=pts=>'M'+pts.map(p=>p.join(',')).join('L');
 
-const svg=E('svg',{viewBox:'0 0 1530 784',role:'img','aria-label':'Peta kesehatan peralatan coal handling'});
+const svg=E('svg',{viewBox:'0 0 1530 872',role:'img','aria-label':'Peta kesehatan peralatan coal handling'});
 document.getElementById('stage').appendChild(svg);
 const defs=E('defs',{},svg);
 defs.innerHTML=`
@@ -1817,17 +1822,17 @@ defs.innerHTML=`
 <filter id="txtRaise" x="-5%" y="-40%" width="110%" height="180%"><feDropShadow dx="1.5" dy="1.5" stdDeviation="1.2" flood-color="#000" flood-opacity=".6"/></filter>
 <pattern id="dots\" width="3" height="3" patternUnits="userSpaceOnUse"><rect width="3" height="3" fill="#efe6ee"/><circle cx="1.5" cy="1.5" r=".55" fill="#b8aab8"/></pattern>`;
 
-E('rect',{x:0,y:0,width:1530,height:784,fill:'url(#bgGrey)'},svg);E('rect',{x:0,y:0,width:1530,height:784,fill:'url(#bgGreyGlow)'},svg);
+E('rect',{x:0,y:0,width:1530,height:872,fill:'url(#bgGrey)'},svg);E('rect',{x:0,y:0,width:1530,height:872,fill:'url(#bgGreyGlow)'},svg);
 
 /* header bar */
-E('rect',{x:0,y:0,width:1530,height:44,fill:'url(#hdrGrad)',filter:'url(#raise)'},svg);
+E('rect',{x:0,y:0,width:1530,height:56,fill:'url(#hdrGrad)',filter:'url(#raise)'},svg);
 const hdrInd=E('g',{'font-family':'Tahoma,Verdana,sans-serif'},svg);
-E('rect',{x:140,y:5,width:150,height:34,rx:8,fill:'#232323',filter:'url(#inset)'},hdrInd);
-E('circle',{cx:158,cy:22,r:5,fill:'#2ee84a'},hdrInd);
-const onlineT=T(172,28,'1 Online',{fill:'#7fd4ff','font-size':17},hdrInd);
+E('rect',{x:140,y:11,width:150,height:34,rx:8,fill:'#232323',filter:'url(#inset)'},hdrInd);
+E('circle',{cx:158,cy:28,r:5,fill:'#2ee84a'},hdrInd);
+const onlineT=T(172,34,'1 Online',{fill:'#7fd4ff','font-size':17},hdrInd);
 const shG=E('g',{style:'cursor:pointer',role:'button',tabindex:0,'aria-label':'Shift bertugas'},hdrInd);
-E('rect',{x:6,y:5,width:126,height:34,rx:8,fill:'#232323',filter:'url(#inset)'},shG);
-const shiftT=T(69,28,'',{fill:'#7fd4ff','font-size':17,'text-anchor':'middle'},shG);
+E('rect',{x:6,y:11,width:126,height:34,rx:8,fill:'#232323',filter:'url(#inset)'},shG);
+const shiftT=T(69,34,'',{fill:'#7fd4ff','font-size':17,'text-anchor':'middle'},shG);
 const SHKEY='pku-chf-shift-v1';let SHC={start:8,off:0};try{SHC=Object.assign(SHC,JSON.parse(localStorage.getItem(SHKEY)||'{}'))}catch(e){}
 const SHN=['Pagi','Sore','Malam'],GRP=['A','B','C','D'];
 function shiftAt(d){const s=SHC.start,h=d.getHours()+d.getMinutes()/60,rel=((h-s)%24+24)%24,T3=rel<8?0:rel<16?1:2;
@@ -1846,11 +1851,12 @@ shG.addEventListener('click',shiftSettings);shG.addEventListener('keydown',e=>{i
   const upd=ps=>{const ids=new Set();ps.forEach(p=>{if(p.kind==='viewer')ids.add(p.by||p.peer)});onlineT.textContent=Math.max(1,ids.size)+' Online'};
   room.onPeers(ch=>upd(ch.peers));upd(room.peers())}catch(e){}})();
 
-T(740,31,'PKU Coal Handling System | PLTU Tanjung Awar-awar',{fill:'#f2f4f7',filter:'url(#txtRaise)','font-size':27,'text-anchor':'middle','font-family':'Candara,Calibri,"Segoe UI",sans-serif'},svg);
-E('rect',{x:1204,y:5,width:320,height:34,rx:8,fill:'#232323',filter:'url(#inset)'},svg);
-const dt=T(1364,28,'',{fill:'#7fd4ff','font-size':17,'text-anchor':'middle'},svg);
+T(740,38,'PKU Coal Handling System | PLTU Tanjung Awar-awar',{fill:'#f2f4f7',filter:'url(#txtRaise)','font-size':27,'text-anchor':'middle','font-family':'Candara,Calibri,"Segoe UI",sans-serif'},svg);
+E('rect',{x:1204,y:11,width:320,height:34,rx:8,fill:'#232323',filter:'url(#inset)'},svg);
+const dt=T(1364,34,'',{fill:'#7fd4ff','font-size':17,'text-anchor':'middle'},svg);
 function tick(){const n=new Date();const p=x=>String(x).padStart(2,'0');dt.textContent=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][n.getDay()]+', '+n.getDate()+' '+['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][n.getMonth()]+' '+n.getFullYear()+' | '+p(n.getHours())+':'+p(n.getMinutes())}
 tick();setInterval(tick,1000);
+const MAPDY=22,HDR_N=svg.childNodes.length;
 
 /* stacker block legend */
 
@@ -2279,7 +2285,7 @@ function saveH(){try{localStorage.setItem(HKEY,JSON.stringify(HPOS))}catch(e){}}
 function heavyApply(k,dx,dy){(SYMEL[k]||[]).forEach(el=>{if(el.__t0===undefined)el.__t0=el.getAttribute('transform')||'';el.setAttribute('transform','translate('+dx+' '+dy+') '+el.__t0)});
   [tagL.querySelector('g[data-tag="'+k+'"]'),hitG.querySelector('[data-tag="'+k+'"]'),symHit.querySelector('[data-sym="'+k+'"]')].forEach(el=>{if(el)el.setAttribute('transform','translate('+dx+' '+dy+')')})}
 HEAVY.forEach(k=>{const o=HPOS[k];if(o&&isFinite(o[0])&&isFinite(o[1])){const c=cxy(k);if(c&&inCY([c[0]+o[0],c[1]+o[1]]))heavyApply(k,o[0],o[1]);else delete HPOS[k]}});
-function svgPt(ev){const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const q=p.matrixTransform(svg.getScreenCTM().inverse());return[q.x,q.y]}
+function svgPt(ev){const p=svg.createSVGPoint();p.x=ev.clientX;p.y=ev.clientY;const q=p.matrixTransform(svg.getScreenCTM().inverse());return[q.x,q.y-MAPDY]}
 let hd=null,hdMoved=false,hdBlock=false;
 svg.addEventListener('pointerdown',ev=>{if(ev.button>0)return;const sy=ev.target.closest&&ev.target.closest('[data-sym]');if(!sy||!HEAVY.includes(sy.dataset.sym))return;
   const k=sy.dataset.sym,o=(HPOS[k]||[0,0]).slice();hd={k,c:cxy(k),start:svgPt(ev),o0:o,o:o.slice(),id:ev.pointerId,sx:ev.clientX,sy:ev.clientY};hdMoved=false});
@@ -2355,7 +2361,9 @@ if(window.edAddItems)window.edAddItems(Object.keys(EQ).filter(id=>!PKU_NAME[id])
 svg.addEventListener('click',ev=>{if(!ev.target.closest('.eq,[data-sym],[data-card]'))dockHideNow()});
 document.addEventListener('keydown',ev=>{if(ev.key!=='Tab'||ev.ctrlKey||ev.altKey||ev.metaKey)return;const t=ev.target,tg=t&&t.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||(t&&t.isContentEditable))return;if(document.getElementById('crewView')&&!document.getElementById('crewView').hidden)return;
   if(document.fullscreenElement)return;ev.preventDefault();const r=document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen;if(r)try{const p=r.call(document.documentElement);if(p&&p.catch)p.catch(()=>{})}catch(e){}});
-document.addEventListener('fullscreenchange',dockHideNow);
+function fsFit(){const t=document.querySelector('.tools');if(t)document.documentElement.style.setProperty('--toolsH',t.offsetHeight+'px')}
+document.addEventListener('fullscreenchange',()=>{dockHideNow();fsFit();if(document.fullscreenElement)window.scrollTo(0,0);setTimeout(fsFit,120)});
+window.addEventListener('resize',()=>{fsFit()});
 svg.addEventListener('keydown',ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target.closest('.eq')){ev.preventDefault();pick(ev.target.closest('.eq').dataset.id)}});
 let tipKey='';
 const tipEsc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -2482,6 +2490,7 @@ document.getElementById('bImp').onclick=()=>{document.getElementById('mTitle').t
     save();render();mMsg.textContent=n+' peralatan diperbarui'+(bad.length?'. Tidak dikenali: '+bad.slice(0,6).join(', '):'.')};
   modal.classList.add('open')};
 
+(function(){const mg=document.createElementNS(NS,'g');mg.setAttribute('id','mapShift');mg.setAttribute('transform','translate(0,'+MAPDY+')');Array.from(svg.childNodes).slice(HDR_N).forEach(n=>mg.appendChild(n));svg.appendChild(mg)})();
 render();
 })();
 </script>
