@@ -556,6 +556,16 @@ body.crewonly #crewBack{display:none}
 @keyframes edSmoke{from{background-position:0% 0%}to{background-position:100% 100%}}
 @media (prefers-reduced-motion:reduce){#eqDetail{animation:none}}
 
+/* ===== tampilan mobile ===== */
+body.mv .hsr-top{padding:12px 12px 8px;gap:10px}
+body.mv .hsr-stat{padding:9px 12px}body.mv .hsr-stat b{font-size:1.2rem}
+body.mv .hsr-tools{gap:10px}body.mv .hsr-search{min-width:0;flex:1 1 100%}
+body.mv .hsr-list{padding:0 12px 24px}
+body.mv .hsr-dh{margin:12px 0 8px;padding:9px 13px;font-size:.78rem}
+body.mv .hsr-list .dk-l1{font-size:10px}
+body.mv .mv-bar{padding:8px 12px}body.mv .mv-title{font-size:1rem}body.mv .mv-ext{padding:7px 10px;font-size:12px}
+body.mv .stage svg{min-width:900px}
+@media (max-width:700px){body .stage svg{min-width:900px}.hsr-stats{gap:8px}.hsr-fb{padding:9px 16px}.mv-title{font-size:1rem}.mv-ext{padding:7px 10px;font-size:12px}}
 /* ===== mode layar penuh (monitoring) ===== */
 :fullscreen body{overflow-y:auto}
 :fullscreen .stagewrap{height:calc(100vh - var(--toolsH,76px));background:#2a2a2a}
@@ -580,14 +590,16 @@ body.crewonly #crewBack{display:none}
 #dock .dk-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:10px 10px 12px;display:flex;flex-direction:column;gap:7px;scrollbar-width:thin;scrollbar-color:#4a5578 transparent}
 #dock .dk-wo,#dock .dk-fr{background:#fff;color:#111;border-radius:11px;padding:6px 10px;box-shadow:0 1px 4px rgba(0,0,0,.25);border-left:3px solid var(--c,#38a3ff);animation:dkIn .2s ease-out both;animation-delay:calc(var(--i,0)*18ms)}
 #dock .dk-wo.s1{--c:#0b7bd6}#dock .dk-wo.s2{--c:#d4a017}#dock .dk-wo.s3{--c:#ea7a12}#dock .dk-wo.s4{--c:#dc2626}
-#dock .dk-l1{display:flex;align-items:baseline;gap:5px;font-size:10.5px;font-weight:800}
-#dock .dk-l1 b{color:#0b7bd6}#dock .dk-l1 span{color:#9aa3b8}
-#dock .dk-l1 u{text-decoration:none;font-weight:800}
-#dock .dk-l1 u.shA{color:#dc2626}#dock .dk-l1 u.shB{color:#2563eb}#dock .dk-l1 u.shC{color:#d19a00}#dock .dk-l1 u.shD{color:#16a34a}
-#dock .dk-l1 em{margin-left:auto;font-style:normal;font-weight:700;color:#7a8499;font-size:10px;white-space:nowrap}
-#dock .dk-l1 em span{color:#9aa3b8}
-#dock .dk-l1 em i{font-style:normal;font-weight:800;color:#0b7bd6;text-transform:none}
-#dock .dk-ds{margin-top:2px;font-size:10.5px;font-weight:600;color:#111;word-break:break-word}
+#dock .dk-l1,.hsr-list .dk-l1{display:grid;grid-template-columns:62px 10px 44px 1fr 68px 10px 48px;align-items:baseline;font-size:10.5px;font-weight:800;white-space:nowrap}
+#dock .dk-l1 b,.hsr-list .dk-l1 b{color:#0b7bd6;overflow:hidden}
+#dock .dk-l1 span,.hsr-list .dk-l1 span{color:#9aa3b8;text-align:center}
+#dock .dk-l1 u,.hsr-list .dk-l1 u{text-decoration:none;font-weight:800}
+#dock .dk-l1 u.shA,.hsr-list .dk-l1 u.shA{color:#dc2626}#dock .dk-l1 u.shB,.hsr-list .dk-l1 u.shB{color:#2563eb}#dock .dk-l1 u.shC,.hsr-list .dk-l1 u.shC{color:#d19a00}#dock .dk-l1 u.shD,.hsr-list .dk-l1 u.shD{color:#16a34a}
+#dock .dk-l1 s,.hsr-list .dk-l1 s{text-decoration:none}
+#dock .dk-l1.nf,.hsr-list .dk-l1.nf{grid-template-columns:62px 10px 44px 1fr 68px}
+#dock .dk-l1 .dt,.hsr-list .dk-l1 .dt{font-style:normal;text-align:right;font-weight:700;color:#7a8499;font-size:10px}
+#dock .dk-l1 .ag,.hsr-list .dk-l1 .ag{font-style:normal;text-align:right;font-weight:800;color:#0b7bd6;text-transform:none}
+#dock .dk-ds,.hsr-list .dk-ds{margin-top:2px;font-size:10.5px;font-weight:600;color:#111;word-break:break-word}
 #dock .dk-sh{display:flex;flex-direction:column}
 #dock .dk-shb{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;border-radius:12px;cursor:pointer;font-weight:800;font-size:11.5px;color:#e6eaf5;background:linear-gradient(135deg,#2c3348,#232a3d);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);transition:filter .15s}
 #dock .dk-shb[disabled]{cursor:default}
@@ -705,6 +717,7 @@ body.crewonly #crewBack{display:none}
 .mv-back:focus{outline:none}.mv-back:focus-visible{outline:2px solid #0072FF;outline-offset:2px}
 .mv-back svg{width:22px;height:22px;fill:none;stroke:#111;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .mv-title{font-size:1.1rem;font-weight:800;color:#0f172a}
+.mv-ext{margin-left:auto;padding:8px 14px;border-radius:12px;background:#f0f2f5;color:#0b5fd1;font-weight:700;font-size:13px;text-decoration:none}.mv-ext:hover{background:#e3e7ee}
 .mv-body{flex:1;min-height:0;position:relative}
 .mv-body iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
 .mv-ph{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px;background:radial-gradient(circle at 20% 15%,rgba(0,198,255,.18),transparent 55%),radial-gradient(circle at 85% 90%,rgba(124,58,237,.16),transparent 55%),#0e1019}
@@ -788,6 +801,26 @@ body.mv .lm-foot{display:none}
 .hsr-empty{padding:60px 20px;text-align:center;color:#7d8898;font-weight:700}
 @media (max-width:700px){.hsr-row{grid-template-columns:1fr auto;gap:10px 12px;padding:14px 14px 14px 20px}.hsr-st{grid-column:1/-1;flex-direction:row;align-items:center}.hsr-days{width:64px;height:64px}.hsr-stats{gap:8px}.hsr-stat{padding:9px 12px}}
 @media (prefers-reduced-motion:reduce){.hsr-state i{animation:none}.hsr-row{transition:none}.hsr-list{scroll-behavior:auto}}
+/* ===== History Service Request: senada dengan panel hover ===== */
+.mv-body.hsr-body{background:#0e1019}
+.hsr{color:#e6eaf5}
+.hsr-stat{border-radius:14px;background:linear-gradient(135deg,#2c3348,#232a3d);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.hsr-stat small{color:#9aa3b8}.hsr-stat b{color:#fff}.hsr-stat.a b{color:#fbbf24}.hsr-stat.c b{color:#34d399}
+.hsr-search{background-color:#232a3d;color:#e6eaf5;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);text-transform:none}
+.hsr-search::placeholder{color:#8b95ad}
+.hsr-search:focus{box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),0 0 0 2px rgba(0,114,255,.5)}
+.hsr-fb{color:#cfd6ea;background:linear-gradient(135deg,#2c3348,#232a3d);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.hsr-fb:hover{color:#fff}
+.hsr-fb.on{color:#fff;background:linear-gradient(135deg,#2196f3,#1565d8);box-shadow:0 5px 14px rgba(21,101,216,.4)}
+.hsr-list{text-transform:uppercase;scrollbar-width:thin;scrollbar-color:#4a5578 transparent}
+.hsr-dh{margin:14px 0 10px;border-radius:13px;font-size:.82rem;background:linear-gradient(135deg,#2196f3,#1565d8);box-shadow:0 5px 14px rgba(21,101,216,.4)}
+.hsr-list .dk-wo{background:#fff;color:#111;border-radius:11px;padding:6px 10px;margin:0 0 7px;box-shadow:0 1px 4px rgba(0,0,0,.25);border-left:3px solid var(--c,#38a3ff);content-visibility:auto;contain-intrinsic-size:auto 64px}
+.hsr-list .dk-wo.s1{--c:#0b7bd6}.hsr-list .dk-wo.s2{--c:#d4a017}.hsr-list .dk-wo.s3{--c:#ea7a12}.hsr-list .dk-wo.s4{--c:#dc2626}.hsr-list .dk-wo.done{--c:#16a34a}
+.hsr-list .dk-wo:hover{transform:none;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.hx-ft{display:flex;align-items:center;gap:7px;margin-top:3px;font-size:9.5px;font-weight:700;color:#7a8499}
+.hx-st{padding:1px 7px;border-radius:99px;color:#fff;font-weight:800;font-size:9px}.hx-st.a{background:linear-gradient(135deg,#fbbf24,#d97706)}.hx-st.c{background:linear-gradient(135deg,#34d399,#059669)}
+.hx-eq{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
 /* ===== Laporan WA & Update Maximo ===== */
 .pku-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:3500;display:flex;align-items:center;gap:14px;padding:12px 14px 12px 18px;border-radius:16px;background:rgba(21,26,42,.97);color:#eef1fb;border:1px solid rgba(0,198,255,.45);box-shadow:0 14px 40px rgba(0,0,0,.5),0 0 18px rgba(0,198,255,.25);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;max-width:calc(100vw - 24px);animation:twIn .16s ease-out}
 .pku-toast[hidden]{display:none}
@@ -822,7 +855,7 @@ body.mv .lm-foot{display:none}
 <div class="lm-hot" id="lmHot" title="Menu"><i></i></div>
 <nav class="lm" id="lmPanel" aria-label="Menu layar DCS" aria-hidden="true">
   <div class="lm-head"><span class="lm-logo"></span><div><b>Menu Cepat</b><small>PKU Coal Handling System</small></div></div>
-  <ul class="lm-list"><li style="--i:0"><button type="button" class="lm-item" data-m="Logbook Coal Handling" style="--a1:#00C6FF;--a2:#0072FF"><span class="lm-ic"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/><path d="M9 8h6M9 11h4"/></svg></span><span class="lm-tx"><b>Logbook Coal Handling</b><small>Catatan operasi Coal Handling</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:1"><button type="button" class="lm-item" data-m="Logbook Ash Handling" style="--a1:#fb923c;--a2:#ea580c"><span class="lm-ic"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/><path d="M12 6.5c-1.6 1.6-2.4 2.6-2.4 3.8a2.4 2.4 0 0 0 4.8 0c0-1.2-.8-2.2-2.4-3.8z"/></svg></span><span class="lm-tx"><b>Logbook Ash Handling</b><small>Catatan operasi Ash Handling</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:2"><button type="button" class="lm-item" data-m="Downtime" style="--a1:#f87171;--a2:#b91c1c"><span class="lm-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.5"/><path d="M12 9v4.5l3 1.8"/><path d="M9.5 3h5"/></svg></span><span class="lm-tx"><b>Downtime</b><small>Rekap peralatan downtime</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:3"><button type="button" class="lm-item" data-m="Peta Coalyard" style="--a1:#34d399;--a2:#059669"><span class="lm-ic"><svg viewBox="0 0 24 24"><path d="M3 6.5l6-2.5 6 2.5 6-2.5v13.5l-6 2.5-6-2.5-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/></svg></span><span class="lm-tx"><b>Peta Coalyard</b><small>Posisi dan stok coalyard</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:4"><button type="button" class="lm-item" data-m="Tabel kalori" style="--a1:#fde047;--a2:#d99a00"><span class="lm-ic"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 4.5v15"/></svg></span><span class="lm-tx"><b>Tabel kalori</b><small>Data kalori batubara</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:5"><button type="button" class="lm-item" data-m="LOTTO" style="--a1:#c084fc;--a2:#7c3aed"><span class="lm-ic"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/><path d="M12 14.2v2.6"/></svg></span><span class="lm-tx"><b>LOTTO</b><small>Lock Out Tag Out</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:6"><button type="button" class="lm-item" data-m="Jadwal RTPM &amp; 5S" style="--a1:#2dd4bf;--a2:#0d9488"><span class="lm-ic"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15.2l2.1 2.1 4-4.2"/></svg></span><span class="lm-tx"><b>Jadwal RTPM &amp; 5S</b><small>Jadwal rutin harian</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:7"><button type="button" class="lm-item" data-m="History Service Request" style="--a1:#60a5fa;--a2:#4f46e5"><span class="lm-ic"><svg viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 4.5v4.2h4.2"/><path d="M12 7.5V12l3 1.8"/></svg></span><span class="lm-tx"><b>History Service Request</b><small>Riwayat SR dan WO</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li></ul>
+  <ul class="lm-list"><li style="--i:0"><button type="button" class="lm-item" data-m="Logbook Coal &amp; Ash Handling" style="--a1:#00C6FF;--a2:#0072FF"><span class="lm-ic"><svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/><path d="M9 8h6M9 11h4"/></svg></span><span class="lm-tx"><b>Logbook Coal &amp; Ash Handling</b><small>Catatan operasi Coal &amp; Ash Handling</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:2"><button type="button" class="lm-item" data-m="Downtime" style="--a1:#f87171;--a2:#b91c1c"><span class="lm-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="7.5"/><path d="M12 9v4.5l3 1.8"/><path d="M9.5 3h5"/></svg></span><span class="lm-tx"><b>Downtime</b><small>Rekap peralatan downtime</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:3"><button type="button" class="lm-item" data-m="Peta Coalyard" style="--a1:#34d399;--a2:#059669"><span class="lm-ic"><svg viewBox="0 0 24 24"><path d="M3 6.5l6-2.5 6 2.5 6-2.5v13.5l-6 2.5-6-2.5-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/></svg></span><span class="lm-tx"><b>Peta Coalyard</b><small>Posisi dan stok coalyard</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:4"><button type="button" class="lm-item" data-m="Tabel kalori" style="--a1:#fde047;--a2:#d99a00"><span class="lm-ic"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M3.5 14.5h17M9.5 4.5v15"/></svg></span><span class="lm-tx"><b>Tabel kalori</b><small>Data kalori batubara</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:5"><button type="button" class="lm-item" data-m="LOTTO" style="--a1:#c084fc;--a2:#7c3aed"><span class="lm-ic"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/><path d="M12 14.2v2.6"/></svg></span><span class="lm-tx"><b>LOTTO</b><small>Lock Out Tag Out</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:6"><button type="button" class="lm-item" data-m="Jadwal RTPM &amp; 5S" style="--a1:#2dd4bf;--a2:#0d9488"><span class="lm-ic"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15.2l2.1 2.1 4-4.2"/></svg></span><span class="lm-tx"><b>Jadwal RTPM &amp; 5S</b><small>Jadwal rutin harian</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li><li style="--i:7"><button type="button" class="lm-item" data-m="History Service Request" style="--a1:#60a5fa;--a2:#4f46e5"><span class="lm-ic"><svg viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 4.5v4.2h4.2"/><path d="M12 7.5V12l3 1.8"/></svg></span><span class="lm-tx"><b>History Service Request</b><small>Riwayat SR dan WO</small></span><svg class="lm-go" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></li></ul>
   <div class="lm-foot">Geser kursor ke tepi kiri layar untuk membuka menu</div>
 </nav>
 </div>
@@ -2390,8 +2423,11 @@ function woTipHTML(name,chip,note){const l=woTipLeft(name,chip,note);return '<di
 const dock=document.createElement('div');dock.id='dock';document.body.appendChild(dock);
 let dkKey='',dkPend='',dkT=null,dkH=null,dkOpen={},dkLeaving=false;
 function dockHideNow(){clearTimeout(dkT);clearTimeout(dkH);dkLeaving=false;dkPend='';dkKey='';dock.classList.remove('on')}
-const DK_OUT=420;
-function dockLeave(){clearTimeout(dkT);dkPend='';if(!dock.classList.contains('on')||dkLeaving)return;dkLeaving=true;dkH=setTimeout(dockHideNow,DK_OUT)}
+const DK_OUT=420;let dkMX=0,dkMY=0;
+let dkD=0,dkAppT=0;
+document.addEventListener('mousemove',e=>{dkMX=e.clientX;dkMY=e.clientY;if(dock.classList.contains('on')){const d=dkDist();if(d<dkD-2)dkAppT=performance.now();dkD=d}},{passive:true,capture:true});
+function dkDist(){let best=1e9;dock.querySelectorAll('.dk-card,.dk-title').forEach(c=>{const r=c.getBoundingClientRect(),dx=Math.max(r.left-dkMX,0,dkMX-r.right),dy=Math.max(r.top-dkMY,0,dkMY-r.bottom);best=Math.min(best,Math.hypot(dx,dy))});return best===1e9?0:best}
+function dockLeave(){clearTimeout(dkT);dkPend='';if(!dock.classList.contains('on')||dkLeaving)return;dkLeaving=true;const app=performance.now()-dkAppT<180;dkH=setTimeout(dockHideNow,DK_OUT+(app?Math.min(500,dkDist()*0.6):0))}
 window.dockHideNow=dockHideNow;window.dockLeave=dockLeave;
 dock.addEventListener('mouseenter',()=>{clearTimeout(dkH);dkLeaving=false});
 dock.addEventListener('mouseleave',()=>{clearTimeout(dkH);dkLeaving=true;dkH=setTimeout(dockHideNow,DK_OUT)});
@@ -2399,7 +2435,7 @@ dock.addEventListener('click',ev=>{const b=ev.target.closest('.dk-shb');if(!b)re
 const DKSEV=d=>d>90?'s4':d>60?'s3':d>30?'s2':'s1';
 const dkAge=d=>d<=0?'Hari ini':d+' Hari';
 const dkShOf=ms=>{try{return String(window.shiftGroupAt(ms)||'').replace(/^.*\s/,'')}catch(e){return ''}};
-function dkMeta(no,sh,x){return '<div class="dk-l1"><b>'+tipEsc(no)+'</b><span>\u00B7</span>'+(sh?'<u class="sh'+sh+'">SHIFT '+sh+'</u>':'')+'<em>'+flmWhen(x.opened)+' <span>\u00B7</span> <i>'+dkAge(x.days)+'</i></em></div>'}
+function dkMeta(no,sh,x,nf){return '<div class="dk-l1'+(nf?' nf':'')+'"><b>'+tipEsc(no)+'</b><span>\u00B7</span>'+(sh?'<u class="sh'+sh+'">SHIFT '+sh+'</u>':'<u></u>')+'<s></s><i class="dt">'+flmWhen(x.opened)+'</i>'+(nf?'':'<span>\u00B7</span><i class="ag">'+dkAge(x.days)+'</i>')+'</div>'}
 function dkHead(){let b=0;document.querySelectorAll('header,.topbar,.hdr,#top,#hud').forEach(e=>{const q=e.getBoundingClientRect();if(q.height>0&&q.top<80&&q.bottom>b&&q.bottom<140)b=q.bottom});return Math.max(b,52)}
 function dkArea(){const a=document.getElementById('stage').getBoundingClientRect(),l=Math.max(0,a.left),rr=Math.min(innerWidth,a.right),t=Math.max(0,a.top),bt=Math.min(innerHeight,a.bottom);return{l:l,w:rr-l,top:t,h:bt-t}}
 function dockBuild(name,chip,note,right){
@@ -2413,11 +2449,11 @@ function dockBuild(name,chip,note,right){
   dkOpen=first?{[first]:true}:{};
   const wo=L.length?L.map((x,i)=>'<div class="dk-wo '+DKSEV(x.days)+'" style="--i:'+i+'">'+dkMeta(/^\d+$/.test(String(x.no))?'SR'+x.no:x.no,dkShOf(x.opened),x)+'<div class="dk-ds">'+tipEsc(x.desc)+'</div></div>').join(''):'<div class="dk-empty ok">✓ Tidak ada SR/WO aktif</div>';
   const nm=new Date();
-  const sh=F.length?F.map((x,i)=>'<div class="dk-wo s1" style="--i:'+i+'">'+dkMeta(x.no,x.shift,x)+'<div class="dk-ds">'+tipEsc(x.desc)+'</div></div>').join(''):(nodata?'':'<div class="dk-empty">Tidak ada FLM bulan ini</div>');
+  const sh=F.length?F.map((x,i)=>'<div class="dk-wo s1" style="--i:'+i+'">'+dkMeta(x.no,x.shift,x,true)+'<div class="dk-ds">'+tipEsc(x.desc)+'</div></div>').join(''):(nodata?'':'<div class="dk-empty">Tidak ada FLM bulan ini</div>');
   dock.innerHTML='<div class="dk-title"><div class="dk-name">'+tipEsc(name)+'</div>'+chip+(note?'<span class="dk-note">'+tipEsc(note.slice(0,70))+'</span>':'')+'</div>'
    +'<div class="dk-cols"><section class="dk-card"><header class="dk-h"><b>SR / WO Aktif</b><span class="dk-n">'+L.length+'</span></header><div class="dk-body">'+wo+'</div></section>'
    +'<section class="dk-card"><header class="dk-h flm"><b>FLM &amp; 5S</b><em>'+BLN3[nm.getMonth()]+' '+nm.getFullYear()+'</em><span class="dk-n">'+F.length+'</span></header><div class="dk-body">'+sh+(nodata?'<div class="dk-empty">Belum ada data FLM. Tempel CM &amp; FLM ke sheet Service Request.</div>':'')+'</div></section></div>'}
-function dockShow(ev,key,name,chip,note){tip.style.display='none';tipKey='';clearTimeout(dkH);dkLeaving=false;
+function dockShow(ev,key,name,chip,note){if(document.body.classList.contains('mv')||innerWidth<=700||(ev.sourceCapabilities&&ev.sourceCapabilities.firesTouchEvents))return;tip.style.display='none';tipKey='';clearTimeout(dkH);dkLeaving=false;
   const on=dock.classList.contains('on');if(on&&key===dkKey){dkPend='';return}
   if(key===dkPend)return;
   clearTimeout(dkT);const r=dkArea(),right=ev.clientX<r.l+r.w/2;
@@ -2498,7 +2534,7 @@ render();
 (function(){
   var $=function(i){return document.getElementById(i)},hot=$('lmHot'),panel=$('lmPanel'),view=$('mview'),body=$('mvBody'),ttl=$('mvTitle'),tm=null,last=null;
   /* Isi halaman tiap menu: isi url (alamat html) atau html (isi dokumen) untuk menampilkan halaman nyata. */
-  var MENU_PAGES={'Logbook Coal Handling':{},'Logbook Ash Handling':{},'Downtime':{},'Peta Coalyard':{},'Tabel kalori':{},'LOTTO':{},'Jadwal RTPM & 5S':{},'History Service Request':{}};
+  var MENU_PAGES={'Logbook Coal & Ash Handling':{url:'https://docs.google.com/spreadsheets/d/17HFjUVMLDXVtrl546OU7SxSQ5a6j32ha2-7B58FvH1k/pubhtml?widget=true&headers=false',ext:'https://docs.google.com/spreadsheets/d/17HFjUVMLDXVtrl546OU7SxSQ5a6j32ha2-7B58FvH1k/edit?usp=drivesdk'},'Downtime':{},'Peta Coalyard':{},'Tabel kalori':{},'LOTTO':{},'Jadwal RTPM & 5S':{},'History Service Request':{}};
   MENU_PAGES['History Service Request']={render:renderHistory,cls:'hsr-body'};
   function renderHistory(host){
     var BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'],HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
@@ -2512,15 +2548,18 @@ render();
     var IC_CK='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',IC_SH='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>',IC_EQ='<svg viewBox="0 0 24 24"><path d="M4 18h16M6 18V9l6-4 6 4v9"/></svg>';
     function dayKey(r){if(r.created==null)return 'x';var d=new Date(r.created);return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
     function dayLabel(r){if(r.created==null)return 'Tanpa tanggal';var d=new Date(r.created);return HARI[d.getDay()]+', '+d.getDate()+' '+BLN[d.getMonth()]+' '+d.getFullYear()}
+    function eqNm(r){var t=String(r.eq||'').trim(),a=String(r.asset||'').replace(/^COAL HANDLING\s*-\s*/i,'').trim(),m;
+      if(!t&&a){if((m=/STACKER\s*RECLAIMER[^0-9]*(\d)/i.exec(a)))t='Stacker Reclaimer '+m[1];else if((m=/SHIP\s*UNLOADER[^0-9]*(\d)/i.exec(a)))t='Ship Unloader '+m[1];else if((m=/CONVEYOR\s*(?:NO\.?\s*)?([0-9][A-Z]?)/i.exec(a)))t='Conveyor '+m[1].toUpperCase();else if((m=/CRUSHER\s*([AB])/i.exec(a)))t='Crusher '+m[1].toUpperCase();else t=a}
+      if(!t)return 'Tanpa alamat';
+      if((m=/^STACKER\s*RECLAIMER[^0-9]*(\d)/i.exec(t)))return 'Stacker Reclaimer '+m[1];if((m=/^SHIP\s*UNLOADER[^0-9]*(\d)/i.exec(t)))return 'Ship Unloader '+m[1];
+      return t.replace(/\bSYSTEM\b/ig,'').replace(/\bNO\.?\s*(?=\d)/ig,'').replace(/\s+/g,' ').trim().slice(0,34)}
     function row(r){var sev=r.days==null?'':(r.days>90?'s4':r.days>60?'s3':r.days>30?'s2':'s1'),d=r.created!=null?new Date(r.created):null;
-      var chip=r.aktif?'<span class="hsr-state aktif"><i></i>AKTIF</span>':'<span class="hsr-state done">'+IC_CK+'CLOSE</span>';
-      var eq=r.eq||(r.asset?r.asset.replace(/^COAL HANDLING - /i,'').slice(0,34):'Tanpa alamat');
-      var when=d?(d.getDate()+' '+BLN[d.getMonth()].slice(0,3)+' '+d.getFullYear()+(r.approx?'':' · '+p2(d.getHours())+':'+p2(d.getMinutes()))):'-';
-      var meta='<span class="hsr-m">'+IC_SH+(r.shift?esc(r.shift)+(r.group?' · '+esc(r.group):''):'-')+'</span><span class="hsr-m">'+when+'</span><span class="hsr-m">'+IC_EQ+esc(eq)+'</span>'+
-        (r.approx?'<span class="hsr-m soft">dari logbook</span>':'')+(!r.aktif?'<span class="hsr-m soft">'+(r.closedBy?'ditutup '+esc(r.closedBy):esc(r.status))+'</span>':'');
-      var days=r.aktif?'<div class="hsr-days '+sev+'"><b>'+(r.days==null?'-':r.days)+'</b><small>hari aktif</small></div>':
-        (r.days!=null?'<div class="hsr-days done"><b>'+r.days+'</b><small>hari</small></div>':'<div class="hsr-days done">'+IC_CK+'<small>selesai</small></div>');
-      return '<article class="hsr-row '+(r.aktif?'aktif':'done')+'"><div class="hsr-st">'+chip+'<small>'+esc(r.status||'')+'</small></div><div class="hsr-main"><div class="hsr-nos"><span class="hsr-no"><small>No. SR</small>'+(r.sr?esc(r.sr):'-')+'</span><span class="hsr-no wo"><small>No. WO</small>'+(r.wo?esc(r.wo):'-')+'</span></div><div class="hsr-sum">'+esc(r.summary)+'</div><div class="hsr-meta">'+meta+'</div></div>'+days+'</article>'}
+      var sh=(r.group||'').replace(/^.*\s/,''),no=r.wo||(r.sr?'SR'+r.sr:'-'),hr=r.days==null?'-':(r.days<=0?'Hari ini':r.days+' Hari');
+      var when=d?(p2(d.getDate())+' '+BLN[d.getMonth()].slice(0,3)+' '+p2(d.getHours())+':'+p2(d.getMinutes())):'-';
+      var eq=eqNm(r);
+      var st=r.aktif?'<span class="hx-st a">AKTIF</span>':'<span class="hx-st c">CLOSE</span>';
+      var ft=st+'<span class="hx-eq">'+esc(eq)+(!r.aktif&&r.closedBy?' \u00B7 ditutup '+esc(r.closedBy):'')+'</span>';
+      var nf=r.days==null;return '<article class="dk-wo hx '+(r.aktif?sev:'done')+'"><div class="dk-l1'+(nf?' nf':'')+'"><b>'+esc(no)+'</b><span>\u00B7</span>'+(sh?'<u class="sh'+sh+'">SHIFT '+sh+'</u>':'<u></u>')+'<s></s><i class="dt">'+when+'</i>'+(nf?'':'<span>\u00B7</span><i class="ag">'+hr+'</i>')+'</div><div class="dk-ds">'+esc(r.summary)+'</div><div class="hx-ft">'+ft+'</div></article>'}
     function draw(){var rows=data.filter(function(r){if(flt==='aktif'&&!r.aktif)return false;if(flt==='close'&&r.aktif)return false;
         if(q&&(r.sr+' '+r.wo+' '+r.summary+' '+r.eq+' '+r.asset).toLowerCase().indexOf(q)<0)return false;return true});
       if(!rows.length){list.innerHTML='<div class="hsr-empty">Tidak ada SR yang cocok.</div>';return}
@@ -2546,10 +2585,11 @@ render();
   hot.addEventListener('click',function(){panel.classList.contains('open')?close(0):open()});
   document.addEventListener('click',function(e){if(panel.classList.contains('open')&&!panel.contains(e.target)&&!hot.contains(e.target))close(0)});
   function show(name,btn){var cfg=MENU_PAGES[name]||{};last=btn||null;ttl.textContent=name;body.innerHTML='';body.className='mv-body'+(cfg.cls?' '+cfg.cls:'');
+    var xo=view.querySelector('.mv-ext');if(xo)xo.remove();if(cfg.url&&cfg.ext){var xa=document.createElement('a');xa.className='mv-ext';xa.href=(typeof cfg.ext==='string'?cfg.ext:cfg.url);xa.target='_blank';xa.rel='noopener';xa.textContent='Buka di tab baru';ttl.parentNode.appendChild(xa)}
     if(cfg.render){cfg.render(body)}else if(cfg.url||cfg.html){var f=document.createElement('iframe');f.title=name;f.setAttribute('sandbox','allow-scripts allow-same-origin allow-forms allow-popups allow-downloads');if(cfg.url)f.src=cfg.url;else f.srcdoc=cfg.html;body.appendChild(f)}
     else{var it=btn?btn.cloneNode(true):null,ph=document.createElement('div');ph.className='mv-ph';ph.innerHTML=(it?'<span class="lm-ic" style="--a1:'+it.style.getPropertyValue('--a1')+';--a2:'+it.style.getPropertyValue('--a2')+'">'+it.querySelector('.lm-ic').innerHTML+'</span>':'')+'<b>'+name.replace(/&/g,'&amp;')+'</b><p>Halaman ini sudah siap dan menunggu HTML-nya dipasang. Setelah file HTML diberikan, isinya akan tampil di sini.</p>';body.appendChild(ph)}
     view.hidden=false;close(0);document.body.style.overflow='hidden';$('mvBack').focus()}
-  function hide(){if(view.hidden)return;view.hidden=true;body.innerHTML='';body.className='mv-body';document.body.style.overflow='';if(last)try{last.focus()}catch(e){}}
+  function hide(){if(view.hidden)return;var xo=view.querySelector('.mv-ext');if(xo)xo.remove();view.hidden=true;body.innerHTML='';body.className='mv-body';document.body.style.overflow='';if(last)try{last.focus()}catch(e){}}
   panel.addEventListener('click',function(e){var b=e.target.closest('.lm-item');if(b)show(b.dataset.m,b)});
   $('mvBack').addEventListener('click',hide);
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!view.hidden)hide();else if(panel.classList.contains('open'))close(0)}});
@@ -2653,7 +2693,7 @@ render();
 (function(){var b=document.getElementById('bMobile'),K='peta-kesehatan-chf-mobileview';
 function set(on){document.body.classList.toggle('mv',on);b.setAttribute('aria-pressed',on?'true':'false');b.textContent=on?'Desktop View':'Mobile View';setTimeout(function(){window.dispatchEvent(new Event('resize'))},60);try{localStorage.setItem(K,on?'1':'0')}catch(e){}}
 b.addEventListener('click',function(){set(!document.body.classList.contains('mv'))});
-try{if(localStorage.getItem(K)==='1')set(true)}catch(e){}})();
+try{var sv=localStorage.getItem(K);if(sv==='1'||(sv===null&&window.innerWidth<=700))set(true)}catch(e){}})();
 </script>
 </body>
 </html>
