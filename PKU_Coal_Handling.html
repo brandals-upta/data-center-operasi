@@ -572,7 +572,7 @@ body.crewonly #crewBack{display:none}
 #dock .dk-h em{font-style:normal;font-size:10px;font-weight:700;opacity:.85}
 #dock .dk-n{min-width:22px;height:20px;padding:0 7px;border-radius:999px;background:#fff;color:#1565d8;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center}
 #dock .dk-h.flm .dk-n{color:#b45309}
-#dock .dk-body{flex:1;min-height:0;overflow-y:auto;padding:10px 10px 12px;display:flex;flex-direction:column;gap:7px;scrollbar-width:thin;scrollbar-color:#4a5578 transparent}
+#dock .dk-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:10px 10px 12px;display:flex;flex-direction:column;gap:7px;scrollbar-width:thin;scrollbar-color:#4a5578 transparent}
 #dock .dk-wo,#dock .dk-fr{background:#fff;color:#111;border-radius:11px;padding:6px 10px;box-shadow:0 1px 4px rgba(0,0,0,.25);border-left:3px solid var(--c,#38a3ff);animation:dkIn .2s ease-out both;animation-delay:calc(var(--i,0)*18ms)}
 #dock .dk-wo.s1{--c:#0b7bd6}#dock .dk-wo.s2{--c:#d4a017}#dock .dk-wo.s3{--c:#ea7a12}#dock .dk-wo.s4{--c:#dc2626}
 #dock .dk-l1{display:flex;align-items:baseline;gap:5px;font-size:10.5px;font-weight:800}
@@ -2352,6 +2352,10 @@ window.dcsManual=name=>{const id=Object.keys(EQ).find(i=>(PKU_NAME[i]||EQ[i].nam
 window.dcsStatus=name=>{const id=Object.keys(EQ).find(i=>(PKU_NAME[i]||EQ[i].name)===name);return id?eqStatus(id):symStatus(name)};
 window.dcsKritisFor=(pre,tok)=>SYMORDER.some(n=>!isArea(n)&&n.indexOf(pre)===0&&n.indexOf(tok)>=0&&symStatus(n)==='kritis');
 if(window.edAddItems)window.edAddItems(Object.keys(EQ).filter(id=>!PKU_NAME[id]).map(id=>EQ[id].name).concat(SYMORDER.filter(n=>!isArea(n))));
+svg.addEventListener('click',ev=>{if(!ev.target.closest('.eq,[data-sym],[data-card]'))dockHideNow()});
+document.addEventListener('keydown',ev=>{if(ev.key!=='Tab'||ev.ctrlKey||ev.altKey||ev.metaKey)return;const t=ev.target,tg=t&&t.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||(t&&t.isContentEditable))return;if(document.getElementById('crewView')&&!document.getElementById('crewView').hidden)return;
+  if(document.fullscreenElement)return;ev.preventDefault();const r=document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen;if(r)try{const p=r.call(document.documentElement);if(p&&p.catch)p.catch(()=>{})}catch(e){}});
+document.addEventListener('fullscreenchange',dockHideNow);
 svg.addEventListener('keydown',ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target.closest('.eq')){ev.preventDefault();pick(ev.target.closest('.eq').dataset.id)}});
 let tipKey='';
 const tipEsc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -2376,12 +2380,13 @@ function woTipHTML(name,chip,note){const l=woTipLeft(name,chip,note);return '<di
 
 /* ---------- DOCK: setengah layar (kiri/kanan) berisi SR/WO Aktif + FLM & 5S ---------- */
 const dock=document.createElement('div');dock.id='dock';document.body.appendChild(dock);
-let dkKey='',dkPend='',dkT=null,dkH=null,dkOpen={};
-function dockHideNow(){clearTimeout(dkT);clearTimeout(dkH);dkPend='';dkKey='';dock.classList.remove('on')}
-function dockLeave(){clearTimeout(dkT);dkPend='';if(!dock.classList.contains('on'))return;clearTimeout(dkH);dkH=setTimeout(dockHideNow,250)}
+let dkKey='',dkPend='',dkT=null,dkH=null,dkOpen={},dkLeaving=false;
+function dockHideNow(){clearTimeout(dkT);clearTimeout(dkH);dkLeaving=false;dkPend='';dkKey='';dock.classList.remove('on')}
+const DK_OUT=420;
+function dockLeave(){clearTimeout(dkT);dkPend='';if(!dock.classList.contains('on')||dkLeaving)return;dkLeaving=true;dkH=setTimeout(dockHideNow,DK_OUT)}
 window.dockHideNow=dockHideNow;window.dockLeave=dockLeave;
-dock.addEventListener('mouseenter',()=>clearTimeout(dkH));
-dock.addEventListener('mouseleave',()=>{clearTimeout(dkH);dkH=setTimeout(dockHideNow,250)});
+dock.addEventListener('mouseenter',()=>{clearTimeout(dkH);dkLeaving=false});
+dock.addEventListener('mouseleave',()=>{clearTimeout(dkH);dkLeaving=true;dkH=setTimeout(dockHideNow,DK_OUT)});
 dock.addEventListener('click',ev=>{const b=ev.target.closest('.dk-shb');if(!b)return;const sh=b.parentNode;sh.classList.toggle('open');dkOpen[b.dataset.s]=sh.classList.contains('open')});
 const DKSEV=d=>d>90?'s4':d>60?'s3':d>30?'s2':'s1';
 const dkAge=d=>d<=0?'Hari ini':d+' Hari';
@@ -2404,7 +2409,7 @@ function dockBuild(name,chip,note,right){
   dock.innerHTML='<div class="dk-title"><div class="dk-name">'+tipEsc(name)+'</div>'+chip+(note?'<span class="dk-note">'+tipEsc(note.slice(0,70))+'</span>':'')+'</div>'
    +'<div class="dk-cols"><section class="dk-card"><header class="dk-h"><b>SR / WO Aktif</b><span class="dk-n">'+L.length+'</span></header><div class="dk-body">'+wo+'</div></section>'
    +'<section class="dk-card"><header class="dk-h flm"><b>FLM &amp; 5S</b><em>'+BLN3[nm.getMonth()]+' '+nm.getFullYear()+'</em><span class="dk-n">'+F.length+'</span></header><div class="dk-body">'+sh+(nodata?'<div class="dk-empty">Belum ada data FLM. Tempel CM &amp; FLM ke sheet Service Request.</div>':'')+'</div></section></div>'}
-function dockShow(ev,key,name,chip,note){tip.style.display='none';tipKey='';clearTimeout(dkH);
+function dockShow(ev,key,name,chip,note){tip.style.display='none';tipKey='';clearTimeout(dkH);dkLeaving=false;
   const on=dock.classList.contains('on');if(on&&key===dkKey){dkPend='';return}
   if(key===dkPend)return;
   clearTimeout(dkT);const r=dkArea(),right=ev.clientX<r.l+r.w/2;
