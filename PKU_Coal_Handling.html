@@ -559,12 +559,13 @@ body.crewonly #crewBack{display:none}
 /* ===== DOCK setengah layar ===== */
 #dock{text-transform:uppercase;position:fixed;z-index:30;display:flex;flex-direction:column;gap:10px;opacity:0;pointer-events:none;transition:opacity .18s ease,transform .22s cubic-bezier(.2,.8,.2,1);font:11.5px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#e6eaf5}
 #dock.l{transform:translateX(-18px)}#dock.r{transform:translateX(18px)}
-#dock.on{opacity:1;pointer-events:auto;transform:none}
-#dock .dk-title{flex:none;display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:16px;background:linear-gradient(135deg,rgba(23,26,37,.94),rgba(16,19,28,.94));border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 34px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
+#dock.on{opacity:1;transform:none}
+#dock.on .dk-title,#dock.on .dk-card{pointer-events:auto}
+#dock .dk-title{flex:none;align-self:flex-start;display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:16px;background:linear-gradient(135deg,rgba(23,26,37,.94),rgba(16,19,28,.94));border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 34px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
 #dock .dk-name{padding:6px 14px;border-radius:12px;color:#fff;font-weight:800;font-size:13px;background:linear-gradient(135deg,#00C6FF,#0072FF 60%,#1D4ED8);box-shadow:0 4px 14px rgba(0,114,255,.45)}
 #dock .dk-note{margin-left:auto;color:#9aa3b8;font-size:10.5px;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#dock .dk-cols{flex:1;min-height:0;display:flex;gap:14px}
-#dock .dk-card{flex:1 1 0;min-width:0;display:flex;flex-direction:column;border-radius:18px;background:linear-gradient(160deg,rgba(28,32,46,.95),rgba(14,17,26,.95));border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 44px rgba(0,0,0,.5);overflow:hidden;backdrop-filter:blur(8px)}
+#dock .dk-cols{flex:1;min-height:0;display:flex;gap:14px;align-items:flex-start}
+#dock .dk-card{flex:1 1 0;min-width:0;max-height:100%;display:flex;flex-direction:column;border-radius:18px;background:linear-gradient(160deg,rgba(28,32,46,.95),rgba(14,17,26,.95));border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 44px rgba(0,0,0,.5);overflow:hidden;backdrop-filter:blur(8px)}
 #dock .dk-h{flex:none;display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;color:#fff;font-size:12.5px;font-weight:800;letter-spacing:.01em;background:linear-gradient(135deg,#2196f3,#1565d8);box-shadow:0 4px 14px rgba(21,101,216,.4)}
 #dock .dk-h.flm{background:linear-gradient(135deg,#fbbf24,#d97706);box-shadow:0 4px 14px rgba(217,119,6,.4)}
 #dock .dk-h b{flex:1}
@@ -576,9 +577,11 @@ body.crewonly #crewBack{display:none}
 #dock .dk-wo.s1{--c:#0b7bd6}#dock .dk-wo.s2{--c:#d4a017}#dock .dk-wo.s3{--c:#ea7a12}#dock .dk-wo.s4{--c:#dc2626}
 #dock .dk-l1{display:flex;align-items:baseline;gap:5px;font-size:10.5px;font-weight:800}
 #dock .dk-l1 b{color:#0b7bd6}#dock .dk-l1 span{color:#9aa3b8}
-#dock .dk-l1 i{font-style:normal;color:#dc2626}
-#dock .dk-wo.s1 .dk-l1 i{color:#0b7bd6}#dock .dk-wo.s2 .dk-l1 i{color:#b7791f}#dock .dk-wo.s3 .dk-l1 i{color:#d9680b}
-#dock .dk-l1 em{margin-left:auto;font-style:normal;font-weight:700;color:#7a8499;font-size:9.5px}
+#dock .dk-l1 u{text-decoration:none;font-weight:800}
+#dock .dk-l1 u.shA{color:#dc2626}#dock .dk-l1 u.shB{color:#2563eb}#dock .dk-l1 u.shC{color:#d19a00}#dock .dk-l1 u.shD{color:#16a34a}
+#dock .dk-l1 em{margin-left:auto;font-style:normal;font-weight:700;color:#7a8499;font-size:10px;white-space:nowrap}
+#dock .dk-l1 em span{color:#9aa3b8}
+#dock .dk-l1 em i{font-style:normal;font-weight:800;color:#0b7bd6;text-transform:none}
 #dock .dk-ds{margin-top:2px;font-size:10.5px;font-weight:600;color:#111;word-break:break-word}
 #dock .dk-sh{display:flex;flex-direction:column}
 #dock .dk-shb{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;border-radius:12px;cursor:pointer;font-weight:800;font-size:11.5px;color:#e6eaf5;background:linear-gradient(135deg,#2c3348,#232a3d);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);transition:filter .15s}
@@ -594,7 +597,7 @@ body.crewonly #crewBack{display:none}
 #dock .dk-sh.open .dk-fl{display:flex}
 #dock .dk-fr{position:relative;--c:#38a3ff}
 #dock .dk-fr::before{content:"";position:absolute;left:-20px;top:-8px;bottom:-8px;width:2px;background:#8b95ad}
-#dock .dk-fr:last-child::before{bottom:auto;height:26px}
+#dock .dk-fr:last-child::before{bottom:auto;height:8px}
 #dock .dk-el{position:absolute;left:-20px;top:0;width:19px;height:18px;border-left:2.5px solid #e11d48;border-bottom:2.5px solid #e11d48;border-bottom-left-radius:10px;box-sizing:border-box}
 #dock .dk-el::after{content:"";position:absolute;right:-5px;bottom:-6.5px;border:5px solid transparent;border-left:7px solid #e11d48;border-right:0}
 #dock .dk-empty{margin:6px 2px;color:#9aa3b8;font-size:10.5px;text-align:center}
@@ -1443,7 +1446,7 @@ var chfSections = [
   function goEquip(d){extra=null;dcsId=null;currentIndex=(currentIndex+d+equipList.length)%equipList.length;renderEquip()}
   // called from the DCS map above
   window.edAddItems=function(names){names.forEach(function(n){if(!equipList.some(function(e){return e.name===n}))equipList.push({name:n,pct:null})})};
-  window.edWOList=function(name){return ((window.PKU.modeled(name)||woData[name]!==undefined)?activeItems(name):symItems(name)).map(function(x){return{no:x.no,desc:x.desc,days:days(x.opened)}})};
+  window.edWOList=function(name){return ((window.PKU.modeled(name)||woData[name]!==undefined)?activeItems(name):symItems(name)).map(function(x){return{no:x.no,desc:x.desc,days:days(x.opened),opened:x.opened}})};
   /* ---------- FLM (5S): disimpan terpisah dari SR/WO, tidak ikut menghitung PKU ---------- */
   var FLMKEY='pku-chf-flm-v1',FLMROWS=[],FLMMETA={},woFlm={};
   function flmApply(rows){FLMROWS=rows||[];FLMMETA={};FLMROWS.forEach(function(r){FLMMETA[String(r[0])]={shift:String(r[7]||'').toUpperCase()}});
@@ -2375,13 +2378,15 @@ function woTipHTML(name,chip,note){const l=woTipLeft(name,chip,note);return '<di
 const dock=document.createElement('div');dock.id='dock';document.body.appendChild(dock);
 let dkKey='',dkPend='',dkT=null,dkH=null,dkOpen={};
 function dockHideNow(){clearTimeout(dkT);clearTimeout(dkH);dkPend='';dkKey='';dock.classList.remove('on')}
-function dockLeave(){clearTimeout(dkT);dkPend='';if(!dock.classList.contains('on'))return;clearTimeout(dkH);dkH=setTimeout(dockHideNow,500)}
+function dockLeave(){clearTimeout(dkT);dkPend='';if(!dock.classList.contains('on'))return;clearTimeout(dkH);dkH=setTimeout(dockHideNow,250)}
 window.dockHideNow=dockHideNow;window.dockLeave=dockLeave;
 dock.addEventListener('mouseenter',()=>clearTimeout(dkH));
-dock.addEventListener('mouseleave',()=>{clearTimeout(dkH);dkH=setTimeout(dockHideNow,500)});
+dock.addEventListener('mouseleave',()=>{clearTimeout(dkH);dkH=setTimeout(dockHideNow,250)});
 dock.addEventListener('click',ev=>{const b=ev.target.closest('.dk-shb');if(!b)return;const sh=b.parentNode;sh.classList.toggle('open');dkOpen[b.dataset.s]=sh.classList.contains('open')});
 const DKSEV=d=>d>90?'s4':d>60?'s3':d>30?'s2':'s1';
 const dkAge=d=>d<=0?'Hari ini':d+' Hari';
+const dkShOf=ms=>{try{return String(window.shiftGroupAt(ms)||'').replace(/^.*\s/,'')}catch(e){return ''}};
+function dkMeta(no,sh,x){return '<div class="dk-l1"><b>'+tipEsc(no)+'</b><span>\u00B7</span>'+(sh?'<u class="sh'+sh+'">SHIFT '+sh+'</u>':'')+'<em>'+flmWhen(x.opened)+' <span>\u00B7</span> <i>'+dkAge(x.days)+'</i></em></div>'}
 function dkArea(){const a=document.getElementById('stage').getBoundingClientRect(),l=Math.max(0,a.left),rr=Math.min(innerWidth,a.right),t=Math.max(0,a.top),bt=Math.min(innerHeight,a.bottom);return{l:l,w:rr-l,top:t,h:bt-t}}
 function dockBuild(name,chip,note,right){
   const r=dkArea(),W=r.w/2-16;
@@ -2392,9 +2397,9 @@ function dockBuild(name,chip,note,right){
   const nodata=!(window.PKUFLM&&window.PKUFLM.n()>0);
   let first=null,best=-1;['A','B','C','D'].forEach(k=>{if(by[k].length&&by[k][0].opened>best){best=by[k][0].opened;first=k}});
   dkOpen=first?{[first]:true}:{};
-  const wo=L.length?L.map((x,i)=>'<div class="dk-wo '+DKSEV(x.days)+'" style="--i:'+i+'"><div class="dk-l1"><b>'+tipEsc(/^\d+$/.test(String(x.no))?'SR'+x.no:x.no)+'</b><span>·</span><i>'+dkAge(x.days)+'</i></div><div class="dk-ds">'+tipEsc(x.desc)+'</div></div>').join(''):'<div class="dk-empty ok">✓ Tidak ada SR/WO aktif</div>';
+  const wo=L.length?L.map((x,i)=>'<div class="dk-wo '+DKSEV(x.days)+'" style="--i:'+i+'">'+dkMeta(/^\d+$/.test(String(x.no))?'SR'+x.no:x.no,dkShOf(x.opened),x)+'<div class="dk-ds">'+tipEsc(x.desc)+'</div></div>').join(''):'<div class="dk-empty ok">✓ Tidak ada SR/WO aktif</div>';
   const nm=new Date();
-  const sh=['A','B','C','D'].map(k=>{const a=by[k];return '<div class="dk-sh'+(a.length?' has':'')+(dkOpen[k]?' open':'')+'"><button type="button" class="dk-shb" data-s="'+k+'"'+(a.length?'':' disabled')+'><span>Shift '+k+'</span>'+(a.length?'<b>'+a.length+'</b>':'')+'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="dk-fl">'+a.map((x,i)=>'<div class="dk-fr" style="--i:'+i+'"><s class="dk-el"></s><div class="dk-l1"><b>'+tipEsc(x.no)+'</b><span>·</span><i>'+dkAge(x.days)+'</i><em>'+flmWhen(x.opened)+'</em></div><div class="dk-ds">'+tipEsc(x.desc)+'</div></div>').join('')+'</div></div>'}).join('');
+  const sh=['A','B','C','D'].map(k=>{const a=by[k];return '<div class="dk-sh'+(a.length?' has':'')+(dkOpen[k]?' open':'')+'"><button type="button" class="dk-shb" data-s="'+k+'"'+(a.length?'':' disabled')+'><span>Shift '+k+'</span>'+(a.length?'<b>'+a.length+'</b>':'')+'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="dk-fl">'+a.map((x,i)=>'<div class="dk-fr" style="--i:'+i+'"><s class="dk-el"></s>'+dkMeta(x.no,x.shift,x)+'<div class="dk-ds">'+tipEsc(x.desc)+'</div></div>').join('')+'</div></div>'}).join('');
   dock.innerHTML='<div class="dk-title"><div class="dk-name">'+tipEsc(name)+'</div>'+chip+(note?'<span class="dk-note">'+tipEsc(note.slice(0,70))+'</span>':'')+'</div>'
    +'<div class="dk-cols"><section class="dk-card"><header class="dk-h"><b>SR / WO Aktif</b><span class="dk-n">'+L.length+'</span></header><div class="dk-body">'+wo+'</div></section>'
    +'<section class="dk-card"><header class="dk-h flm"><b>FLM &amp; 5S</b><em>'+BLN3[nm.getMonth()]+' '+nm.getFullYear()+'</em><span class="dk-n">'+F.length+'</span></header><div class="dk-body">'+sh+(nodata?'<div class="dk-empty">Belum ada data FLM. Tempel CM &amp; FLM ke sheet Service Request.</div>':'')+'</div></section></div>'}
@@ -2403,7 +2408,7 @@ function dockShow(ev,key,name,chip,note){tip.style.display='none';tipKey='';clea
   if(key===dkPend)return;
   clearTimeout(dkT);const r=dkArea(),right=ev.clientX<r.l+r.w/2;
   const fire=()=>{dkKey=key;dkPend='';dockBuild(name,chip,note,right);dock.classList.add('on')};
-  dkPend=key;dkT=setTimeout(fire,250)}
+  dkPend=key;dkT=setTimeout(fire,150)}
 /* ---------- kartu ringkasan PKU di area kiri ---------- */
 const CHN=['Ship Unloader 1','Ship Unloader 2','Stacker Reclaimer 1','Stacker Reclaimer 2','Conveyor 1A','Conveyor 1B','Conveyor 2A','Conveyor 2B','Conveyor 3A','Conveyor 3B','Conveyor 4A','Conveyor 4B','Crusher A','Crusher B','Conveyor 5A','Conveyor 5B','Conveyor 6A','Conveyor 6B','Conveyor 7'];
 const HV=[['Excavator','Excavator Komatsu PC200'],['Bulldozer D9','Bulldozer CAT D9'],['Bulldozer 1','Bulldozer XGMA 1'],['Bulldozer 2','Bulldozer XGMA 2'],['Bulldozer 3','Bulldozer 3'],['Dump Truck 4','Dump Truck 4'],['Dump Truck 5','Dump Truck 5'],['Bobcat 1','Bobcat 1'],['Bobcat 2','Bobcat 2']];
