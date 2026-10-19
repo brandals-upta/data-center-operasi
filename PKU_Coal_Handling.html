@@ -564,8 +564,8 @@ body.crewonly #crewBack{display:none}
 #dock .dk-title{flex:none;align-self:flex-start;display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:16px;background:linear-gradient(135deg,rgba(23,26,37,.94),rgba(16,19,28,.94));border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 34px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
 #dock .dk-name{padding:6px 14px;border-radius:12px;color:#fff;font-weight:800;font-size:13px;background:linear-gradient(135deg,#00C6FF,#0072FF 60%,#1D4ED8);box-shadow:0 4px 14px rgba(0,114,255,.45)}
 #dock .dk-note{margin-left:auto;color:#9aa3b8;font-size:10.5px;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#dock .dk-cols{flex:1;min-height:0;display:flex;gap:14px;align-items:flex-start}
-#dock .dk-card{flex:1 1 0;min-width:0;max-height:100%;display:flex;flex-direction:column;border-radius:18px;background:linear-gradient(160deg,rgba(28,32,46,.95),rgba(14,17,26,.95));border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 44px rgba(0,0,0,.5);overflow:hidden;backdrop-filter:blur(8px)}
+#dock .dk-cols{flex:0 1 auto;min-height:0;display:flex;gap:14px;align-items:stretch}
+#dock .dk-card{flex:1 1 0;min-width:0;min-height:0;display:flex;flex-direction:column;border-radius:18px;background:linear-gradient(160deg,rgba(28,32,46,.95),rgba(14,17,26,.95));border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 44px rgba(0,0,0,.5);overflow:hidden;backdrop-filter:blur(8px)}
 #dock .dk-h{flex:none;display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;color:#fff;font-size:12.5px;font-weight:800;letter-spacing:.01em;background:linear-gradient(135deg,#2196f3,#1565d8);box-shadow:0 4px 14px rgba(21,101,216,.4)}
 #dock .dk-h.flm{background:linear-gradient(135deg,#fbbf24,#d97706);box-shadow:0 4px 14px rgba(217,119,6,.4)}
 #dock .dk-h b{flex:1}
@@ -2387,10 +2387,11 @@ const DKSEV=d=>d>90?'s4':d>60?'s3':d>30?'s2':'s1';
 const dkAge=d=>d<=0?'Hari ini':d+' Hari';
 const dkShOf=ms=>{try{return String(window.shiftGroupAt(ms)||'').replace(/^.*\s/,'')}catch(e){return ''}};
 function dkMeta(no,sh,x){return '<div class="dk-l1"><b>'+tipEsc(no)+'</b><span>\u00B7</span>'+(sh?'<u class="sh'+sh+'">SHIFT '+sh+'</u>':'')+'<em>'+flmWhen(x.opened)+' <span>\u00B7</span> <i>'+dkAge(x.days)+'</i></em></div>'}
+function dkHead(){let b=0;document.querySelectorAll('header,.topbar,.hdr,#top,#hud').forEach(e=>{const q=e.getBoundingClientRect();if(q.height>0&&q.top<80&&q.bottom>b&&q.bottom<140)b=q.bottom});return Math.max(b,52)}
 function dkArea(){const a=document.getElementById('stage').getBoundingClientRect(),l=Math.max(0,a.left),rr=Math.min(innerWidth,a.right),t=Math.max(0,a.top),bt=Math.min(innerHeight,a.bottom);return{l:l,w:rr-l,top:t,h:bt-t}}
 function dockBuild(name,chip,note,right){
   const r=dkArea(),W=r.w/2-16;
-  dock.style.top=(r.top+8)+'px';dock.style.height=Math.max(200,r.h-16)+'px';dock.style.width=Math.max(300,W)+'px';
+  const hb=dkHead(),top=Math.max(r.top,hb)+8;dock.style.top=top+'px';dock.style.height=Math.max(200,r.top+r.h-top-8)+'px';dock.style.width=Math.max(300,W)+'px';
   dock.style.left=(right?r.l+r.w/2+8:r.l+8)+'px';dock.className=(dock.classList.contains('on')?'on ':'')+(right?'r':'l');
   const L=(window.edWOList&&window.edWOList(name))||[],F=(window.edFLMList&&window.edFLMList(name))||[],by={A:[],B:[],C:[],D:[]};
   F.forEach(x=>{if(by[x.shift])by[x.shift].push(x)});
@@ -2399,7 +2400,7 @@ function dockBuild(name,chip,note,right){
   dkOpen=first?{[first]:true}:{};
   const wo=L.length?L.map((x,i)=>'<div class="dk-wo '+DKSEV(x.days)+'" style="--i:'+i+'">'+dkMeta(/^\d+$/.test(String(x.no))?'SR'+x.no:x.no,dkShOf(x.opened),x)+'<div class="dk-ds">'+tipEsc(x.desc)+'</div></div>').join(''):'<div class="dk-empty ok">✓ Tidak ada SR/WO aktif</div>';
   const nm=new Date();
-  const sh=['A','B','C','D'].map(k=>{const a=by[k];return '<div class="dk-sh'+(a.length?' has':'')+(dkOpen[k]?' open':'')+'"><button type="button" class="dk-shb" data-s="'+k+'"'+(a.length?'':' disabled')+'><span>Shift '+k+'</span>'+(a.length?'<b>'+a.length+'</b>':'')+'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="dk-fl">'+a.map((x,i)=>'<div class="dk-fr" style="--i:'+i+'"><s class="dk-el"></s>'+dkMeta(x.no,x.shift,x)+'<div class="dk-ds">'+tipEsc(x.desc)+'</div></div>').join('')+'</div></div>'}).join('');
+  const sh=F.length?F.map((x,i)=>'<div class="dk-wo s1" style="--i:'+i+'">'+dkMeta(x.no,x.shift,x)+'<div class="dk-ds">'+tipEsc(x.desc)+'</div></div>').join(''):(nodata?'':'<div class="dk-empty">Tidak ada FLM bulan ini</div>');
   dock.innerHTML='<div class="dk-title"><div class="dk-name">'+tipEsc(name)+'</div>'+chip+(note?'<span class="dk-note">'+tipEsc(note.slice(0,70))+'</span>':'')+'</div>'
    +'<div class="dk-cols"><section class="dk-card"><header class="dk-h"><b>SR / WO Aktif</b><span class="dk-n">'+L.length+'</span></header><div class="dk-body">'+wo+'</div></section>'
    +'<section class="dk-card"><header class="dk-h flm"><b>FLM &amp; 5S</b><em>'+BLN3[nm.getMonth()]+' '+nm.getFullYear()+'</em><span class="dk-n">'+F.length+'</span></header><div class="dk-body">'+sh+(nodata?'<div class="dk-empty">Belum ada data FLM. Tempel CM &amp; FLM ke sheet Service Request.</div>':'')+'</div></section></div>'}
