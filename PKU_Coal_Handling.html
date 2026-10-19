@@ -555,6 +555,52 @@ body.crewonly #crewBack{display:none}
 #eqDetail{background-size:135% 135%!important;background-repeat:no-repeat!important;animation:edSmoke 26s ease-in-out infinite alternate}
 @keyframes edSmoke{from{background-position:0% 0%}to{background-position:100% 100%}}
 @media (prefers-reduced-motion:reduce){#eqDetail{animation:none}}
+
+/* ===== DOCK setengah layar ===== */
+#dock{position:fixed;z-index:30;display:flex;flex-direction:column;gap:10px;opacity:0;pointer-events:none;transition:opacity .18s ease,transform .22s cubic-bezier(.2,.8,.2,1);font:11.5px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#e6eaf5}
+#dock.l{transform:translateX(-18px)}#dock.r{transform:translateX(18px)}
+#dock.on{opacity:1;pointer-events:auto;transform:none}
+#dock .dk-title{flex:none;display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:16px;background:linear-gradient(135deg,rgba(23,26,37,.94),rgba(16,19,28,.94));border:1px solid rgba(255,255,255,.12);box-shadow:0 14px 34px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
+#dock .dk-name{padding:6px 14px;border-radius:12px;color:#fff;font-weight:800;font-size:13px;background:linear-gradient(135deg,#00C6FF,#0072FF 60%,#1D4ED8);box-shadow:0 4px 14px rgba(0,114,255,.45)}
+#dock .dk-note{margin-left:auto;color:#9aa3b8;font-size:10.5px;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#dock .dk-cols{flex:1;min-height:0;display:flex;gap:14px}
+#dock .dk-card{flex:1 1 0;min-width:0;display:flex;flex-direction:column;border-radius:18px;background:linear-gradient(160deg,rgba(28,32,46,.95),rgba(14,17,26,.95));border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 44px rgba(0,0,0,.5);overflow:hidden;backdrop-filter:blur(8px)}
+#dock .dk-h{flex:none;display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;color:#fff;font-size:12.5px;font-weight:800;letter-spacing:.01em;background:linear-gradient(135deg,#2196f3,#1565d8);box-shadow:0 4px 14px rgba(21,101,216,.4)}
+#dock .dk-h.flm{background:linear-gradient(135deg,#fbbf24,#d97706);box-shadow:0 4px 14px rgba(217,119,6,.4)}
+#dock .dk-h b{flex:1}
+#dock .dk-h em{font-style:normal;font-size:10px;font-weight:700;opacity:.85}
+#dock .dk-n{min-width:22px;height:20px;padding:0 7px;border-radius:999px;background:#fff;color:#1565d8;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center}
+#dock .dk-h.flm .dk-n{color:#b45309}
+#dock .dk-body{flex:1;min-height:0;overflow-y:auto;padding:10px 10px 12px;display:flex;flex-direction:column;gap:7px;scrollbar-width:thin;scrollbar-color:#4a5578 transparent}
+#dock .dk-wo,#dock .dk-fr{background:#fff;color:#111;border-radius:11px;padding:6px 10px;box-shadow:0 1px 4px rgba(0,0,0,.25);border-left:3px solid var(--c,#38a3ff);animation:dkIn .2s ease-out both;animation-delay:calc(var(--i,0)*18ms)}
+#dock .dk-wo.s1{--c:#0b7bd6}#dock .dk-wo.s2{--c:#d4a017}#dock .dk-wo.s3{--c:#ea7a12}#dock .dk-wo.s4{--c:#dc2626}
+#dock .dk-l1{display:flex;align-items:baseline;gap:5px;font-size:10.5px;font-weight:800}
+#dock .dk-l1 b{color:#0b7bd6}#dock .dk-l1 span{color:#9aa3b8}
+#dock .dk-l1 i{font-style:normal;color:#dc2626}
+#dock .dk-wo.s1 .dk-l1 i{color:#0b7bd6}#dock .dk-wo.s2 .dk-l1 i{color:#b7791f}#dock .dk-wo.s3 .dk-l1 i{color:#d9680b}
+#dock .dk-l1 em{margin-left:auto;font-style:normal;font-weight:700;color:#7a8499;font-size:9.5px}
+#dock .dk-ds{margin-top:2px;font-size:10.5px;font-weight:600;color:#111;word-break:break-word}
+#dock .dk-sh{display:flex;flex-direction:column}
+#dock .dk-shb{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;border-radius:12px;cursor:pointer;font-weight:800;font-size:11.5px;color:#e6eaf5;background:linear-gradient(135deg,#2c3348,#232a3d);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);transition:filter .15s}
+#dock .dk-shb[disabled]{cursor:default;opacity:.75}
+#dock .dk-shb i{width:8px;height:8px;border-radius:50%;flex:none}
+#dock .dk-shb span{flex:1}
+#dock .dk-shb b{min-width:20px;height:18px;padding:0 6px;border-radius:999px;background:#fff;color:#b91c1c;display:flex;align-items:center;justify-content:center;font-size:10.5px}
+#dock .dk-shb svg{flex:none;width:14px;transition:transform .2s;opacity:0}
+#dock .dk-sh.has .dk-shb{color:#fff;background:linear-gradient(135deg,#fbbf24,#d97706);box-shadow:0 4px 12px rgba(217,119,6,.35)}
+#dock .dk-sh.has .dk-shb:hover{filter:brightness(1.08)}
+#dock .dk-sh.has .dk-shb svg{opacity:1}
+#dock .dk-sh.open .dk-shb svg{transform:rotate(180deg)}
+#dock .dk-fl{display:none;flex-direction:column;gap:6px;margin:7px 0 2px 14px;padding-left:16px;border-left:2px solid #4a5578;position:relative}
+#dock .dk-sh.open .dk-fl{display:flex}
+#dock .dk-fr{position:relative}
+#dock .dk-fr::before{content:"";position:absolute;left:-18px;top:14px;width:14px;height:0;border-top:2px solid #e11d48}
+#dock .dk-fr::after{content:"";position:absolute;left:-7px;top:10px;border:4px solid transparent;border-left:6px solid #e11d48;border-right:0}
+#dock .dk-empty{margin:6px 2px;color:#9aa3b8;font-size:10.5px;text-align:center}
+#dock .dk-empty.ok{color:#6ee7b7;font-weight:700;font-size:11.5px}
+@keyframes dkIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@media (max-width:900px){#dock .dk-cols{flex-direction:column}}
+@media (prefers-reduced-motion:reduce){#dock,#dock .dk-wo,#dock .dk-fr{transition:none;animation:none}}
 /* ===== tooltip SR/WO aktif saat kursor di atas alat ===== */
 .tip.rich{white-space:normal;background:#151826;color:#eef1fb;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px 14px;width:max-content;max-width:min(380px,calc(100vw - 24px));box-shadow:0 16px 40px rgba(0,0,0,.45);font-size:12.5px;line-height:1.35;animation:twIn .14s ease-out}
 @keyframes twIn{from{opacity:0;transform:translateY(4px) scale(.98)}to{opacity:1;transform:none}}
@@ -2305,10 +2351,10 @@ if(window.edAddItems)window.edAddItems(Object.keys(EQ).filter(id=>!PKU_NAME[id])
 svg.addEventListener('keydown',ev=>{if((ev.key==='Enter'||ev.key===' ')&&ev.target.closest('.eq')){ev.preventDefault();pick(ev.target.closest('.eq').dataset.id)}});
 let tipKey='';
 const tipEsc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function tipHide(){tip.style.display='none';tipKey=''}
+function tipHide(){tip.style.display='none';tipKey='';if(window.dockLeave)window.dockLeave()}
 function tipPos(ev){const w=tip.offsetWidth,h=tip.offsetHeight;let x=ev.clientX+16,y=ev.clientY+16;if(x+w>innerWidth-8)x=Math.max(8,ev.clientX-16-w);if(y+h>innerHeight-8)y=Math.max(8,innerHeight-8-h);tip.style.left=x+'px';tip.style.top=y+'px'}
 function tipFit(){const rows=tip.querySelectorAll('.tw-row'),more=tip.querySelector('.tw-more');let hid=0;while(more&&tip.offsetHeight>innerHeight-24&&hid<rows.length-1){rows[rows.length-1-hid].style.display='none';hid++;more.hidden=false;more.textContent='+'+hid+' lagi · klik peralatan untuk melihat semua'}}
-function tipShow(ev,key,html,rich){if(key!==tipKey){tipKey=key;tip.className='tip'+(rich?' rich':'')+(rich&&html.indexOf('tw-cols')>=0?' two':'');tip.innerHTML=html;tip.style.display='block';if(rich)tipFit()}else tip.style.display='block';tipPos(ev)}
+function tipShow(ev,key,html,rich){if(window.dockHideNow)window.dockHideNow();if(key!==tipKey){tipKey=key;tip.className='tip'+(rich?' rich':'')+(rich&&html.indexOf('tw-cols')>=0?' two':'');tip.innerHTML=html;tip.style.display='block';if(rich)tipFit()}else tip.style.display='block';tipPos(ev)}
 function woTipLeft(name,chip,note){const L=(window.edWOList&&window.edWOList(name))||[];const sev=d=>d>90?'s4':d>60?'s3':d>30?'s2':'s1';
   let h='<div class="tw-head"><b>'+tipEsc(name)+'</b>'+chip+'</div>';
   if(note)h+='<div class="tw-note">'+tipEsc(note.slice(0,90))+'</div>';
@@ -2323,6 +2369,40 @@ function flmPanel(name){const L=(window.edFLMList&&window.edFLMList(name))||[],b
   if(nodata)h+='<div class="tw-fm" style="margin-top:8px">Belum ada data FLM. Tempel CM & FLM ke sheet Service Request.</div>';
   return h+'</div>'}
 function woTipHTML(name,chip,note){const l=woTipLeft(name,chip,note);return '<div class="tw-cols"><div class="tw-col">'+l+'</div>'+flmPanel(name)+'</div>'}
+
+/* ---------- DOCK: setengah layar (kiri/kanan) berisi SR/WO Aktif + FLM & 5S ---------- */
+const dock=document.createElement('div');dock.id='dock';document.body.appendChild(dock);
+let dkKey='',dkPend='',dkT=null,dkH=null,dkOpen={};
+function dockHideNow(){clearTimeout(dkT);clearTimeout(dkH);dkPend='';dkKey='';dock.classList.remove('on')}
+function dockLeave(){clearTimeout(dkT);dkPend='';if(!dock.classList.contains('on'))return;clearTimeout(dkH);dkH=setTimeout(dockHideNow,300)}
+window.dockHideNow=dockHideNow;window.dockLeave=dockLeave;
+dock.addEventListener('mouseenter',()=>clearTimeout(dkH));
+dock.addEventListener('mouseleave',()=>{clearTimeout(dkH);dkH=setTimeout(dockHideNow,220)});
+dock.addEventListener('click',ev=>{const b=ev.target.closest('.dk-shb');if(!b)return;const sh=b.parentNode;sh.classList.toggle('open');dkOpen[b.dataset.s]=sh.classList.contains('open')});
+const DKSEV=d=>d>90?'s4':d>60?'s3':d>30?'s2':'s1';
+const dkAge=d=>d<=0?'Hari ini':d+' Hari';
+function dkArea(){const a=document.getElementById('stage').getBoundingClientRect(),l=Math.max(0,a.left),rr=Math.min(innerWidth,a.right),t=Math.max(0,a.top),bt=Math.min(innerHeight,a.bottom);return{l:l,w:rr-l,top:t,h:bt-t}}
+function dockBuild(name,chip,note,right){
+  const r=dkArea(),W=r.w/2-16;
+  dock.style.top=(r.top+8)+'px';dock.style.height=Math.max(200,r.h-16)+'px';dock.style.width=Math.max(300,W)+'px';
+  dock.style.left=(right?r.l+r.w/2+8:r.l+8)+'px';dock.className=(dock.classList.contains('on')?'on ':'')+(right?'r':'l');
+  const L=(window.edWOList&&window.edWOList(name))||[],F=(window.edFLMList&&window.edFLMList(name))||[],by={A:[],B:[],C:[],D:[]};
+  F.forEach(x=>{if(by[x.shift])by[x.shift].push(x)});
+  const nodata=!(window.PKUFLM&&window.PKUFLM.n()>0);
+  let first=null,best=-1;['A','B','C','D'].forEach(k=>{if(by[k].length&&by[k][0].opened>best){best=by[k][0].opened;first=k}});
+  dkOpen=first?{[first]:true}:{};
+  const wo=L.length?L.map((x,i)=>'<div class="dk-wo '+DKSEV(x.days)+'" style="--i:'+i+'"><div class="dk-l1"><b>'+tipEsc(x.no)+'</b><span>·</span><i>'+dkAge(x.days)+'</i></div><div class="dk-ds">'+tipEsc(x.desc)+'</div></div>').join(''):'<div class="dk-empty ok">✓ Tidak ada SR/WO aktif</div>';
+  const nm=new Date();
+  const sh=['A','B','C','D'].map(k=>{const a=by[k];return '<div class="dk-sh'+(a.length?' has':'')+(dkOpen[k]?' open':'')+'"><button type="button" class="dk-shb" data-s="'+k+'"'+(a.length?'':' disabled')+'><i style="background:'+FLC[k]+'"></i><span>Shift '+k+'</span>'+(a.length?'<b>'+a.length+'</b>':'')+'<svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="dk-fl">'+a.map((x,i)=>'<div class="dk-fr" style="--c:'+FLC[k]+';--i:'+i+'"><div class="dk-l1"><b>'+tipEsc(x.no)+'</b><span>·</span><i>'+dkAge(x.days)+'</i><em>'+flmWhen(x.opened)+'</em></div><div class="dk-ds">'+tipEsc(x.desc)+'</div></div>').join('')+'</div></div>'}).join('');
+  dock.innerHTML='<div class="dk-title"><div class="dk-name">'+tipEsc(name)+'</div>'+chip+(note?'<span class="dk-note">'+tipEsc(note.slice(0,70))+'</span>':'')+'</div>'
+   +'<div class="dk-cols"><section class="dk-card"><header class="dk-h"><b>SR / WO Aktif</b><span class="dk-n">'+L.length+'</span></header><div class="dk-body">'+wo+'</div></section>'
+   +'<section class="dk-card"><header class="dk-h flm"><b>FLM &amp; 5S</b><em>'+BLN3[nm.getMonth()]+' '+nm.getFullYear()+'</em><span class="dk-n">'+F.length+'</span></header><div class="dk-body">'+sh+(nodata?'<div class="dk-empty">Belum ada data FLM. Tempel CM &amp; FLM ke sheet Service Request.</div>':'')+'</div></section></div>'}
+function dockShow(ev,key,name,chip,note){tip.style.display='none';tipKey='';clearTimeout(dkH);
+  const on=dock.classList.contains('on');if(on&&key===dkKey){dkPend='';return}
+  if(key===dkPend)return;
+  clearTimeout(dkT);const r=dkArea(),right=ev.clientX<r.l+r.w/2;
+  const fire=()=>{dkKey=key;dkPend='';dockBuild(name,chip,note,right);dock.classList.add('on')};
+  if(on){dkPend=key;dkT=setTimeout(fire,150)}else fire()}
 /* ---------- kartu ringkasan PKU di area kiri ---------- */
 const CHN=['Ship Unloader 1','Ship Unloader 2','Stacker Reclaimer 1','Stacker Reclaimer 2','Conveyor 1A','Conveyor 1B','Conveyor 2A','Conveyor 2B','Conveyor 3A','Conveyor 3B','Conveyor 4A','Conveyor 4B','Crusher A','Crusher B','Conveyor 5A','Conveyor 5B','Conveyor 6A','Conveyor 6B','Conveyor 7'];
 const HV=[['Excavator','Excavator Komatsu PC200'],['Bulldozer D9','Bulldozer CAT D9'],['Bulldozer 1','Bulldozer XGMA 1'],['Bulldozer 2','Bulldozer XGMA 2'],['Bulldozer 3','Bulldozer 3'],['Dump Truck 4','Dump Truck 4'],['Dump Truck 5','Dump Truck 5'],['Bobcat 1','Bobcat 1'],['Bobcat 2','Bobcat 2']];
@@ -2357,12 +2437,12 @@ window.dcsSummary=()=>{const ch=CHN.map(n=>{const st=window.dcsStatus(n);return[
 svg.addEventListener('mousemove',ev=>{const cdEl=ev.target.closest('[data-card]');if(cdEl){symHov(null);cardTip(ev,cdEl.dataset.card);return}const sy=ev.target.closest('[data-sym]');const g=sy?null:ev.target.closest('.eq');symHov(sy?sy.dataset.sym:null);
   if(!g){const u=sy?unitOf(sy.dataset.sym):null;
     if(u){if(isArea(u.name))tipShow(ev,'cy:'+u.name,`<b>${u.name}</b>`,false);
-      else{const sx=symStatus(u.name);tipShow(ev,'w:'+u.name+':'+tipN(u.name)+':'+sx,woTipHTML(u.name,'<span class="tw-pku '+sx+'">'+tipEsc(SC[sx].n)+'</span>'),true)}}
+      else{const sx=symStatus(u.name);dockShow(ev,'w:'+u.name+':'+tipN(u.name)+':'+sx,u.name,'<span class="tw-pku '+sx+'">'+tipEsc(SC[sx].n)+'</span>')}}
     else tipHide();return}
   const id=g.dataset.id,s=state[id]||{},nm=PKU_NAME[id]||EQ[id].name,es=eqStatus(id);let chip;
   if(PKU_NAME[id]){const p=window.PKU.get(nm);chip='<span class="tw-pku '+es+'">PKU '+p+'%</span>'}
   else chip='<span class="tw-pku '+es+'">'+tipEsc(SC[es].n)+'</span>';
-  tipShow(ev,'e:'+id+':'+tipN(nm)+':'+es+':'+(s.n||''),woTipHTML(nm,chip,s.n),true)});
+  dockShow(ev,'e:'+id+':'+tipN(nm)+':'+es+':'+(s.n||''),nm,chip,s.n)});
 svg.addEventListener('mouseleave',tipHide);
 let hovId=null;function setHov(id){if(id===hovId)return;if(hovId)svg.querySelectorAll(`.eq[data-id="${hovId}"]`).forEach(e=>e.classList.remove('hov'));hovId=id;if(id)svg.querySelectorAll(`.eq[data-id="${id}"]`).forEach(e=>e.classList.add('hov'))}
 svg.addEventListener('mouseover',ev=>{const g=ev.target.closest('.eq');setHov(g?g.dataset.id:null)});
