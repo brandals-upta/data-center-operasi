@@ -1012,6 +1012,8 @@ try{const el=document.getElementById('impOktData');if(el){const IM=JSON.parse(el
   else if(k==='cat'&&Array.isArray(a)&&Array.isArray(b)){const s=new Set(a.map(nz));b.forEach(t=>{if(!s.has(nz(t))){a.push(t);c=true}})}
   else if(isO(a)&&isO(b)){if(fill(a,b))c=true}}
   return c}
+ const rowOn=r=>!!r&&Object.keys(r).some(c=>r[c]!==''&&r[c]!=null&&r[c]!==false);
+ Object.keys(DB).forEach(d=>{const x=DB[d];if(!x||typeof x!=='object')return;['M','P','S','A'].forEach(q=>{const s=x[q];if(!s)return;['ld1','ld2','ul1','ul2'].forEach(f=>{if(Array.isArray(s[f])){const n=s[f].filter(rowOn);if(n.length!==s[f].length){s[f]=n;ch=true}}});['kd1','kd2'].forEach(f=>{if(Array.isArray(s[f])){const n=s[f].filter(r=>r&&(r.t||r.t1||r.t2||r.img));if(n.length!==s[f].length){s[f]=n;ch=true}}})})});
  Object.keys(IM).forEach(d=>{if(FL.indexOf(d)>=0)return;const x=DB[d];
   if(!x||x._seed){DB[d]=cp(IM[d]);ch=true}
   else{['M','P','S'].forEach(q=>{if(!x[q]){x[q]=cp(IM[d][q]);ch=true}else{const b=blank();for(const f in b)if(x[q][f]==null)x[q][f]=b[f];if(fill(x[q],IM[d][q]))ch=true}})}
