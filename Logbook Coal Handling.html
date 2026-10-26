@@ -1495,9 +1495,17 @@ function wHourly(k,i){
   E.kond,E.conv,E.ab,E.reuse,E.ds,E.ms,WA_SEP,'TERIMAKASIH'
  ].join('\n\n');
 }
+function wAkhirMissing(k){
+ const o=sh(k),m=[];
+ [['ld1','LOADING 1'],['ld2','LOADING 2']].forEach(([f,lb])=>wRows(o,f).forEach((r,i)=>{
+  const ton=parseFloat(String(r.tot||'').replace(',','.')),x=[];
+  if(!wTm(r.stop))x.push('Jam stop');if(!wSp(r.jalur))x.push('Jalur');if(!wSp(r.lokasi))x.push('Lokasi');if(!wSp(r.shipper))x.push('Shipper');if(!wSp(r.jenis))x.push('Jenis');
+  if(!(ton>0))x.push('Totalizer');if(!bkShow(r.bk))x.push('Bunker');
+  if(x.length)m.push(lb+' baris '+(i+1)+' ('+wTm(r.start)+'): '+x.join(', '))}));
+ return m}
 function wAkhir(k){
  const o=sh(k),g=schedGrp(cur,k);
- const hdr='*LAPORAN LOADING & UNLOADING*\n============================\n*'+shiftTitle(SH.find(x=>x.k===k)).replace(/ (MALAM|PAGI|SORE)$/,' ($1)')+'*\n📆 : '+wDate(cur,1)+'\n⏰ : '+WA_RNG[k]+' WIB';
+ const hdr='*LAPORAN LOADING & UNLOADING*\n============================\n*'+shiftTitle(SH.find(x=>x.k===k)).replace(/ (MALAM|PAGI|SORE)$/,' ($1)')+'*\n📆 : '+wDate(cur)+'\n⏰ : '+WA_RNG[k]+' WIB';
  const ld=f=>{
   const a=wRows(o,f).map(r=>{
    const br=wSp(r.shipper),bk=bkWa(r.bk);
@@ -1506,23 +1514,25 @@ function wAkhir(k){
   return a||'🕛 NIHIL'};
  const loading='*LOADING 1*\n___________________\n\n'+ld('ld1')+'\n\n*LOADING 2*\n___________________\n\n'+ld('ld2');
  const bio=['ld1','ld2'].reduce((s,f)=>s+(o[f]||[]).reduce((x,r)=>x+(r&&r.stop?murOf(r,o):0),0),0);
- const nb='*NB : Total Co-firing BIOMASSA : '+fmt(bio)+' T*';
- const D=cur.slice(8)+' '+BLN[+cur.slice(5,7)-1].toUpperCase()+' '+cur.slice(0,4);
+ const coal=['ld1','ld2'].reduce((s,f)=>s+wRows(o,f).reduce((x,r)=>{const v=parseFloat(String(r.tot||'').replace(',','.'));return x+(v>0?v:0)},0),0);
+ const tot=coal+bio,pct=tot>0?bio/tot*100:0,rb=v=>Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+ const nb='*NB : Total Co-firing (Batubara + Biomassa) : '+rb(tot)+' T, dengan komposisi biomassa sebesar '+(Math.round(pct*100)/100).toFixed(2).replace('.',',')+' %*';
+ const D=(+cur.slice(8))+' '+BLN[+cur.slice(5,7)-1].toUpperCase()+' '+cur.slice(0,4);
  const stt=v=>wSp(v).toUpperCase().replace('CHANGE OVER','C/O');
 
- const kdl=n=>{const it=(o['kd'+n]||[]).filter(r=>r&&wSp(r.t)).map(r=>{const a=toMin(r.t1),b=toMin(r.t2);let d='';if(a!=null&&b!=null){const h=Math.round(((b-a)%1440+1440)%1440/60*10)/10;d=' ('+String(h).replace('.',',')+' JAM)'}return '* '+wSp(r.t)+d});return it.length?it.join('\n'):'* -'};
+ const kdl=n=>{const it=(o['kd'+n]||[]).filter(r=>r&&wSp(r.t)).map(r=>{const a=toMin(r.t1),b=toMin(r.t2);let d='';if(a!=null&&b!=null){const h=Math.round(((b-a)%1440+1440)%1440/60*10)/10;d=' ('+String(h).replace('.',',')+' JAM)'}return '* '+wSp(r.t).toUpperCase()+d});return it.length?it.join('\n'):'* -'};
  const ul=n=>{
   const m=o['um'+n]||{};if(m.off==='1')return '';
   const rows=wRows(o,'ul'+n),shp=wSp(m.shp)||(rows[0]?wSp(rows[0].shipper):'');if(!shp)return '';
   const a=wMin(m.t1),b=wMin(m.t2),mn=a==null||b==null?0:((b-a)%1440+1440)%1440,tot=umTot(m);
   const lok=[];rows.forEach(r=>{const l=wSp(r.lokasi);if(l&&lok.indexOf(l)<0)lok.push(l)});
-  return '*UNLOADING '+n+':*\n____________________\n\nShipper : *'+shp+'*\nAwal bongkar : '+D+' JAM '+wTm(m.t1)+' WIB *('+stt(m.s1)+')*\nAkhir bongkar : '+D+' JAM '+wTm(m.t2)+' WIB *('+stt(m.s2)+')*\nDurasi bongkar : *'+Math.floor(mn/60)+'* JAM *'+mn%60+'* MENIT\nTotal bongkar : *'+fmt(tot)+'* T\nFlow rate : *'+(mn>0?Math.round(tot/(mn/60)):0)+'* T/H\n\nLokasi :\n- *'+lok.join(', ')+'*\n\nKendala :\n\n'+kdl(n)};
+  return '*UNLOADING '+n+':*\n____________________\n\nShipper : *'+shp.toUpperCase()+'*\nAwal bongkar : '+D+' JAM '+wTm(m.t1)+' WIB *('+stt(m.s1)+')*\nAkhir bongkar : '+D+' JAM '+wTm(m.t2)+' WIB *('+stt(m.s2)+')*\nDurasi bongkar : *'+Math.floor(mn/60)+'* JAM *'+mn%60+'* MENIT\nTotal bongkar : *'+fmt(tot)+'* T\nFlow rate : *'+(mn>0?Math.round(tot/(mn/60)):0)+'* T/H\n\nLokasi :\n- *'+lok.join(', ').toUpperCase()+'*\n\nKendala :\n\n'+kdl(n)};
  const u=[ul(1),ul(2)].filter(Boolean),uTxt=u.length&&ul(1)?u.join('\n\n'):'-';
  return [hdr,loading,nb,uTxt].filter(x=>x!=='').join('\n\n');
 }
 function bkParse(v){const o={1:'',2:''};String(v||'').toUpperCase().replace(/([12])\s*([A-F]*)/g,(m,u,l)=>{o[u]+=l;return m});['1','2'].forEach(u=>{o[u]=[...new Set(o[u].split(''))].sort().join('')});return o}
 function bkShow(v){const o=bkParse(v);return [o[1]?'1'+o[1]:'',o[2]?'2'+o[2]:''].filter(Boolean).join(' ')}
-function bkWa(v){return bkShow(v).replace(' ',' - ')}
+function bkWa(v){return bkShow(v).replace(/\s+/g,' ').trim().replace(' ',' - ')}
 function bkOpen(k,f,i){const r=(sh(k)[f]||[])[i]||{},cur0=bkParse(r.bk);let m=document.getElementById('bkDlg');if(!m){m=document.createElement('div');m.id='bkDlg';m.className='mdl';m.hidden=true;document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.hidden=true})}
  const sel={1:cur0[1].split(''),2:cur0[2].split('')},comp=()=>(sel[1].length?'1'+sel[1].join(''):'')+(sel[1].length&&sel[2].length?' ':'')+(sel[2].length?'2'+sel[2].join(''):'');
  const draw=()=>{m.innerHTML='<div style="width:min(380px,100%)"><h4>Bunker yang diisi · Loading '+f.slice(2)+' baris '+(i+1)+'</h4>'+[1,2].map(u=>'<div><div style="font:700 12px var(--fb);margin-bottom:6px">Unit #'+u+' <button type="button" class="gbtn" data-all="'+u+'" style="padding:2px 8px;margin-left:6px">Semua</button></div><div class="bkch">'+'ABCDEF'.split('').map(l=>'<button type="button" data-u="'+u+'" data-l="'+l+'" class="'+(sel[u].includes(l)?'on':'')+'">'+l+'</button>').join('')+'</div></div>').join('')+'<div id="bkPrev" style="font:700 13px var(--fb);color:#143A78">Tampil: <span>'+(comp()||'–')+'</span></div><div class="row" style="justify-content:space-between"><span style="display:flex;gap:8px;margin-left:auto"><button class="gbtn" id="bkClr">Kosongkan</button><button class="gbtn" id="bkX">Batal</button><button class="abtn" id="bkOk">Simpan</button></span></div></div>';
@@ -1545,6 +1555,8 @@ function waShow(i){WAI=i;$('#mTx').value=WAR[i].tx;$('#mOk').textContent='';docu
 function waOpen(k,mode){
  WAR=mode==='akhir'?[{lb:'Laporan Akhir',tx:wAkhir(k)}]:waReports(k);WAR.forEach(r=>r.tx=waClean(r.tx));$('#mTabs').innerHTML=WAR.map((r,i)=>`<button class="gbtn" data-watab="${i}" style="padding:6px 12px">${r.lb}</button>`).join('');
  $('#mT').textContent=(mode==='akhir'?'Laporan Akhir Shift · ':'Laporan WA · ')+shiftTitle(SH.find(s=>s.k===k));$('#mTabs').style.display=mode==='akhir'?'none':'';$('#mdl').hidden=false;waShow(0);
+ const mm=mode==='akhir'?wAkhirMissing(k):[],cb=$('#mCopy');cb.disabled=!!mm.length;cb.style.opacity=mm.length?'.45':'';cb.style.cursor=mm.length?'not-allowed':'';
+ if(mm.length){const o=$('#mOk');o.style.color='#C62828';o.style.whiteSpace='pre-line';o.textContent='Belum lengkap, isi dulu:\n'+mm.join('\n')}else{const o=$('#mOk');o.style.color='';o.style.whiteSpace=''}
 }
 function openModal(title,text){$('#mT').textContent=title;$('#mTx').value=text;$('#mOk').textContent='';$('#mdl').hidden=false}
 $('#mClose').onclick=()=>{$('#mdl').hidden=true};
