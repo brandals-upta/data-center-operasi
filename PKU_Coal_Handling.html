@@ -2320,7 +2320,7 @@ render();
     function p2(n){return n<10?'0'+n:''+n}
     function stat(l,n,c){return '<div class="hsr-stat '+c+'"><b>'+n+'</b><small>'+l+'</small></div>'}
     host.innerHTML='<div class="hsr"><div class="hsr-top"><div class="hsr-stats">'+stat('Total SR',data.length,'')+stat('Aktif',nA,'a')+stat('Close',data.length-nA,'c')+'</div>'+
-      '<div class="hsr-tools"><input class="hsr-search" type="search" placeholder="Cari nomor SR, WO, atau summary" aria-label="Cari SR"><div class="hsr-chips"><button type="button" class="hsr-fb on" data-f="all">Semua</button><button type="button" class="hsr-fb" data-f="aktif">Aktif</button><button type="button" class="hsr-fb" data-f="close">Close</button><button type="button" class="hsr-fb" data-f="cmflm">CM &amp; FLM</button></div></div></div><div class="hsr-list" id="hsrList"></div></div>';
+      '<div class="hsr-tools"><input class="hsr-search" type="search" placeholder="Cari nomor SR, WO, atau summary" aria-label="Cari SR"><div class="hsr-chips"><button type="button" class="hsr-fb on" data-f="all">Semua</button><button type="button" class="hsr-fb" data-f="aktif">Aktif</button><button type="button" class="hsr-fb" data-f="close">Close</button><button type="button" class="hsr-fb" data-f="cm">CM</button><button type="button" class="hsr-fb" data-f="flm">FLM &amp; 5S</button></div></div></div><div class="hsr-list" id="hsrList"></div></div>';
     var list=host.querySelector('.hsr-list');
     var IC_CK='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',IC_SH='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg>',IC_EQ='<svg viewBox="0 0 24 24"><path d="M4 18h16M6 18V9l6-4 6 4v9"/></svg>';
     function dayKey(r){if(r.created==null)return 'x';var d=new Date(r.created);return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
@@ -2334,19 +2334,13 @@ render();
       var days=r.aktif?'<div class="hsr-days '+sev+'"><b>'+(r.days==null?'-':r.days)+'</b><small>hari aktif</small></div>':
         (r.days!=null?'<div class="hsr-days done"><b>'+r.days+'</b><small>hari</small></div>':'<div class="hsr-days done">'+IC_CK+'<small>selesai</small></div>');
       return '<article class="hsr-row '+(r.aktif?'aktif':'done')+'"><div class="hsr-st">'+chip+'<small>'+esc(r.status||'')+'</small></div><div class="hsr-main"><div class="hsr-nos"><span class="hsr-no"><small>No. SR</small>'+(r.sr?esc(r.sr):'-')+'</span><span class="hsr-no wo"><small>No. WO</small>'+(r.wo?esc(r.wo):'-')+'</span></div><div class="hsr-sum">'+esc(r.summary)+'</div><div class="hsr-meta">'+meta+'</div></div>'+days+'</article>'}
-    function draw(){var rows=data.filter(function(r){if(flt==='aktif'&&!r.aktif)return false;if(flt==='close'&&r.aktif)return false;
+    function draw(){var rows=data.filter(function(r){if(flt==='aktif'&&!r.aktif)return false;if(flt==='close'&&r.aktif)return false;if(flt==='cm'&&String(r.ft||'').toUpperCase()!=='CM')return false;if(flt==='flm'&&String(r.ft||'').toUpperCase()!=='FLM')return false;
         if(q&&(r.sr+' '+r.wo+' '+r.summary+' '+r.eq+' '+r.asset).toLowerCase().indexOf(q)<0)return false;return true});
       if(!rows.length){list.innerHTML='<div class="hsr-empty">Tidak ada SR yang cocok.</div>';return}
       function dayHtml(rs){var html='',cur=null,cnt=0,buf='';
         function flush(){if(cur!==null)html+='<section class="hsr-day"><h3 class="hsr-dh">'+esc(cur)+'<span>'+cnt+' SR</span></h3>'+buf+'</section>'}
         rs.forEach(function(r){var k=dayLabel(r);if(k!==cur){flush();cur=k;cnt=0;buf=''}cnt++;buf+=row(r)});flush();return html}
-      var out='';
-      if(flt==='cmflm'){
-        [['CM','CM'],['FLM','FLM'],['','Jenis belum diketahui']].forEach(function(g){
-          var rs=rows.filter(function(r){var t=String(r.ft||'').toUpperCase();return g[0]?t===g[0]:(t!=='CM'&&t!=='FLM')});
-          if(!rs.length&&g[0]==='')return;
-          out+='<div class="hsr-grp"><h2 class="hsr-gh">'+esc(g[1])+'<span>'+rs.length+' SR</span></h2>'+(rs.length?dayHtml(rs):'<div class="hsr-empty">Tidak ada SR '+g[0]+'.</div>')+'</div>'});
-      }else out=dayHtml(rows);
+      var out=dayHtml(rows);
       list.innerHTML=out;list.scrollTop=0}
     host.querySelector('.hsr-search').addEventListener('input',function(e){q=e.target.value.trim().toLowerCase();draw()});
     host.querySelector('.hsr-chips').addEventListener('click',function(e){var b=e.target.closest('.hsr-fb');if(!b)return;flt=b.dataset.f;host.querySelectorAll('.hsr-fb').forEach(function(x){x.classList.toggle('on',x===b)});draw()});
