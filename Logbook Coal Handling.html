@@ -91,6 +91,7 @@ input.num{text-align:right;font-weight:600}
 .tbx ol li{display:flex;justify-content:space-between;gap:4px}
 .tbx .nil{color:var(--muted);text-align:center;margin:1px 0}
 .tbx input{font-size:11.5px!important;border-bottom-style:dashed!important}
+.tkL{gap:8px}.tkL .tkb{display:flex;flex-direction:column;flex:1;min-width:0}.tkL .tkb .wa{flex:1;min-height:90px}.tbx ol li>span{white-space:pre-line}.tbx ol li+li{margin-top:6px}
 .x{border:0;background:transparent;color:#A3AEC0;width:18px;height:18px;border-radius:4px;flex:none;display:grid;place-items:center;font-size:13px;line-height:1}
 .x:hover{background:#FDECEA;color:var(--tsb)}
 .tot{margin-top:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--line);border-radius:6px;padding:5px 8px;background:var(--soft)}
@@ -1040,7 +1041,7 @@ function addDay(s,n){const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);re
 function longDate(s){const d=new Date(s+'T12:00:00');return HARI[d.getDay()]+', '+d.getDate()+' '+BLN[d.getMonth()]+' '+d.getFullYear()}
 function liveShift(){const d=new Date(),h=d.getHours();if(h<6)return{date:ymd(d),k:'M'};if(h<14)return{date:ymd(d),k:'P'};if(h<22)return{date:ymd(d),k:'S'};return{date:addDay(ymd(d),1),k:'M'}}
 function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function blank(){return{awal:{},nt:{},md:{},tk:{},pl1:{},pl2:{},um1:{},um2:{},kd1:[],kd2:[],tender:[],antri:[],otw:[],berl:[],c1a:'',c1b:'',cuaca:'',bk:{},keg:[],cat:[],st:{},hm:{},lv:{},tt:{},ld1:[],ld2:[],ul1:[],ul2:[],sr:[],done:[],loto:[],fl:{}}}
+function blank(){return{awal:{},nt:{},md:{},tk:{},pl1:{},pl2:{},um1:{},um2:{},kd1:[],kd2:[],tender:[],kapal:{},antri:[],otw:[],berl:[],c1a:'',c1b:'',cuaca:'',bk:{},keg:[],cat:[],st:{},hm:{},lv:{},tt:{},ld1:[],ld2:[],ul1:[],ul2:[],sr:[],done:[],loto:[],fl:{}}}
 function day(d){if(!DB[d])DB[d]={M:blank(),P:blank(),S:blank()};return DB[d]}
 function sh(k,d){const o=day(d||cur);if(!o[k]){o[k]=blank();if(k==='A'){for(const q of ['M','P','S']){if(o[q]&&o[q].st&&Object.keys(o[q].st).length){['st','hm','nt','md','lv','tt'].forEach(x=>{o.A[x]=JSON.parse(JSON.stringify(o[q][x]||{}))});break}}}}const b=blank();for(const x in b)if(o[k][x]==null)o[k][x]=b[x];return o[k]}
 function getP(o,p){return p.split('.').reduce((a,k)=>a==null?a:a[k],o)}
@@ -1084,8 +1085,10 @@ function secTongkang(k){
  const w=o.cuaca;
  return `<section class="sec"><h3>${ICS.ship}Tongkang &amp; Kegiatan Kapal</h3><div class="sb">
  <div class="tkg"><div class="tkL">
-  <div class="sdr">TONGKANG SANDAR : <span class="cnv" aria-label="Jumlah tongkang sandar">${(t.txt||'').trim()?1:0}</span></div>
-  <textarea class="wa" id="wa-${k}" data-s="${k}" data-p="tk.txt" data-raw="1" aria-label="Keterangan tongkang sandar">${esc(t.txt)}</textarea>
+  <div class="tkb"><div class="sdr">TONGKANG SELESAI BONGKAR : <span class="cnv" aria-label="Jumlah tongkang selesai bongkar">${wBlk(t.sel)}</span></div>
+  <textarea class="wa" id="wa-sel-${k}" data-s="${k}" data-p="tk.sel" data-raw="1" aria-label="Keterangan tongkang selesai bongkar">${esc(t.sel)}</textarea></div>
+  <div class="tkb"><div class="sdr">TONGKANG SANDAR / BONGKAR : <span class="cnv" aria-label="Jumlah tongkang sandar">${wBlk(t.txt)}</span></div>
+  <textarea class="wa" id="wa-${k}" data-s="${k}" data-p="tk.txt" data-raw="1" aria-label="Keterangan tongkang sandar">${esc(t.txt)}</textarea></div>
  </div><div class="tl">${lists}</div></div>
  </div></section>`;
 }
@@ -1366,7 +1369,7 @@ document.addEventListener('keydown',e=>{const t=e.target;if(e.key!=='Enter'||!t.
 document.addEventListener('keydown',e=>{const t=e.target;if(e.key!=='Enter'||!t.matches||!t.matches('.col.eqtop input'))return;const g=t.closest('.eqc');if(!g)return;e.preventDefault();const L=[...g.querySelectorAll('input')].filter(x=>x.offsetParent&&x.type!=='checkbox'&&x.type!=='button'),i=L.indexOf(t),n=L[i+1];if(n){n.focus();if(n.select)n.select()}else t.blur()});
 addEventListener('scroll',e=>{if(!TP.hidden&&!TP.contains(e.target))tmPlace()},true);addEventListener('resize',()=>{if(!TP.hidden)tmPlace()});
 document.addEventListener('input',handleField);
-document.addEventListener('input',e=>{const t=e.target;if(t.dataset&&t.dataset.p==='tk.txt'){const c=t.closest('.col'),v=t.value.trim()?1:0;sh(t.dataset.s).tk.n=v;const o=c&&c.querySelector('.cnv');if(o)o.textContent=v}});
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset&&(t.dataset.p==='tk.txt'||t.dataset.p==='tk.sel')){const c=t.closest('.tkb'),v=wBlk(t.value);if(t.dataset.p==='tk.txt')sh(t.dataset.s).tk.n=v;const o=c&&c.querySelector('.cnv');if(o)o.textContent=v}});
 document.addEventListener('change',e=>{
  const t=e.target;if(t.tagName==='SELECT')handleField(e);
  if(t.dataset&&t.dataset.kdf&&t.files&&t.files[0]){const k=t.dataset.s,f=t.dataset.kdf,i=+t.dataset.i,file=t.files[0];
@@ -1428,7 +1431,30 @@ function wMin(t){const m=wTm(t);return m?+m.slice(0,2)*60+ +m.slice(3):null}
 function wNote(n){n=String(n==null?'':n).trim();return n&&n!=='-'?n:''}
 function wSp(s){return String(s||'').replace(/\s+/g,' ').trim()}
 function wDate(d,pd){const x=new Date(d+'T12:00:00');return HARI[x.getDay()]+', '+(pd?pad(x.getDate()):x.getDate())+' '+BLN[x.getMonth()]+' '+x.getFullYear()}
-function wTk(x){x=wSp(x);let m=x.match(/^(\d+)\s+(.+)$/);if(m)return[+m[1],m[2]];m=x.match(/^(.+?)\s+(\d+)$/);return m?[+m[2],m[1]]:[1,x]}
+function wTk(x){if(/\n/.test(String(x)))return[1,wSp(x)];x=wSp(x);let m=x.match(/^(\d+)\s+(.+)$/);if(m)return[+m[1],m[2]];m=x.match(/^(.+?)\s+(\d+)$/);return m?[+m[2],m[1]]:[1,x]}
+/* ---------- Tongkang & Kegiatan Kapal: tarikan otomatis dari WA (Energi Primer UJTA) lewat Google Sheet ---------- */
+function wBlk(s){return String(s||'').replace(/\r/g,'').split(/\n\s*\n/).filter(x=>x.trim()).length}
+const KAPAL_URL='https://script.google.com/macros/s/AKfycbyYq9E9wnYpVfCUXYvDszZ-0FGBZB7yXUt-mugmyPLNlYaooFCAZzq3XoD6Bk7yf5k/exec';
+function kapShift(tgl,jam){const h=+jam.slice(0,2);if(h<6)return{d:tgl,k:'M'};if(h<14)return{d:tgl,k:'P'};if(h<22)return{d:tgl,k:'S'};return{d:addDay(tgl,1),k:'M'}}
+function kapTxt(t){const D=t.detail||{},L=[],sh1=String(D.shipper||'').split(/\s+QQ\s+/i)[0].trim();if(sh1)L.push(sh1);if(D.bl)L.push('BL '+D.bl+' MT');
+ ['ta','eta','etb','ata','etc','etd'].forEach(x=>{if(D[x])L.push(x.toUpperCase()+' '+D[x])});
+ const skip=['shipper','agent','bl','jetty','ta','eta','etb','ata','etc','etd','docs','coa_cow','draft','draft_f','draft_a'];
+ Object.keys(D).forEach(x=>{if(skip.indexOf(x)<0&&D[x])L.push(x.toUpperCase()+': '+D[x])});
+ if(!L.length&&t.nama)L.push(t.nama);return L.join('\n').toUpperCase()}
+function kapApply(j){
+ if(!j||!j.ok||!j.ada||!j.id||!j.tanggal||!j.jam)return false;
+ let A={};try{A=JSON.parse(localStorage.getItem('logbook-kapal-diterapkan-v2')||'{}')||{}}catch(e){}
+ if(A[j.id]===j.diterima)return false;
+ const s=kapShift(j.tanggal,j.jam),o=sh(s.k,s.d),L=g=>((j[g]&&j[g].daftar)||[]).map(kapTxt);
+ o.antri=L('antri');o.otw=L('otw');o.berl=L('berlindung');
+ o.tk=o.tk||{};o.tk.sel=L('selesai').join('\n\n');o.tk.txt=L('sandar').join('\n\n');o.tk.n=wBlk(o.tk.txt);
+ o.kapal={id:j.id,tgl:j.tanggal,jam:j.jam,lain:j.lain||{},anomali:j.anomali||[],data:{selesai:j.selesai,sandar:j.sandar,antri:j.antri,otw:j.otw,berlindung:j.berlindung}};
+ A[j.id]=j.diterima;try{localStorage.setItem('logbook-kapal-diterapkan-v2',JSON.stringify(A))}catch(e){}
+ if(DB[s.d])delete DB[s.d]._seed;save();
+ if(s.d===cur){try{renderPart(s.k,'tk')}catch(e){render()}}
+ return true}
+function kapJsonp(){return new Promise((res,rej)=>{const cb='kapCb'+Date.now(),sc=document.createElement('script');const t=setTimeout(()=>{sc.remove();rej(new Error('timeout'))},20000);window[cb]=x=>{clearTimeout(t);sc.remove();delete window[cb];res(x)};sc.onerror=()=>{clearTimeout(t);sc.remove();rej(new Error('blokir'))};sc.src=KAPAL_URL+'?data=kapal&callback='+cb;document.head.appendChild(sc)})}
+async function kapPull(){let j=null;try{const r=await fetch(KAPAL_URL+'?data=kapal');j=await r.json()}catch(e){try{j=await kapJsonp()}catch(e2){}}try{kapApply(j)}catch(e){}}
 function wCnt(a){return a.reduce((s,x)=>s+wTk(x)[0],0)}
 function wList(o,key,lb){const a=(o[key]||[]).filter(x=>String(x).trim());return '*'+lb+' : '+wCnt(a)+'*\n'+(a.length?a.map(x=>{const t=wTk(x);return t[0]+' '+t[1]}).join('\n'):'NIHIL')}
 function wRows(o,f){return (o[f]||[]).filter(r=>r&&wTm(r.start))}
@@ -1521,7 +1547,7 @@ function wHourly(k,i){
  const sdr=(t.txt||'').replace(/\r/g,'').trim();
  return [
   '*PLTU TANJUNG AWAR - AWAR*\nSELAMAT '+sl+'\nCOAL HANDLING '+shiftTitle(SH.find(x=>x.k===k)).replace(/ (MALAM|PAGI|SORE)$/,'')+'\n'+wDate(cur)+'\nPukul '+jam+'.00 WIB',
-  '*TONGKANG SANDAR : '+(sdr?1:0)+'*\n'+(sdr||'NIHIL'),
+  '*TONGKANG SANDAR : '+wBlk(sdr)+'*\n'+(sdr||'NIHIL'),
   wList(o,'tender','TONGKANG TENDER'),wList(o,'antri','TONGKANG ANTRI'),wList(o,'otw','TONGKANG OTW'),wList(o,'berl','TONGKANG BERLINDUNG'),
   'TOTAL BONGKAR :\nC1A : '+wCtr(aw.c1a,aw.n1)+'\nC1B : '+wCtr(aw.c1b,aw.n2),
   'Kondisi Cuaca :\n'+(o.cuaca||'CERAH'),
@@ -1833,7 +1859,7 @@ document.addEventListener('keydown',e=>{
  {const old=sh(view),nb=blank();['st','hm','nt','md','lv','tt'].forEach(f=>{nb[f]=old[f]||{}});day(cur)[view]=nb}delete DB[cur]._seed;save();render();
  $('#saved').textContent='Shift dikosongkan';
 });
-setBg(bgSel);render();syncW();if(CL.on){cScan(true);cPull()}setInterval(cPull,7000);tick();setInterval(tick,15000);
+setBg(bgSel);render();syncW();if(CL.on){cScan(true);cPull()}setInterval(cPull,7000);tick();setInterval(tick,15000);kapPull();setInterval(kapPull,300000);
 })();
 </script>
 <style id="srCariCss">
