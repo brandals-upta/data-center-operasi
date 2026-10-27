@@ -1140,7 +1140,7 @@ function tkChip(e,k,key,i){e=String(e||'');const m=e.match(/SHIPPER\s*:\s*(.*)/i
  code=code.replace('MADUCHON','MADHUCON');
  return `<span class="tkp${un?' un':''}" data-full="${esc(tip)}"><b>${cnt}</b>${esc(code)}<button type="button" class="x" data-s="${k}" data-del="${key}" data-i="${i}" aria-label="Hapus">\u00d7</button></span>`}
 (function(){const t=document.createElement('div');t.id='tkTip';t.hidden=true;document.body.appendChild(t);
- document.addEventListener('mouseover',e=>{const p=e.target.closest&&e.target.closest('.tkp');if(!p){t.hidden=true;return}t.textContent=p.dataset.full||'';t.hidden=false;const r=p.getBoundingClientRect(),w=t.offsetWidth,hh=t.offsetHeight;let x=Math.min(Math.max(6,r.left),innerWidth-w-6),y=r.bottom+6;if(y+hh>innerHeight-6)y=Math.max(6,r.top-hh-6);t.style.left=x+'px';t.style.top=y+'px'});
+ document.addEventListener('mouseover',e=>{const p=e.target.closest&&e.target.closest('.tkp,[data-tip]');if(!p){t.hidden=true;return}const tp=p.dataset.tip!=null&&!p.classList.contains('tkp');t.style.textTransform=tp?'none':'';t.textContent=tp?p.dataset.tip:(p.dataset.full||'');t.hidden=false;const r=p.getBoundingClientRect(),w=t.offsetWidth,hh=t.offsetHeight;let x=Math.min(Math.max(6,r.left),innerWidth-w-6),y=r.bottom+6;if(y+hh>innerHeight-6)y=Math.max(6,r.top-hh-6);t.style.left=x+'px';t.style.top=y+'px'});
  document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('.tkp')))t.hidden=true},true)})();
 function plHalf(k,f,ids){
  const qn=f.slice(-1),lp='bl.q'+qn+'.';
@@ -1201,13 +1201,26 @@ const FLOW_ERH=25,FLOW_SR=35;
 function toMin(v){const m=String(v||'').match(/^(\d\d):(\d\d)$/);return m?(+m[1])*60+(+m[2]):null}
 function hrs(m){const a=toMin(m.t1),b=toMin(m.t2);if(a==null||b==null)return 0;let d=b-a;if(d<=0)d+=1440;return d/60}
 function fmt(x){if(!isFinite(x))x=0;return (Math.round(x*100)/100).toString().replace('.',',')}
+const TGT_BAURAN=3,TGT_FLOW=625;
+function bauranCalc(o){const pn=x=>{const v=parseFloat(String(x==null?'':x).replace(',','.'));return isNaN(v)?0:v};
+ let bio=0,coal=0;['ld1','ld2'].forEach(f=>(o[f]||[]).filter(r=>r&&wTm(r.start)).forEach(r=>{const v=pn(r.tot);if(v>0)coal+=v;if(r.stop)bio+=murOf(r,o)}));
+ const tot=coal+bio;return{coal,bio,tot,pct:tot>0?bio/tot*100:0}}
+function nT(v){const r=Math.round(v*10)/10;return String(r).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,m=>m)}
+function nTh(v){const r=Math.round(v*10)/10,p=String(r).split('.');return p[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.')+(p[1]?','+p[1]:'')}
+function pc2(v){return (Math.round(v*100)/100).toFixed(2).replace('.',',')}
+function tipBauran(o){const b=bauranCalc(o);return 'Batubara : '+nTh(b.coal)+' ton\nBiomassa : '+nTh(b.bio)+' ton\nTotal Co-firing : '+nTh(b.tot)+' ton\nPersentase Biomassa :\n'+nTh(b.bio)+' ÷ '+nTh(b.tot)+' x 100% = '+pc2(b.pct)+' %\nTarget : '+TGT_BAURAN+' %'}
+function tipFlow(o,n){const m=o['um'+n]||{};if(m.off==='1')return 'Unloading '+n+' : tidak ada bongkar';const pn=x=>{const v=parseFloat(String(x==null?'':x).replace(',','.'));return isNaN(v)?null:v};
+ const L=['Unloading '+n+(m.shp?' ('+m.shp+')':'')];
+ [['C1A','a1','k1'],['C1B','a2','k2']].forEach(([nm,a,b])=>{const ak=pn(m[b]);if(ak!=null){const aw=pn(m[a])||0;L.push(nm+' : '+nTh(ak)+' − '+nTh(aw)+' = '+nTh(Math.round((ak-aw)*100)/100)+' ton')}});
+ const h=hrs(m),t=umTot(m);L.push('Total Bongkar : '+nTh(t)+' ton');
+ if(toMin(m.t1)==null||toMin(m.t2)==null)L.push('Durasi : belum lengkap (jam mulai/selesai)');else L.push('Durasi : '+m.t1+' – '+m.t2+' = '+nTh(Math.round(h*100)/100)+' jam');
+ L.push('Flowrate :');L.push(h>0&&t>0?nTh(t)+' ÷ '+nTh(Math.round(h*100)/100)+' = '+Math.round(t/h)+' ton/jam':'belum bisa dihitung');L.push('Target : '+TGT_FLOW+' ton/jam');return L.join('\n')}
 function secLap(k){
- const o=sh(k),pn=x=>{const v=parseFloat(String(x||'').replace(',','.'));return isNaN(v)?null:v};
- const ms=[...(o.ld1||[]),...(o.ld2||[])].filter(r=>r&&r.start&&r.stop).map(r=>murOf(r,o));
- const bio=ms.length?ms.reduce((a,b)=>a+b,0):null;
+ const o=sh(k),bz=bauranCalc(o);
  const fl=n=>{const m=o['um'+n]||{};return m.off==='1'?null:umFlow(m)};
- const R=[['LOADING BIOMASSA',100,bio],['FLOWRATE BONGKAR 1',625,fl(1)],['FLOWRATE BONGKAR 2',625,fl(2)]];
- return `<section class="sec lap"><div class="lph">LAPORAN AKHIR SHIFT</div><div class="sb"><table class="lpt"><thead><tr><th>AKTIVITAS PEKERJAAN</th><th>TARGET</th><th>REALISASI</th><th>HASIL</th></tr></thead><tbody>${R.map(([n,t,v])=>`<tr><td class="an"><i>▸</i>${n}</td><td class="tg">${t}</td><td class="rl">${v==null?'-':fmt(v)}</td><td class="hs">${v==null?'':`<span class="${v>=t?'ok':'no'}">${v>=t?'TERCAPAI':'TIDAK TERCAPAI'}</span>`}</td></tr>`).join('')}</tbody></table></div></section>`;
+ const has=['ld1','ld2'].some(f=>(o[f]||[]).some(r=>r&&r.start&&r.stop));
+ const R=[['LOADING BAURAN BIOMASSA',TGT_BAURAN,has?bz.pct:null,tipBauran(o),'%'],['FLOWRATE BONGKAR 1',TGT_FLOW,fl(1),tipFlow(o,1),''],['FLOWRATE BONGKAR 2',TGT_FLOW,fl(2),tipFlow(o,2),'']];
+ return `<section class="sec lap"><div class="lph">LAPORAN AKHIR SHIFT</div><div class="sb"><table class="lpt"><thead><tr><th>AKTIVITAS PEKERJAAN</th><th>TARGET</th><th>REALISASI</th><th>HASIL</th></tr></thead><tbody>${R.map(([n,t,v,tp,u])=>`<tr data-tip="${esc(tp)}"><td class="an"><i>▸</i>${n}</td><td class="tg">${t}${u?' '+u:''}</td><td class="rl">${v==null?'-':(u?pc2(v)+' '+u:fmt(v))}</td><td class="hs">${v==null?'':`<span class="${v>=t?'ok':'no'}">${v>=t?'TERCAPAI':'TIDAK TERCAPAI'}</span>`}</td></tr>`).join('')}</tbody></table></div></section>`;
 }
 const IMG_CAM='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.3"/></svg>';
 function secKd(k,n){
@@ -1787,10 +1800,8 @@ function wAkhir(k){
    return '🕛 '+wTm(r.start)+' - '+(wTm(r.stop)||'  :  ')+' WIB / '+wSp(wSp(r.jenis)+' '+wSp(r.lokasi)+' '+br.replace(' (MRC)',''))+' / (CRUSHER '+cr+') / BUNKER ('+bk+') *'+(ton>0?String(r.tot).trim():'ERROR')+'* T (C5'+cr+')'}).join('\n\n');
   return a||'🕛 NIHIL'};
  const loading='*LOADING 1*\n___________________\n\n'+ld('ld1')+'\n\n*LOADING 2*\n___________________\n\n'+ld('ld2');
- const bio=['ld1','ld2'].reduce((s,f)=>s+(o[f]||[]).reduce((x,r)=>x+(r&&r.stop?murOf(r,o):0),0),0);
- const coal=['ld1','ld2'].reduce((s,f)=>s+wRows(o,f).reduce((x,r)=>{const v=parseFloat(String(r.tot||'').replace(',','.'));return x+(v>0?v:0)},0),0);
- const tot=coal+bio,pct=tot>0?bio/tot*100:0,rb=v=>Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
- const nb='*NB : Total Co-firing (Batubara + Biomassa) : '+rb(tot)+' T, dengan komposisi biomassa sebesar '+(Math.round(pct*100)/100).toFixed(2).replace('.',',')+' %*';
+ const bzc=bauranCalc(o),rb=v=>Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+ const nb='*NB : Total Co-firing (Batubara + Biomassa) : '+rb(bzc.tot)+' T, bauran biomassa sebesar '+pc2(bzc.pct)+' %*';
  const D=(+cur.slice(8))+' '+BLN[+cur.slice(5,7)-1].toUpperCase()+' '+cur.slice(0,4);
  const stt=v=>wSp(v).toUpperCase().replace('CHANGE OVER','C/O');
 
@@ -1928,8 +1939,8 @@ function cTables(d,k,u){
  if(k!=='A'){
   const pn=x=>{const v=parseFloat(String(x==null?'':x).replace(',','.'));return isNaN(v)?0:v},R=[],add=(i,v)=>R.push([key,d,sn,i,v]);
   let bio=0;['ld1','ld2'].forEach((f,j)=>{let tt=0,n=0;(u[f]||[]).forEach(r=>{if(r&&r.start){tt+=pn(r.tot);n++;if(r.stop)bio+=murOf(r,u)}});add('Loading '+(j+1)+' - jumlah baris',n);add('Loading '+(j+1)+' - total (T)',Math.round(tt*100)/100)});
-  add('Total Co-firing Biomassa (T)',Math.round(bio*100)/100);add('Flow ERH (t/h)',(u.fl&&u.fl.erh)||FLOW_ERH);add('Flow SR (t/h)',(u.fl&&u.fl.sr)||FLOW_SR);
-  [1,2].forEach(n=>{const m=u['um'+n]||{};if(m.off==='1'){add('Unloading '+n,'TIDAK ADA BONGKAR');return}const h=hrs(m),tot=umTot(m);add('Unloading '+n+' - shipper',m.shp||'');add('Unloading '+n+' - durasi (jam)',Math.round(h*100)/100);add('Unloading '+n+' - total (T)',tot);add('Unloading '+n+' - flowrate (t/h)',h>0&&tot>0?Math.round(tot/h):0);
+  add('Total Co-firing Biomassa (T)',Math.round(bio*100)/100);{const z=bauranCalc(u),r2=x=>Math.round(x*100)/100;add('Loading Bauran Biomassa - Batubara (ton)',r2(z.coal));add('Loading Bauran Biomassa - Biomassa (ton)',r2(z.bio));add('Loading Bauran Biomassa - Total Co-firing (ton)',r2(z.tot));add('Loading Bauran Biomassa - Realisasi (%)',r2(z.pct));add('Loading Bauran Biomassa - Target (%)',TGT_BAURAN);add('Loading Bauran Biomassa - Hasil',z.tot>0?(z.pct>=TGT_BAURAN?'TERCAPAI':'TIDAK TERCAPAI'):'')}add('Flow ERH (t/h)',(u.fl&&u.fl.erh)||FLOW_ERH);add('Flow SR (t/h)',(u.fl&&u.fl.sr)||FLOW_SR);
+  [1,2].forEach(n=>{const m=u['um'+n]||{};if(m.off==='1'){add('Unloading '+n,'TIDAK ADA BONGKAR');return}const h=hrs(m),tot=umTot(m);add('Unloading '+n+' - shipper',m.shp||'');add('Unloading '+n+' - durasi (jam)',Math.round(h*100)/100);add('Unloading '+n+' - total (T)',tot);add('Unloading '+n+' - flowrate (t/h)',h>0&&tot>0?Math.round(tot/h):0);add('Unloading '+n+' - target flowrate (t/h)',TGT_FLOW);add('Unloading '+n+' - hasil flowrate',h>0&&tot>0?(Math.round(tot/h)>=TGT_FLOW?'TERCAPAI':'TIDAK TERCAPAI'):'');
    let kj=0,kn=0;(u['kd'+n]||[]).forEach(r=>{if(r&&r.t){kn++;if(r.t1&&r.t2)kj+=hrs({t1:r.t1,t2:r.t2})}});add('Unloading '+n+' - jumlah kendala',kn);add('Unloading '+n+' - total jam kendala',Math.round(kj*10)/10)});
   let gr0='';try{gr0=schedGrp(d,k)||''}catch(e){}
   const SR=[];(u.sr||[]).forEach((r,i)=>{if(r&&(r.no||r.desc))SR.push([key,d,sn,gr0,i+1,r.no||'',r.desc||''])});
