@@ -1037,6 +1037,7 @@ try{const el=document.getElementById('impOktData'),eo=document.getElementById('i
    else if(isO(nn)||isO(b)){if(!isO(a)){u[k]={};c=true}if(syncv(u[k],isO(b)?b:{},isO(nn)?nn:{}))c=true}
    else{if(eq(a,b)||em(a)){if(!eq(a,nn)&&!(em(a)&&em(nn))){if(nn===undefined)delete u[k];else u[k]=cp(nn);c=true}}}});
   return c}
+ window.__syncv=syncv;
  Object.keys(DB).forEach(d=>{const x=DB[d];if(!x||typeof x!=='object')return;['M','P','S','A'].forEach(q=>{const s=x[q];if(!s)return;['ld1','ld2','ul1','ul2'].forEach(f=>{if(Array.isArray(s[f])){const n=s[f].filter(rowOn);if(n.length!==s[f].length){s[f]=n;ch=true}}});['kd1','kd2'].forEach(f=>{if(Array.isArray(s[f])){const n=s[f].filter(r=>r&&(r.t||r.t1||r.t2||r.img));if(n.length!==s[f].length){s[f]=n;ch=true}}})})});
  const FORCE=FL.__f!=='v4',EQF=['st','hm','nt','md','lv','tt'];if(FORCE){try{if(!localStorage.getItem('logbook-backup-pre-v4'))localStorage.setItem('logbook-backup-pre-v4',JSON.stringify(DB))}catch(e){}}
  Object.keys(IM).forEach(d=>{const sg=hs(js(IM[d]));if(!FORCE&&FL[d]===sg)return;const x=DB[d];
@@ -1584,7 +1585,7 @@ function incMissing(k){
   LDC.forEach(c=>{if(em(r[c]))add('[data-lf="'+f+'"][data-li="'+i+'"][data-lc="'+c+'"]',f+i)});
   if(!bkShow(r.bk))add('[data-bkrow="'+f+'"][data-i="'+i+'"]',f+i)}));
  ['ul1','ul2'].forEach(f=>{const n=f.slice(2),m=o['um'+n]||{};if(m.off==='1')return;
-  const rows=(o[f]||[]).map((r,i)=>[r,i]).filter(x=>rowOn(x[0]));if(!rows.length)return;
+  const rows=(o[f]||[]).map((r,i)=>[r,i]).filter(x=>rowOn(x[0]));if(!rows.length&&em(m.shp)&&em(m.t1)&&em(m.t2))return;
   rows.forEach(([r,i])=>ULC.forEach(c=>{if(em(r[c]))add('[data-lf="'+f+'"][data-li="'+i+'"][data-lc="'+c+'"]',f+i)}));
   ['shp','t1','s1','t2','s2'].forEach(x=>{if(em(m[x]))add('[data-p="um'+n+'.'+x+'"]','um'+n)});
   if(['a1','k1','a2','k2'].every(x=>em(m[x])))['a1','k1','a2','k2'].forEach(x=>add('[data-p="um'+n+'.'+x+'"]','umc'+n))});
@@ -1859,12 +1860,14 @@ const _save=save;
 save=function(){_save();const t=JSON.stringify(DB);if(t!==lastSnap){UH.push(lastSnap);if(UH.length>100)UH.shift();RH.length=0;lastSnap=t}cScan()};
 /* ---------- database Google Sheets ---------- */
 const CLOUD_DEFAULT={url:'',token:'',user:''};
-const CL={on:false,busy:false,q:new Set(),hash:{},ver:{},t:null};
+const CL={on:false,busy:false,q:new Set(),hash:{},ver:{},base:{},t:null};
+const hs2=s=>{let k=0;for(let i=0;i<s.length;i++)k=(k*31+s.charCodeAt(i))|0;return String(k)+'.'+s.length};
 let CC=Object.assign({},CLOUD_DEFAULT);
 try{const s=JSON.parse(localStorage.getItem('logbook-cloud')||'null');if(s)CC=Object.assign(CC,s)}catch(e){}
 try{CL.ver=JSON.parse(localStorage.getItem('logbook-cloud-ver')||'{}')||{}}catch(e){}
+try{CL.hash=JSON.parse(localStorage.getItem('logbook-cloud-hash')||'{}')||{}}catch(e){}
 CL.on=!!(CC.url&&CC.token);
-function cvSave(){try{localStorage.setItem('logbook-cloud-ver',JSON.stringify(CL.ver))}catch(e){}}
+function cvSave(){try{localStorage.setItem('logbook-cloud-ver',JSON.stringify(CL.ver));localStorage.setItem('logbook-cloud-hash',JSON.stringify(CL.hash))}catch(e){}}
 function cStat(t,bad){const s=$('#cst');if(s){s.textContent=t;s.style.color=bad?'#ffb4b4':''}}
 function cFlat(o,p,out){if(o&&typeof o==='object'){Object.keys(o).forEach(k=>cFlat(o[k],p?p+(Array.isArray(o)?'['+k+']':'.'+k):k,out))}else if(o!==''&&o!=null&&o!==false)out[p]=o;return out}
 function cTables(d,k,u){
@@ -1918,27 +1921,58 @@ function cScan(all){
  if(!CL.on)return;
  (all?Object.keys(DB):[cur]).forEach(d=>{
   if(!DB[d]||DB[d]._seed)return;
-  ['M','P','S','A'].forEach(k=>{const j=cUnitJson(d,k);if(j==null||(!CL.hash[d+'|'+k]&&!Object.keys(cFlat(DB[d][k],'',{})).length))return;const id=d+'|'+k;if(CL.hash[id]!==j)CL.q.add(id)})});
+  ['M','P','S','A'].forEach(k=>{const j=cUnitJson(d,k);if(j==null||(!CL.hash[d+'|'+k]&&!Object.keys(cFlat(DB[d][k],'',{})).length))return;const id=d+'|'+k;if(CL.hash[id]!==hs2(j))CL.q.add(id)})});
  if(CL.q.size){cStat('Menyimpan ke Sheet…');clearTimeout(CL.t);CL.t=setTimeout(cFlush,1500)}
 }
 function cReq(method,body,qs){
  const u=CC.url+(qs?(CC.url.includes('?')?'&':'?')+qs:'');
  return fetch(u,method==='POST'?{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body),redirect:'follow'}:{redirect:'follow'}).then(r=>r.json());
 }
+let cRedraw=false;
 async function cFlush(){
+ CL.t=null;
  if(!CL.on||CL.busy||!CL.q.size)return;CL.busy=true;
  try{
   for(const id of Array.from(CL.q)){
    const [d,k]=id.split('|'),j=cUnitJson(d,k);
    if(j==null){CL.q.delete(id);continue}
-   const r=await cReq('POST',{action:'push',token:CC.token,date:d,k:k,json:j,user:CC.user||'',device:navigator.platform||'',tables:cTables(d,k,JSON.parse(j))});
+   const r=await cReq('POST',{action:'push',token:CC.token,date:d,k:k,json:j,base:CL.ver[id]||0,user:CC.user||'',device:navigator.platform||'',tables:cTables(d,k,JSON.parse(j))});
    if(!r.ok)throw new Error(r.error||'gagal');
-   CL.q.delete(id);CL.hash[id]=j;CL.ver[id]=r.ver;
-   if(r.json&&DB[d]&&cUnitJson(d,k)===j){DB[d][k]=JSON.parse(r.json);CL.hash[id]=r.json;try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+   if(r.conflict){
+    let m;try{m=JSON.parse(r.json);window.__syncv(m,CL.base[id]?JSON.parse(CL.base[id]):{},JSON.parse(j))}catch(e){m=JSON.parse(r.json)}
+    if(DB[d]&&cUnitJson(d,k)===j){DB[d][k]=m;try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}cRedraw=true}
+    CL.base[id]=r.json;CL.hash[id]=hs2(r.json);CL.ver[id]=r.ver;
+    if(JSON.stringify(m)===r.json)CL.q.delete(id);
+    continue}
+   CL.q.delete(id);CL.hash[id]=hs2(j);CL.base[id]=j;CL.ver[id]=r.ver;
   }
+  if(cRedraw){cRedraw=false;const ae=document.activeElement;if(!(ae&&ae.closest&&ae.closest('#cols')&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))){lastSnap=JSON.stringify(DB);render()}}
   cvSave();cStat('Sheet ✓ '+new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}));
  }catch(e){cStat('Sheet gagal – coba lagi',1);clearTimeout(CL.t);CL.t=setTimeout(cFlush,15000)}
  CL.busy=false;if(CL.q.size&&!CL.t)CL.t=setTimeout(cFlush,1500);
+}
+async function cStart(){
+ if(!CL.on)return;
+ try{
+  const q='&token='+encodeURIComponent(CC.token),r=await cReq('GET',null,'action=manifest'+q);
+  if(r.ok){
+   const need=[];
+   r.units.forEach(u=>{const [d,k]=u.key.split('|'),loc=(DB[d]&&!DB[d]._seed&&DB[d][k])?cUnitJson(d,k):null;
+    if(loc!=null&&hs2(loc)===u.h){CL.hash[u.key]=u.h;CL.ver[u.key]=u.ver;CL.base[u.key]=loc;return}
+    if(loc!=null&&(CL.ver[u.key]||0)===u.ver){if(CL.hash[u.key]===hs2(loc))CL.base[u.key]=loc;return}
+    need.push(u.key)});
+   for(let i=0;i<need.length;i+=12){
+    const rr=await cReq('GET',null,'action=dump'+q+'&keys='+encodeURIComponent(need.slice(i,i+12).join(',')));
+    (rr.units||[]).forEach(u=>{const [d,k]=u.key.split('|');
+     if(!DB[d]||DB[d]._seed)DB[d]={M:blank(),P:blank(),S:blank()};
+     const loc=DB[d][k]?cUnitJson(d,k):null;let m=JSON.parse(u.json);
+     const synced=loc!=null&&CL.hash[u.key]===hs2(loc);
+     if(loc!=null&&!synced&&Object.keys(cFlat(DB[d][k],'',{})).length){try{window.__syncv(m,CL.base[u.key]?JSON.parse(CL.base[u.key]):{},JSON.parse(loc))}catch(e){}}
+     DB[d][k]=m;CL.base[u.key]=u.json;CL.ver[u.key]=u.ver;CL.hash[u.key]=hs2(u.json)})}
+   if(need.length){lastSnap=JSON.stringify(DB);UH.length=0;RH.length=0;try{localStorage.setItem(KEY,lastSnap)}catch(e){}render()}
+  }
+ }catch(e){}
+ cvSave();cScan(true);cPull();
 }
 async function cPull(){
  if(!CL.on||CL.busy)return;
@@ -1953,7 +1987,7 @@ async function cPull(){
    if(u.json===undefined||u.json==='')continue;
    const ae=document.activeElement;
    if(ae&&ae.closest&&ae.closest('#cols')&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))return;
-   try{const o=JSON.parse(u.json);if(!DB[d]||DB[d]._seed)DB[d]={M:blank(),P:blank(),S:blank()};DB[d][u.k]=o;CL.hash[id]=JSON.stringify(o);CL.ver[id]=u.ver;ch=true}catch(e){}
+   try{const o=JSON.parse(u.json);if(!DB[d]||DB[d]._seed)DB[d]={M:blank(),P:blank(),S:blank()};DB[d][u.k]=o;CL.base[id]=JSON.stringify(o);CL.hash[id]=hs2(CL.base[id]);CL.ver[id]=u.ver;ch=true}catch(e){}
   }
   if(ch){cvSave();lastSnap=JSON.stringify(DB);UH.length=0;RH.length=0;try{localStorage.setItem(KEY,lastSnap)}catch(e){}render();cStat('Diperbarui dari Sheet')}
   else if(!CL.q.size)cStat('Sheet ✓ terhubung');
@@ -1972,7 +2006,7 @@ function cOpen(){
   if(!CC.url){CL.on=false;M.textContent='Dimatikan';cStat('');return}
   M.textContent='Menguji…';
   try{const r=await cReq('GET',null,'action=ping&token='+encodeURIComponent(CC.token));if(!r.ok)throw new Error(r.error);
-   CL.on=true;CL.hash={};M.textContent='Terhubung ✓';cScan(true);cPull();setTimeout(()=>m.remove(),900)}
+   CL.on=true;M.textContent='Terhubung ✓';cStart();setTimeout(()=>m.remove(),900)}
   catch(e){CL.on=false;M.textContent='Gagal: '+e.message}
  };
 }
@@ -2029,7 +2063,7 @@ document.addEventListener('keydown',e=>{
  {const old=sh(view),nb=blank();['st','hm','nt','md','lv','tt'].forEach(f=>{nb[f]=old[f]||{}});day(cur)[view]=nb}delete DB[cur]._seed;save();render();
  $('#saved').textContent='Shift dikosongkan';
 });
-setBg(bgSel);loadFix();render();syncW();if(CL.on){cScan(true);cPull()}setInterval(cPull,7000);tick();setInterval(tick,15000);incInit();kapPull();setInterval(kapPull,300000);
+setBg(bgSel);loadFix();render();syncW();if(CL.on){cStart()}setInterval(cPull,7000);tick();setInterval(tick,15000);incInit();kapPull();setInterval(kapPull,300000);
 })();
 </script>
 <style id="srCariCss">
