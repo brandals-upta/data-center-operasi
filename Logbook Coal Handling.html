@@ -1116,16 +1116,27 @@ function secTongkang(k){
  </div></section>`;
 }
 /* ---------- chip tongkang (tender / antri / OTW / berlindung) ---------- */
-const TKK=[["BORNEO INDOBARA", "BIB"], ["ANTANG GUNUNG MERATUS", "AGM"], ["SARWA SEMBADA", "SSKB"], ["BUKIT ASAM", "BA"], ["SINGLURUS", "SGP"], ["GEMURUH", "GEMURUH"], ["EXPLOITASI", "EEI"], ["EKSPLOITASI", "EEI"], ["DWI GUNA", "DGL"], ["BANGUN NUSANTARA", "BNJM"], ["MADHUCON", "MADHUCON"], ["MADHUCON", "MADHUCON"], ["GLOBAL ENERGI", "GEL"], ["INDEXIM", "INDEXIM"], ["BHUMI SRIWIJAYA", "BSPC"], ["GUNUNG TABUR", "GTMS"], ["INTERNASIONAL PRIMA", "IPC"], ["ANGSANA", "AJE"], ["BERKAT MURAH", "BMR"], ["BINUANG", "BMBD"], ["ADIMITRA", "ABN"], ["REKAMITRA", "RCT"], ["ALAMJAYA", "ABP"], ["BANGUN KARYA", "BKPL"], ["KALTIM P", "KPC"], ["GRAND ANUGERAH", "GAJ"], ["TUNAS INTI", "TUNAS"], ["LAUTAN HUTAN", "LHL"], ["INDOMINCO", "IMM"], ["FAJAR SAKTI", "FSP"], ["ALFARA", "ADP"], ["INSANI BARA", "IBP"], ["INTI GARDA", "INTI"], ["TEMPIRAI", "TER"], ["KIDECO", "KIDECO"], ["BARAMULTI", "BSS"]];
+const TKK=[["BORNEO INDOBARA", "BIB"], ["ANTANG GUNUNG MERATUS", "AGM"], ["SARWA SEMBADA", "SSKB"], ["BUKIT ASAM", "BA"], ["SINGLURUS", "SGP"], ["GEMURUH", "GEMURUH"], ["EXPLOITASI", "EEI"], ["EKSPLOITASI", "EEI"], ["DWI GUNA", "DGL"], ["BANGUN NUSANTARA", "BNJM"], ["MADHUCON", "MADHUCON"], ["MADUCHON", "MADHUCON"], ["GLOBAL ENERGI", "GEL"], ["INDEXIM", "INDEXIM"], ["BHUMI SRIWIJAYA", "BSPC"], ["GUNUNG TABUR", "GTMS"], ["INTERNASIONAL PRIMA", "IPC"], ["ANGSANA", "AJE"], ["BERKAT MURAH", "BMR"], ["BINUANG", "BMBD"], ["ADIMITRA", "ABN"], ["REKAMITRA", "RCT"], ["ALAMJAYA", "ABP"], ["BANGUN KARYA", "BKPL"], ["KALTIM P", "KPC"], ["GRAND ANUGERAH", "GAJ"], ["TUNAS INTI", "TUNAS"], ["LAUTAN HUTAN", "LHL"], ["INDOMINCO", "IMM"], ["FAJAR SAKTI", "FSP"], ["ALFARA", "ADP"], ["INSANI BARA", "IBP"], ["INTI GARDA", "INTI"], ["TEMPIRAI", "TER"], ["KIDECO", "KIDECO"], ["BARAMULTI", "BSS"]];
 function tkKode(name,ctx){let n=String(name||'').toUpperCase().replace(/[.,]/g,' ').replace(/\bPT\b/g,' ').replace(/\s+/g,' ').trim();const c=n+' '+String(ctx||'').toUpperCase();
  for(const [a,b] of [['BORNEO INDOBARA','BIB'],['ANTANG GUNUNG MERATUS','AGM'],['SARWA SEMBADA','SSKB']])if(n.indexOf(a)>=0)return b;
  if(n.indexOf('ARUTMIN')>=0)return n.indexOf('MRC')>=0?'AI MRC':'AI';
  if(n.indexOf('PLN BATUBARA')>=0){for(const [a,b] of [['TANUR','TJ'],['TIWA','TIWA'],['PBS','PBS']])if(c.indexOf(a)>=0)return b;return c.indexOf('JETTY BIB')>=0?'BIB':'BB NIAGA'}
  for(const [a,b] of TKK)if(n.indexOf(a)>=0)return b;return ''}
+function tkParse(e){e=String(e||'');const m=e.match(/SHIPPER\s*:\s*(.*)/i);let nm,cnt=1;
+ if(m)nm=m[1].trim();else{if(/\n/.test(e))nm=(e.split('\n')[0]||'').trim();else{const t=wTk(e);cnt=t[0];nm=String(t[1]==null?e:t[1]).trim()}}
+ let code=tkKode(nm,e),un=false;if(!code){if(/^[A-Za-z0-9 ]{1,10}$/.test(nm))code=nm.toUpperCase();else{un=true;code=nm.toUpperCase().replace(/[.,]/g,' ').replace(/\bPT\b/g,' ').replace(/\bTBK\b/g,' ').replace(/\s+/g,' ').trim().split(' ')[0]||'?'}}
+ return{nm,cnt,code:code.replace('MADUCHON','MADHUCON'),un}}
+function tkDetail(e,k,key,i){const isD=x=>/SHIPPER\s*:/i.test(String(x));if(isD(e))return e;
+ const me=tkParse(e).code,arr=sh(k)[key]||[];let n=0;for(let j=0;j<i;j++)if(!isD(arr[j])&&tkParse(arr[j]).code===me)n++;
+ const ds=[cur,addDay(cur,-1)],cand=[];
+ ds.forEach((d,di)=>{const o=DB[d];if(!o)return;(di?['S']:[k,'P','S','M']).forEach(q=>{if(o[q]&&!(d===cur&&q===k&&0))cand.push(o[q])})});
+ for(const o of cand){const seen=new Set(),hits=[];['tender','antri','otw','berl'].forEach(l=>(o[l]||[]).forEach(x=>{if(!isD(x))return;const tb=String(x).split('\n')[0].trim();if(seen.has(tb))return;seen.add(tb);if(tkParse(x).code===me)hits.push(x)}));
+  if(hits.length)return hits[Math.min(n,hits.length-1)]}
+ return null}
 function tkChip(e,k,key,i){e=String(e||'');const m=e.match(/SHIPPER\s*:\s*(.*)/i);let nm,cnt=1;
  if(m)nm=m[1].trim();else{if(/\n/.test(e))nm=(e.split('\n')[0]||'').trim();else{const t=wTk(e);cnt=t[0];nm=String(t[1]==null?e:t[1]).trim()}}
  let code=tkKode(nm,e),un=false;if(!code){if(/^[A-Za-z0-9 ]{1,10}$/.test(nm))code=nm.toUpperCase();else{un=true;code=nm.toUpperCase().replace(/[.,]/g,' ').replace(/\bPT\b/g,' ').replace(/\bTBK\b/g,' ').replace(/\s+/g,' ').trim().split(' ')[0]||'?'}}
- const tip=e.trim()+(un?'\n\n\u26a0 Belum ada kode di daftar shipper: '+nm.toUpperCase():'');
+ const dt=tkDetail(e,k,key,i),tip=(dt?String(dt).trim():e.trim()+(dt===null?'\n\n(Detail belum ada — hanya kode. Terisi otomatis dari pesan Update Lineup.)':''))+(un?'\n\n\u26a0 Belum ada kode di daftar shipper: '+nm.toUpperCase():'');
  code=code.replace('MADUCHON','MADHUCON');
  return `<span class="tkp${un?' un':''}" data-full="${esc(tip)}"><b>${cnt}</b>${esc(code)}<button type="button" class="x" data-s="${k}" data-del="${key}" data-i="${i}" aria-label="Hapus">\u00d7</button></span>`}
 (function(){const t=document.createElement('div');t.id='tkTip';t.hidden=true;document.body.appendChild(t);
