@@ -911,7 +911,7 @@ html{scroll-padding-top:10px}
       <button class="hbtn" id="bCloud" title="Database Google Sheets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 18a4 4 0 0 1-.5-8A6 6 0 0 1 18 9a4.5 4.5 0 0 1 0 9z"/></svg>Database</button>
       <button class="hbtn" id="bImp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Impor</button>
       <input type="file" id="fImp" accept=".json,application/json" hidden>
-      <span class="saved" id="saved">Tersimpan</span><span class="saved" id="cst"></span>
+      <span class="saved" id="saved">Tersimpan</span><span class="saved" id="cst"></span><span class="saved" id="kst"></span>
     </div>
   </div>
 </header>
@@ -1435,28 +1435,126 @@ function wTk(x){if(/\n/.test(String(x)))return[1,wSp(x)];x=wSp(x);let m=x.match(
 /* ---------- Tongkang & Kegiatan Kapal: tarikan otomatis dari WA (Energi Primer UJTA) lewat Google Sheet ---------- */
 function wBlk(s){return String(s||'').replace(/\r/g,'').split(/\n\s*\n/).filter(x=>x.trim()).length}
 const KAPAL_URL='https://script.google.com/macros/s/AKfycbyYq9E9wnYpVfCUXYvDszZ-0FGBZB7yXUt-mugmyPLNlYaooFCAZzq3XoD6Bk7yf5k/exec';
+/* ===== PEMECAH PESAN "UPDATE LINEUP TONGKANG" ===== */
+var KBAG = [
+  { k: 'selesai',    re: /^selesai\s*bongkar/i },
+  { k: 'sandar',     re: /^sandar/i },
+  { k: 'antri',      re: /^antri/i },
+  { k: 'otw',        re: /^otw/i },
+  { k: 'berlindung', re: /^berlindung/i }
+];
+var KBLN = { januari:1, februari:2, maret:3, april:4, mei:5, juni:6, juli:7, agustus:8, september:9, oktober:10, november:11, desember:12 };
+
+function kapParse(teks) {
+  var hasil = { tanggal: '', jam: '', selesai: null, sandar: null, antri: null, otw: null, berlindung: null, lain: {}, anomali: [] };
+  var baris = String(teks).replace(/\r/g, '').split('\n');
+  var bersih = function (s) { return s.replace(/^[\s*_~]+|[\s*_~]+$/g, '').replace(/\s+/g, ' ').trim(); };
+  var bag = null, tk = null, lain = false, draftMode = false;
+
+  for (var i = 0; i < baris.length; i++) {
+    var raw = baris[i], b = bersih(raw);
+    if (!b) continue;
+
+    var mt = b.match(/^(Senin|Selasa|Rabu|Kamis|Jumat|Jum'at|Sabtu|Minggu)[,\s]+(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/i);
+    if (mt) {
+      var bl = KBLN[mt[3].toLowerCase()];
+      hasil.tanggal = mt[4] + '-' + ('0' + (bl || 0)).slice(-2) + '-' + ('0' + mt[2]).slice(-2);
+      continue;
+    }
+    var mj = b.match(/^Pukul\s*:?\s*(\d{1,2})[.:](\d{2})/i);
+    if (mj) { hasil.jam = ('0' + mj[1]).slice(-2) + ':' + mj[2]; continue; }
+
+    var mh = b.match(/^Tongkang\s+(.+?)\s*:?\s*(\d+)?$/i);
+    if (mh) {
+      var nama = mh[1].replace(/\s*:\s*$/, '').trim();
+      var ketemu = null;
+      KBAG.forEach(function (x) { if (x.re.test(nama)) ketemu = x.k; });
+      if (ketemu && hasil[ketemu]) { bag = null; tk = null; lain = false; continue; }
+      if (ketemu) {
+        bag = ketemu; tk = null; lain = false; draftMode = false;
+        hasil[bag] = { jumlah: mh[2] != null ? parseInt(mh[2], 10) : null, daftar: [], nihil: false };
+        continue;
+      }
+    }
+    if (/^Lain\s*-?\s*lain/i.test(b)) { lain = true; bag = null; tk = null; continue; }
+    if (/^(Terima\s*kasih|Terimakasih|Wassalam)/i.test(b)) break;
+
+    if (lain) {
+      var ml = b.match(/^([^:]+?)\s*:\s*(.*)$/);
+      if (ml) hasil.lain[ml[1].trim().toLowerCase()] = ml[2].trim();
+      continue;
+    }
+    if (!bag) continue;
+    var H = hasil[bag];
+    if (/^NIHIL$/i.test(b)) { H.nihil = true; continue; }
+
+    var mn = b.match(/^(\d+)\s*[).]\s*(.+)$/);
+    if (mn) {
+      tk = { no: parseInt(mn[1], 10), nama: mn[2].trim(), detail: {}, catatan: [], baris: [raw.replace(/\s+$/, '').replace(/^\s+/, '')] };
+      H.daftar.push(tk); draftMode = false;
+      continue;
+    }
+    if (!tk) { tk = { no: H.daftar.length + 1, nama: b, detail: {}, catatan: [], baris: [raw.replace(/^\s+|\s+$/g, '')] }; H.daftar.push(tk); continue; }
+    if (!/^\s*#/.test(raw)) tk.baris.push(raw.replace(/^\s+|\s+$/g, ''));
+
+    if (/^\s*#/.test(raw)) continue;
+    var mbl = b.match(/^BL\s*:?\s*([\d.,]+)\s*(MT)?\s*(?:Dari\s+(.*))?$/i);
+    if (mbl) { tk.detail.bl = mbl[1]; if (mbl[3]) tk.detail.jetty = mbl[3].trim(); draftMode = false; continue; }
+
+    var mta = b.match(/^(TA|ETA|ETB|ETC|ATA|ETD)\s*:?\s*(.+)$/i);
+    if (mta) { tk.detail[mta[1].toLowerCase()] = mta[2].trim(); draftMode = false; continue; }
+
+    var mk = b.match(/^([^:]{1,40}?)\s*:\s*(.*)$/);
+    if (mk) {
+      var key = mk[1].trim().toLowerCase(), val = mk[2].trim();
+      if (key === 'draft') { draftMode = true; if (val) tk.detail.draft = val; continue; }
+      if (draftMode && (key === 'f' || key === 'a')) { tk.detail['draft_' + key] = val; continue; }
+      draftMode = false;
+      if (key === 'coa & cow' || key === 'coa&cow' || key === 'coa dan cow') key = 'coa_cow';
+      else if (key === 'docs kapal' || key === 'dokumen kapal') key = 'docs';
+      tk.detail[key] = val; continue;
+    }
+    tk.catatan.push(b);
+  }
+
+  KBAG.forEach(function (x) {
+    var H = hasil[x.k];
+    if (!H) { hasil.anomali.push('Bagian "' + x.k + '" tidak ditemukan di pesan'); return; }
+    if (H.jumlah != null && H.jumlah !== H.daftar.length) hasil.anomali.push(x.k + ': judul bilang ' + H.jumlah + ', daftar berisi ' + H.daftar.length);
+    H.daftar.forEach(function (t) {
+      var d = t.detail;
+      if (!d.shipper) hasil.anomali.push(x.k + ' ' + t.nama + ': shipper kosong');
+      if (!d.bl) hasil.anomali.push(x.k + ' ' + t.nama + ': BL kosong');
+      if (d.coa_cow && !/^ok$/i.test(d.coa_cow)) hasil.anomali.push(x.k + ' ' + t.nama + ': Coa & Cow = ' + d.coa_cow);
+      if (d.docs && !/^ok$/i.test(d.docs)) hasil.anomali.push(x.k + ' ' + t.nama + ': Docs = ' + d.docs);
+    });
+  });
+  return hasil;
+}
 function kapShift(tgl,jam){const h=+jam.slice(0,2);if(h<6)return{d:tgl,k:'M'};if(h<14)return{d:tgl,k:'P'};if(h<22)return{d:tgl,k:'S'};return{d:addDay(tgl,1),k:'M'}}
-function kapTxt(t){const D=t.detail||{},L=[],sh1=String(D.shipper||'').split(/\s+QQ\s+/i)[0].trim();if(sh1)L.push(sh1);if(D.bl)L.push('BL '+D.bl+' MT');
- ['ta','eta','etb','ata','etc','etd'].forEach(x=>{if(D[x])L.push(x.toUpperCase()+' '+D[x])});
- const skip=['shipper','agent','bl','jetty','ta','eta','etb','ata','etc','etd','docs','coa_cow','draft','draft_f','draft_a'];
- Object.keys(D).forEach(x=>{if(skip.indexOf(x)<0&&D[x])L.push(x.toUpperCase()+': '+D[x])});
- if(!L.length&&t.nama)L.push(t.nama);return L.join('\n').toUpperCase()}
+function kapTxt(t){if(t.baris&&t.baris.length)return t.baris.join('\n').toUpperCase();const D=t.detail||{},L=[t.nama||''];Object.keys(D).forEach(x=>{if(D[x])L.push(x.toUpperCase()+': '+D[x])});return L.join('\n').toUpperCase()}
 function kapApply(j){
  if(!j||!j.ok||!j.ada||!j.id||!j.tanggal||!j.jam)return false;
- let A={};try{A=JSON.parse(localStorage.getItem('logbook-kapal-diterapkan-v2')||'{}')||{}}catch(e){}
+ let A={};try{A=JSON.parse(localStorage.getItem('logbook-kapal-diterapkan-v3')||'{}')||{}}catch(e){}
  if(A[j.id]===j.diterima)return false;
  const s=kapShift(j.tanggal,j.jam),o=sh(s.k,s.d),L=g=>((j[g]&&j[g].daftar)||[]).map(kapTxt);
  o.antri=L('antri');o.otw=L('otw');o.berl=L('berlindung');
  o.tk=o.tk||{};o.tk.sel=L('selesai').join('\n\n');o.tk.txt=L('sandar').join('\n\n');o.tk.n=wBlk(o.tk.txt);
  o.kapal={id:j.id,tgl:j.tanggal,jam:j.jam,lain:j.lain||{},anomali:j.anomali||[],data:{selesai:j.selesai,sandar:j.sandar,antri:j.antri,otw:j.otw,berlindung:j.berlindung}};
- A[j.id]=j.diterima;try{localStorage.setItem('logbook-kapal-diterapkan-v2',JSON.stringify(A))}catch(e){}
+ A[j.id]=j.diterima;try{localStorage.setItem('logbook-kapal-diterapkan-v3',JSON.stringify(A))}catch(e){}
  if(DB[s.d])delete DB[s.d]._seed;save();
  if(s.d===cur){try{renderPart(s.k,'tk')}catch(e){render()}}
  return true}
 function kapJsonp(){return new Promise((res,rej)=>{const cb='kapCb'+Date.now(),sc=document.createElement('script');const t=setTimeout(()=>{sc.remove();rej(new Error('timeout'))},20000);window[cb]=x=>{clearTimeout(t);sc.remove();delete window[cb];res(x)};sc.onerror=()=>{clearTimeout(t);sc.remove();rej(new Error('blokir'))};sc.src=KAPAL_URL+'?data=kapal&callback='+cb;document.head.appendChild(sc)})}
-async function kapPull(){let j=null;try{const r=await fetch(KAPAL_URL+'?data=kapal');j=await r.json()}catch(e){try{j=await kapJsonp()}catch(e2){}}try{kapApply(j)}catch(e){}}
+function kapSt(t,bad){const s=document.getElementById('kst');if(s){s.textContent=t;s.style.color=bad?'#ffb4b4':''}}
+async function kapPull(){let j=null,why='';try{const r=await fetch(KAPAL_URL+'?data=kapal');j=await r.json()}catch(e){why='fetch: '+(e&&e.message||e);try{j=await kapJsonp()}catch(e2){why+=' | jsonp: '+(e2&&e2.message||e2)}}
+ const hh=new Date().toTimeString().slice(0,5);
+ if(!j){kapSt(' \u00b7 Kapal gagal ('+why+')',1);return}
+ if(!j.ok){kapSt(' \u00b7 Kapal: '+(j.error||'ditolak'),1);return}
+ if(!j.ada){kapSt(' \u00b7 Kapal: belum ada pesan Update Lineup');return}
+ try{if(j.pesan){const q=kapParse(j.pesan);q.ok=true;q.ada=true;q.id=j.id;q.diterima=j.diterima;q.pengirim=j.pengirim;j=q}kapApply(j);if(CL.on)cScan(true);kapSt(' \u00b7 Kapal \u2713 '+hh+' (pesan '+j.tanggal.slice(8)+'/'+j.tanggal.slice(5,7)+' '+j.jam+')')}catch(e){kapSt(' \u00b7 Kapal error: '+(e&&e.message||e),1)}}
 function wCnt(a){return a.reduce((s,x)=>s+wTk(x)[0],0)}
-function wList(o,key,lb){const a=(o[key]||[]).filter(x=>String(x).trim());return '*'+lb+' : '+wCnt(a)+'*\n'+(a.length?a.map(x=>{const t=wTk(x);return t[0]+' '+t[1]}).join('\n'):'NIHIL')}
+function wList(o,key,lb){const a=(o[key]||[]).filter(x=>String(x).trim());return '*'+lb+' : '+wCnt(a)+'*\n'+(a.length?a.map(x=>{if(/\n/.test(String(x)))return String(x).trim();const t=wTk(x);return t[0]+' '+t[1]}).join(a.some(x=>/\n/.test(String(x)))?'\n\n':'\n'):'NIHIL')}
 function wRows(o,f){return (o[f]||[]).filter(r=>r&&wTm(r.start))}
 function eqKeys(){return[].concat(UNIT,CONV,BERAT,REUSE,SUMP.map(x=>'SUMP '+x),DS,['WDE #1','WDE #2','FOP #1','FOP #2','FOP #3'],MSEP)}
 function eqPrev(){
