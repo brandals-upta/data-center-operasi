@@ -1859,7 +1859,7 @@ const UH=[],RH=[];let lastSnap=JSON.stringify(DB);
 const _save=save;
 save=function(){_save();const t=JSON.stringify(DB);if(t!==lastSnap){UH.push(lastSnap);if(UH.length>100)UH.shift();RH.length=0;lastSnap=t}cScan()};
 /* ---------- database Google Sheets ---------- */
-const CLOUD_DEFAULT={url:'',token:'',user:''};
+const CLOUD_DEFAULT={url:'https://script.google.com/macros/s/AKfycbwX9CGEIqW0MIUmamLqzptUn8i_ALiLWf7_VPt8iEv-FpgTZ2xA6Nz-MqZcRIoEFg/exec',token:'LogbookCHCB',user:''};
 const CL={on:false,busy:false,q:new Set(),hash:{},ver:{},base:{},t:null};
 const hs2=s=>{let k=0;for(let i=0;i<s.length;i++)k=(k*31+s.charCodeAt(i))|0;return String(k)+'.'+s.length};
 let CC=Object.assign({},CLOUD_DEFAULT);
