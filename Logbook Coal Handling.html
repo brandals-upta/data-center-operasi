@@ -1348,7 +1348,7 @@ function colHTML(s){
  const k=s.k;
  return `<div class="band ${k}">${IC[k]}<div><h2>${shiftTitle(s)}</h2><p>(${s.jam})<span class="live">AKTIF</span></p></div>
   <div class="wxw"><div class="wxh" role="group" aria-label="Kondisi cuaca">${[['CERAH','sun'],['MENDUNG','cloud'],['HUJAN','rain']].map(([c,i])=>`<button data-s="${k}" data-wx="${c}" title="${c}" aria-label="${c}" aria-pressed="${sh(k).cuaca===c}">${ICS[i]}</button>`).join('')}</div><small>CUACA</small></div>
-  <div class="bact">${swHTML()}<button class="bbtn" data-wa="${k}">${ICS.wa}Laporan WA</button><span class="wnt" id="wnt-${k}" hidden>Belum Lengkap</span><button class="bbtn" data-waa="${k}">${ICS.wa}Laporan Akhir Shift</button></div></div>
+  <div class="bact">${swHTML()}<button class="bbtn" data-wa="${k}" data-wi="0">${ICS.wa}Laporan WA Pukul ${WA_JAM[k][0][0]}:00</button><button class="bbtn" data-wa="${k}" data-wi="1">${ICS.wa}Laporan WA Pukul ${WA_JAM[k][1][0]}:00</button><span class="wnt" id="wnt-${k}" hidden>Belum Lengkap</span><button class="bbtn" data-waa="${k}">${ICS.wa}Laporan Akhir Shift</button></div></div>
   <div data-part="awal">${secAwal(k)}</div>
   <div class="r2"><div data-part="tk">${secTongkang(k)}</div><div data-part="bk">${secBunker(k)}</div></div>
   <div class="r3">
@@ -1486,7 +1486,7 @@ document.addEventListener('click',e=>{
  else if(d.addcb)addCat(k);
  else if(d.addsrb)addSR(k,d.addsrb);
  else if(d.eq)eqAct(d.eq);
- else if(d.wa){waOpen(d.wa);waCheck(d.wa)}
+ else if(d.wa){waOpen(d.wa,+d.wi||0);waCheck(d.wa)}
  else if(d.waa){waOpen(d.waa,'akhir')}
  else if(d.flset){flOpen(d.flset)}
  else if(d.bkrow){bkOpen(k,d.bkrow,+d.i)}
@@ -1755,8 +1755,15 @@ function wCat(k){
   const au=wAuto(x).map(e=>'・ '+e.t+' '+e.x),a=au.concat((sh(x).cat||[]).filter(c=>String(c).trim()&&String(c).trim()!=='-'&&!wDup(c,wAuto(x))).map(c=>'・ '+c));
   return 'SHIFT '+WA_NM[x]+' :\n'+(a.length?a.join('\n'):'・ NIHIL')}).join('\n\n');
 }
+function eqSrc(k){
+ const own=sh(k);if(own.st&&Object.keys(own.st).length)return own;
+ let d=cur,kk=k;
+ for(let i=0;i<180;i++){
+  if(kk==='S')kk='P';else if(kk==='P')kk='M';else{kk='S';d=addDay(d,-1)}
+  const x=DB[d],c=x&&x[kk];if(c&&c.st&&Object.keys(c.st).length)return c}
+ return own}
 function wEq(k){
- const A=sh(k),S=A.st||{},N=A.nt||{};
+ const A=eqSrc(k),S=A.st||{},N=A.nt||{};
  const s=key=>S[key]?(S[key]==='PM'?'SB':S[key]):'-';
  const n=(key,sp)=>{const v=wNote(N[key]);return v?(sp||' ')+(v[0]==='('?v:'('+v+')'):''};
  const L=(lb,key,sp)=>lb+' : '+s(key)+n(key,sp);
@@ -1819,7 +1826,7 @@ function wAkhir(k){
   return a||'🕛 NIHIL'};
  const loading='*LOADING 1*\n___________________\n\n'+ld('ld1')+'\n\n*LOADING 2*\n___________________\n\n'+ld('ld2');
  const bzc=bauranCalc(o),rb=v=>Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
- const nb=bzc.bio>0?'*NB : Total Co-firing (Batubara + Biomassa) : '+rb(bzc.tot)+' T, bauran biomassa sebesar '+pc2(bzc.pct)+' %*':'*NB : Loading bunker tanpa biomassa*';
+ const nb=bzc.bio>0?'*NB : Loading Biomassa murni : '+pc2(bzc.bio)+' T atau sebesar '+pc2(bzc.pct).replace(',','.')+'%*':'*NB : Loading bunker tanpa biomassa*';
  const D=(+cur.slice(8))+' '+BLN[+cur.slice(5,7)-1].toUpperCase()+' '+cur.slice(0,4);
  const stt=v=>wSp(v).toUpperCase().replace('CHANGE OVER','C/O');
 
@@ -1856,9 +1863,10 @@ function waReports(k){const J=WA_JAM[k];return[{lb:'Jam '+J[0][0]+':00',tx:wHour
 let WAR=[],WAI=0;
 function waShow(i){WAI=i;$('#mTx').value=WAR[i].tx;$('#mOk').textContent='';document.querySelectorAll('#mTabs button').forEach((b,j)=>{b.className=j===i?'abtn':'gbtn'})}
 function waOpen(k,mode){
- WAR=mode==='akhir'?[{lb:'Laporan Akhir',tx:wAkhir(k)}]:waReports(k);WAR.forEach(r=>r.tx=waClean(r.tx));$('#mTabs').innerHTML=WAR.map((r,i)=>`<button class="gbtn" data-watab="${i}" style="padding:6px 12px">${r.lb}</button>`).join('');
- $('#mT').textContent=(mode==='akhir'?'Laporan Akhir Shift · ':'Laporan WA · ')+shiftTitle(SH.find(s=>s.k===k));$('#mTabs').style.display=mode==='akhir'?'none':'';$('#mdl').hidden=false;waShow(0);
- const mm=mode==='akhir'?wAkhirMissing(k):[],cb=$('#mCopy');cb.disabled=!!mm.length;cb.style.opacity=mm.length?'.45':'';cb.style.cursor=mm.length?'not-allowed':'';
+ const ak=mode==='akhir',i=ak?0:(+mode||0),jm=WA_JAM[k][i][0]+':00';
+ WAR=ak?[{lb:'Laporan Akhir',tx:wAkhir(k)}]:[{lb:'Jam '+jm,tx:wHourly(k,i)}];WAR.forEach(r=>r.tx=waClean(r.tx));$('#mTabs').innerHTML='';
+ $('#mT').textContent=(ak?'Laporan Akhir Shift · ':'Laporan WA Pukul '+jm+' · ')+shiftTitle(SH.find(s=>s.k===k));$('#mTabs').style.display='none';$('#mdl').hidden=false;waShow(0);
+ const mm=ak?wAkhirMissing(k):[],cb=$('#mCopy');cb.disabled=!!mm.length;cb.style.opacity=mm.length?'.45':'';cb.style.cursor=mm.length?'not-allowed':'';
  if(mm.length){const o=$('#mOk');o.style.color='#C62828';o.style.whiteSpace='pre-line';o.textContent='Belum lengkap, isi dulu:\n'+mm.join('\n')}else{const o=$('#mOk');o.style.color='';o.style.whiteSpace=''}
 }
 function openModal(title,text){$('#mT').textContent=title;$('#mTx').value=text;$('#mOk').textContent='';$('#mdl').hidden=false}
