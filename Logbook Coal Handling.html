@@ -99,9 +99,9 @@ input.num{text-align:right;font-weight:600}
 .wab .wbd,.wab textarea.wa{box-sizing:border-box;width:100%;margin:0;padding:10px 12px;border:0;border-radius:8px;font:500 13.5px/1.65 var(--fb);white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;text-transform:uppercase;overflow-y:auto;letter-spacing:normal}
 .wab .wbd{position:absolute;inset:0;color:transparent;pointer-events:none;overflow-y:scroll;scrollbar-width:none}.wab .wbd::-webkit-scrollbar{display:none}
 .wab textarea.wa{position:relative;z-index:1;background:transparent;resize:none;min-height:0;flex:1;scrollbar-width:none}.wab textarea.wa::-webkit-scrollbar{display:none}
-.wab .hl{outline:1.5px dashed;outline-offset:1px;border-radius:3px}.wab .hl.r{outline-color:#D92D20;background:rgba(217,45,32,.10)}.wab .hl.g{outline-color:#17A34A;background:rgba(23,163,74,.12)}
+.wab .hl{outline:2px dashed;outline-offset:2px;border-radius:5px}.wab .hl.r{outline-color:#D92D20;background:rgba(217,45,32,.13)}.wab .hl.g{outline-color:#17A34A;background:rgba(23,163,74,.15)}
 .wab .nihil{color:var(--muted);font-weight:700;text-align:center;letter-spacing:.06em}.wab:focus-within .nihil{display:none}
-.col .r2 .tkL .wab .wbd,.col .r2 .tkL .wab textarea.wa{font:600 11px/1.35 var(--fb);padding:8px 10px}.tkL .tkb .wab textarea.wa{min-height:0}
+.col .r2 .tkL .wab .wbd,.col .r2 .tkL .wab textarea.wa{font:600 14px/1.72 var(--fb);letter-spacing:.012em;padding:12px 18px}.col .r2 .tkL .wab textarea.wa{color:#0F1B33}.tkL .tkb .wab textarea.wa{min-height:0}
 .tkL .tkb.emp:not(:focus-within) .wab{flex:none;height:40px}.tkL .tkb.emp:not(:focus-within) .wab .nihil{line-height:20px}
 #tkTip{position:fixed;z-index:99999;max-width:360px;background:#0F1B33;color:#fff;padding:9px 12px;border-radius:9px;font:600 11.5px/1.45 var(--fb);white-space:pre-line;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.35);text-transform:uppercase}
 #tkTip[hidden]{display:none}
@@ -111,7 +111,7 @@ input.num{text-align:right;font-weight:600}
 .tbx ol li{display:flex;justify-content:space-between;gap:4px}
 .tbx .nil{color:var(--muted);text-align:center;margin:1px 0}
 .tbx input{font-size:11.5px!important;border-bottom-style:dashed!important}
-.tkL{gap:8px}.tkL .tkb{display:flex;flex-direction:column;flex:1;min-width:0}.tkL .tkb .wa{flex:1;min-height:90px}.tbx ol li>span{white-space:pre-line}.tbx ol li+li{margin-top:6px}.col .r2 .tkg .tbx ol{font-size:11px;line-height:1.35;padding-left:10px}.col .r2 .tkg .tbx ol li>span{font-weight:600}.col .r2 .tkL .wa{font:600 11px/1.35 var(--fb);padding:8px 10px}.col .r2 .tkL .sdr{font-size:12px}
+.tkL{gap:8px}.tkL .tkb{display:flex;flex-direction:column;flex:1;min-width:0}.tkL .tkb .wa{flex:1;min-height:90px}.tbx ol li>span{white-space:pre-line}.tbx ol li+li{margin-top:6px}.col .r2 .tkg .tbx ol{font-size:11px;line-height:1.35;padding-left:10px}.col .r2 .tkg .tbx ol li>span{font-weight:600}.col .r2 .tkL .wa{font:600 11px/1.35 var(--fb);padding:8px 10px}.col .r2 .tkL .sdr{font-size:13px;letter-spacing:.05em}
 .col.inc{position:relative}
 .incov{position:absolute;inset:0;z-index:40;pointer-events:none;border-radius:14px;background:linear-gradient(115deg,rgba(239,68,68,.10) 0%,rgba(239,68,68,.20) 30%,rgba(255,130,130,.09) 50%,rgba(239,68,68,.20) 70%,rgba(239,68,68,.10) 100%);background-size:260% 100%;animation:incSweep 5s linear infinite,incBreath 2.6s ease-in-out infinite}
 .incov::after{content:'';position:absolute;inset:0;border-radius:inherit;border:2px solid rgba(239,68,68,.55);box-shadow:inset 0 0 34px rgba(239,68,68,.38);animation:incGlow 2.6s ease-in-out infinite}
@@ -1222,13 +1222,13 @@ function bauranCalc(o){const pn=x=>{const v=parseFloat(String(x==null?'':x).repl
 function nT(v){const r=Math.round(v*10)/10;return String(r).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,m=>m)}
 function nTh(v){const r=Math.round(v*10)/10,p=String(r).split('.');return p[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.')+(p[1]?','+p[1]:'')}
 function pc2(v){return (Math.round(v*100)/100).toFixed(2).replace('.',',')}
-function tipBauran(o){const b=bauranCalc(o);return 'Batubara : '+nTh(b.coal)+' ton\nBiomassa : '+nTh(b.bio)+' ton\nTotal Co-firing : '+nTh(b.tot)+' ton\nPersentase Biomassa :\n'+nTh(b.bio)+' ÷ '+nTh(b.tot)+' x 100% = '+pc2(b.pct)+' %\n(estimasi bauran biomassa murni)\nTarget : biomassa murni '+TGT_BIO_TON+' ton\nRealisasi : '+nTh(b.bio)+' ton\nHasil : '+(b.bio>=TGT_BIO_TON?'TERCAPAI':'TIDAK TERCAPAI')}
+function tipBauran(o){const b=bauranCalc(o);return 'Batubara : '+nTh(b.coal)+' ton\nBiomassa : '+nTh(b.bio)+' ton\nTotal Co-firing : '+nTh(b.tot)+' ton\nPersentase Biomassa :\n'+nTh(b.bio)+' ÷ '+nTh(b.tot)+' x 100% = '+pc2(b.pct)+' %'}
 function tipFlow(o,n){const m=o['um'+n]||{};if(m.off==='1')return 'Unloading '+n+' : tidak ada bongkar';const pn=x=>{const v=parseFloat(String(x==null?'':x).replace(',','.'));return isNaN(v)?null:v};
  const L=['Unloading '+n+(m.shp?' ('+m.shp+')':'')];
  [['C1A','a1','k1'],['C1B','a2','k2']].forEach(([nm,a,b])=>{const ak=pn(m[b]);if(ak!=null){const aw=pn(m[a])||0;L.push(nm+' : '+nTh(ak)+' − '+nTh(aw)+' = '+nTh(Math.round((ak-aw)*100)/100)+' ton')}});
  const h=hrs(m),t=umTot(m);L.push('Total Bongkar : '+nTh(t)+' ton');
  if(toMin(m.t1)==null||toMin(m.t2)==null)L.push('Durasi : belum lengkap (jam mulai/selesai)');else L.push('Durasi : '+m.t1+' – '+m.t2+' = '+nTh(Math.round(h*100)/100)+' jam');
- L.push('Flowrate :');L.push(h>0&&t>0?nTh(t)+' ÷ '+nTh(Math.round(h*100)/100)+' = '+Math.round(t/h)+' ton/jam':'belum bisa dihitung');L.push('Target : '+TGT_FLOW+' ton/jam');return L.join('\n')}
+ L.push('Flowrate :');L.push(h>0&&t>0?nTh(t)+' ÷ '+nTh(Math.round(h*100)/100)+' = '+Math.round(t/h)+' ton/jam':'belum bisa dihitung');return L.join('\n')}
 function secLap(k){
  const o=sh(k),bz=bauranCalc(o);
  const fl=n=>{const m=o['um'+n]||{};return m.off==='1'?null:umFlow(m)};
