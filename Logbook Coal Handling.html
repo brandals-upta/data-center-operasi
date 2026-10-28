@@ -1967,10 +1967,10 @@ let rkSel='';
 const rkDs=d=>{const t=new Date(d+'T00:00:00Z');return ['Min','Sen','Sel','Rab','Kam','Jum','Sab'][t.getUTCDay()]+' '+d.slice(8)+'/'+d.slice(5,7)};
 function rkTank(id,b,lv){const sp=String((b&&b.s)||'').trim().toUpperCase(),c=rkCol(sp),L=parseFloat(String(lv==null?'':lv).replace(',','.')),h=isNaN(L)?0:Math.max(0,Math.min(100,L/14*100)),bio=b&&b.m,dim=rkSel&&sp!==rkSel;
  const tip=id+(sp?' · '+sp+' ('+rcTxt(sp)+')':' · STANDBY')+(b&&b.k?'\nKalori '+b.k:'')+(bio?'\n+ Biomassa '+bio:'')+'\nLevel '+(isNaN(L)?'–':lv);
- return `<div class="tkw${dim?' dim':''}" data-tip="${esc(tip)}"><span class="kal">${esc((b&&b.k)||'')}</span><div class="tk${sp?'':' sb'}"><i class="fl${bio?' bio':''}" style="height:${h}%;--c:${c}"></i><em>${isNaN(L)?'':lv}</em></div><span class="bid">${id}</span></div>`}
+ return `<div class="rktw${dim?' rkdim':''}" data-tip="${esc(tip)}"><span class="rkkal">${esc((b&&b.k)||'')}</span><div class="rktk${sp?'':' rksb'}"><i class="rkfl${bio?' rkbio':''}" style="height:${h}%;--c:${c}"></i><em>${isNaN(L)?'':lv}</em></div><span class="rkbid">${id}</span></div>`}
 function rkPolaRow(o,k,f){const qn=f.slice(-1),lq=(o.bl||{})['q'+qn]||{},P=o[f]||{};
  const vals=BK1.concat(BK2).map(id=>parseFloat(String((P[id]||{}).k||'').replace(',','.'))).filter(v=>!isNaN(v)),avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):0;
- const grp=(ids,u)=>`<div class="rkgp"><small>UNIT ${u}</small><div class="tks">${ids.map(id=>rkTank(id,P[id],lq[id])).join('')}</div></div>`;
+ const grp=(ids,u)=>`<div class="rkgp"><small>UNIT ${u}</small><div class="rktks">${ids.map(id=>rkTank(id,P[id],lq[id])).join('')}</div></div>`;
  return `<div class="rkrow"><div class="rkrh"><b>POLA ${qn}</b><span>level ${CJT[k][+qn-1]}</span><em>${avg?'kalori ≈ '+avg:''}</em></div><div class="rkrg">${grp(BK1,1)}${grp(BK2,2)}</div></div>`}
 function rkTonBar(t){const tot=t.c1+t.c2+t.b1+t.b2;if(!(t.n1+t.n2)||tot<=0)return '<div class="rkton nil">Belum ada loading</div>';
  const w=v=>(v/tot*100).toFixed(2)+'%';
@@ -1978,7 +1978,7 @@ function rkTonBar(t){const tot=t.c1+t.c2+t.b1+t.b2;if(!(t.n1+t.n2)||tot<=0)retur
   <div class="rknum"><span><i class="c1"></i>L1 <b>${nTh(t.c1)}</b></span><span><i class="c2"></i>L2 <b>${nTh(t.c2)}</b></span><span><i class="bm"></i>Biomassa <b>${nTh(t.b1+t.b2)}</b></span><span class="tt">Total <b>${nTh(tot)}</b> T · bauran <b>${pc2(t.pct)}%</b></span></div></div>`}
 function rkLegend(ds){const set={};ds.forEach(d=>SH.forEach(s=>{const o=(DB[d]||{})[s.k];if(!o)return;['pl1','pl2'].forEach(f=>Object.values(o[f]||{}).forEach(b=>{const n=String((b&&b.s)||'').trim().toUpperCase();if(n)set[n]=(set[n]||0)+1}))}));
  const ks=Object.keys(set).sort((a,b)=>set[b]-set[a]);
- return `<div class="rkleg"><span class="lg">SHIPPER</span>${ks.map(n=>`<button type="button" class="${rkSel===n?'on':''}" data-sel="${esc(n)}" style="--c:${rkCol(n)}"><i></i>${esc(n)}</button>`).join('')}<span class="lg2"><i class="bio"></i>garis = campuran biomassa</span></div>`}
+ return `<div class="rkleg"><span class="lg">SHIPPER</span>${ks.map(n=>`<button type="button" class="${rkSel===n?'on':''}" data-sel="${esc(n)}" style="--c:${rkCol(n)}"><i></i>${esc(n)}</button>`).join('')}<span class="lg2"><i class="rkbio"></i>garis = campuran biomassa</span></div>`}
 function rkPolaView(){
  const ds=rkDates();if(!ds.length)return '<div class="rke">Belum ada data pada rentang tanggal ini.</div>';
  return rkLegend(ds)+ds.map(d=>{let C=0,B=0;SH.forEach(s=>{const o=(DB[d]||{})[s.k];if(o){const t=rkTon(o);C+=t.c1+t.c2;B+=t.b1+t.b2}});
@@ -1986,24 +1986,65 @@ function rkPolaView(){
   <div class="rkg">${SH.map(s=>{const o=(DB[d]||{})[s.k];const has=o&&['pl1','pl2'].some(f=>Object.values(o[f]||{}).some(b=>b&&(b.s||b.k||b.m)));
    return `<article class="rkcard">${rkShiftHead(d,s)}${has?rkPolaRow(o,s.k,'pl1')+rkPolaRow(o,s.k,'pl2'):'<div class="rke">'+(o?'Pola loading belum diisi':'Belum ada data')+'</div>'}${o?rkTonBar(rkTon(o)):''}</article>`}).join('')}</div></section>`}).join('')}
 function rkShiftHead(d,s){return `<div class="rksh ${s.k}"><b>${esc(shiftTitle(s,d))}</b><span>${s.jam}</span></div>`}
+function rkBuild(){
+ const t=liveShift().date,ds=Object.keys(DB).filter(d=>/^\d{4}-\d\d-\d\d$/.test(d)&&d>=RK_START&&d<=t&&DB[d]&&!DB[d]._seed).sort(),E=[],V=[];
+ ds.forEach(d=>['M','P','S'].forEach(k=>{const o=DB[d][k];if(!o)return;[1,2].forEach(n=>{const m=o['um'+n]||{};if(m.off==='1'||!(m.shp||m.t1||m.t2||m.k1||m.k2))return;
+  E.push({d,k,n,o,m,shp:String(m.shp||'').trim(),rank:rcTxt(m.shp),s1:String(m.s1||'').toUpperCase(),s2:String(m.s2||'').toUpperCase(),h:hrs(m),tot:umTot(m),f:umFlow(m),g:schedGrp(d,k)||''})})}));
+ [1,2].forEach(n=>{let c=null;E.filter(e=>e.n===n).forEach(e=>{
+  if(!c||/COMDISCH/.test(e.s1)||(c.shp&&e.shp&&c.shp!==e.shp)){c={shp:e.shp,rank:e.rank,es:[]};V.push(c)}
+  c.es.push(e);e.v=c;e.i=c.es.length;if(/COMPLETED/.test(e.s2)){c.done=true;c=null}})});
+ V.forEach(v=>{let T=0,H=0;const lk=[],kd=[];v.es.forEach(e=>{T+=e.tot;if(e.h>0&&e.tot>0)H+=e.h;(e.o['ul'+e.n]||[]).forEach(r=>{const l=r&&String(r.lokasi||'').trim();if(l&&/[A-Z0-9]/i.test(l)&&lk.indexOf(l)<0)lk.push(l)});(e.o['kd'+e.n]||[]).forEach(r=>{const x=r&&String(r.t||'').trim().toUpperCase();if(x&&kd.indexOf(x)<0)kd.push(x)})});
+  v.tot=T;v.f=H>0&&T>0?Math.round(T/H):null;v.lok=lk.join(' - ');v.kd=kd.join(', ');v.last=v.es[v.es.length-1];
+  v.clean=!!v.done&&T<500;v.single=!!v.done&&v.es.length===1;
+  v.es.forEach(e=>{e.cl=v.clean?'pu':v.single?'bl':'c'+Math.min(e.i,4)})});
+ return{ds,E,V}}
+const RKC={c1:['#92D050','#000'],c2:['#00B050','#000'],c3:['#548235','#fff'],c4:['#375623','#fff'],bl:['#00B0F0','#000'],pu:['#7030A0','#fff']},
+ RKG={c1:['#FFFF00','#000'],c2:['#FFC000','#000'],c3:['#BF9000','#fff'],c4:['#7F6000','#fff'],bl:['#00B0F0','#000'],pu:['#7030A0','#fff']};
 function rkFlowView(){
- const ds=rkDates();if(!ds.length)return '<div class="rke">Belum ada data pada rentang tanggal ini.</div>';
- const all=[],bys={};let best=null;
- ds.forEach(d=>SH.forEach(s=>{const o=(DB[d]||{})[s.k];if(!o)return;[1,2].forEach(n=>{const r=rkFlow(o,n);if(r.ada&&r.f!=null){all.push(r.f);const key=(r.shp||'?')+(r.rank?' '+r.rank:'');(bys[key]=bys[key]||[]).push(r.f);if(!best||r.f>best.f)best={f:r.f,shp:key,d,s:shiftTitle(s,d)}}})}));
- const avg=a=>a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):0,ok=all.filter(v=>v>=TGT_FLOW).length,pct=all.length?Math.round(ok/all.length*100):0;
- const R=46,Cc=2*Math.PI*R,ring=`<svg viewBox="0 0 120 120" class="rkring"><circle cx="60" cy="60" r="${R}" class="bg"/><circle cx="60" cy="60" r="${R}" class="fg" stroke-dasharray="${(Cc*pct/100).toFixed(1)} ${Cc.toFixed(1)}" transform="rotate(-90 60 60)"/><text x="60" y="58" text-anchor="middle" class="v">${all.length?pct+'%':'–'}</text><text x="60" y="76" text-anchor="middle" class="l">tercapai</text></svg>`;
- const ks=Object.keys(bys).sort((a,b)=>avg(bys[b])-avg(bys[a])),mx=Math.max(TGT_FLOW*1.3,...ks.map(k=>avg(bys[k])));
- const bars=ks.map(k=>{const v=avg(bys[k]);return `<div class="rkbr"><span class="nm">${esc(k)}</span><div class="tr"><i class="${v>=TGT_FLOW?'ok':'no'}" style="width:${(v/mx*100).toFixed(1)}%"></i><u style="left:${(TGT_FLOW/mx*100).toFixed(1)}%"></u></div><b>${v}</b><small>${bys[k].length}x</small></div>`}).join('');
- const hd=`<div class="rkhero"><div class="rkkp">${ring}<div><small>Rata-rata flowrate</small><b>${all.length?avg(all):'–'}<i> t/h</i></b><small>${ok} dari ${all.length} bongkar ≥ ${TGT_FLOW} t/h</small></div></div>
-  <div class="rkkp"><div><small>Tertinggi</small><b>${best?best.f:'–'}<i> t/h</i></b><small>${best?esc(best.shp)+' · '+rkDs(best.d):''}</small></div></div>
-  <div class="rkrank"><small>PERINGKAT RATA-RATA PER SHIPPER <u>garis = target ${TGT_FLOW} t/h</u></small>${bars||'<div class="rke">–</div>'}</div></div>`;
- const cell=(o,n)=>{if(!o)return '<td class="hm nl">·</td>';const r=rkFlow(o,n);if(!r.ada)return '<td class="hm nl">–</td>';if(r.f==null)return `<td class="hm wip" data-tip="${esc(r.shp+' '+r.rank+'\nDurasi/total belum lengkap')}">…<small>${esc(r.shp.slice(0,8))}</small></td>`;
-  const q=Math.max(0,Math.min(1,r.f/(TGT_FLOW*1.4))),good=r.f>=TGT_FLOW;
-  return `<td class="hm ${good?'g':'r'}" style="--q:${q.toFixed(2)}" data-tip="${esc(r.shp+' '+r.rank+'\n'+r.f+' t/h')}"><b>${r.f}</b><small>${esc(r.shp.slice(0,8))}</small></td>`};
- const rows=ds.map(d=>`<tr><th class="dt">${rkDs(d)}</th>${SH.map(s=>{const o=(DB[d]||{})[s.k];return cell(o,1)+cell(o,2)}).join('')}</tr>`).join('');
- const shh=SH.map(s=>`<th colspan="2" class="sh ${s.k}">${SWN[s.k].toUpperCase()}</th>`).join(''),u12=SH.map(()=>'<th class="u">U1</th><th class="u">U2</th>').join('');
- return hd+`<div class="rkhmw"><table class="rkhm"><thead><tr><th rowspan="2"></th>${shh}</tr><tr>${u12}</tr></thead><tbody>${rows}</tbody></table></div><div class="rkkey"><span><i class="g"></i>≥ ${TGT_FLOW} t/h</span><span><i class="r"></i>&lt; ${TGT_FLOW} t/h</span><span>warna makin pekat = makin ${'jauh dari 0'}</span></div>`}
-function rkDraw(){const b=document.getElementById('rkBody');if(!b)return;document.getElementById('rkT').textContent=rkMode==='flow'?'Flowrate Bongkar':'Pola Loading';b.innerHTML=rkMode==='flow'?rkFlowView():rkPolaView()}
+ const {ds,E,V}=rkBuild(),show=rkDates().slice().reverse();
+ if(!show.length)return '<div class="rke">Belum ada data pada rentang tanggal ini.</div>';
+ const ORD=[['P','PAGI'],['S','SORE'],['M','MALAM']],GR=['A','B','C','D'];
+ const find=(d,k,n)=>E.find(e=>e.d===d&&e.k===k&&e.n===n);
+ const cell=(e,pal,val)=>{if(!e||val==null||val==='')return '<td></td>';const c=pal[e.cl]||['',''];return `<td class="v" style="background:${c[0]};color:${c[1]}">${val}</td>`};
+ const rows=[];
+ show.forEach(d=>{
+  const hasU2=ORD.some(([k])=>find(d,k,2)),U=hasU2?2:1;
+  const vs=V.filter(v=>v.last.d===d).sort((a,b)=>a.last.k<b.last.k?1:-1);
+  const n=Math.max(1+U,vs.length);
+  const gl=ORD.map(([k])=>schedGrp(d,k)||'');const lib=GR.find(g=>gl.indexOf(g)<0)||'';
+  for(let r=0;r<n;r++){
+   let h='';
+   const blk=(fn)=>{ if(r===0)return '<td class="tg" rowspan="'+n+'">'+(+d.slice(8))+'</td>'+fn(); return fn()};
+   const letters=()=>ORD.map(([k],i)=>`<td class="lt">${gl[i]}</td>`).join('')+`<td class="lt">${lib}</td>`;
+   const vals=(pal,fv)=>ORD.map(([k])=>{const e=find(d,k,r);return cell(e,pal,e?fv(e):null)}).join('')+'<td></td>';
+   const empt='<td></td><td></td><td></td><td></td>';
+   const L=(fv,pal)=>r===0?letters():(r<=U?vals(pal,fv):empt);
+   const dn=ORD.reduce((a,[k])=>a+((DB[d]&&DB[d][k])?rkTon(DB[d][k]).b1+rkTon(DB[d][k]).b2:0),0);
+   const bz=ORD.map(([k])=>{const o=DB[d]&&DB[d][k];const t=o?rkTon(o):null;return t&&(t.n1+t.n2)?nTh(t.b1+t.b2):''});
+   const Bz=r===0?letters():(r===1?bz.map(x=>`<td class="v">${x}</td>`).join('')+'<td></td>':empt);
+   const v=vs[r];
+   h+=blk(()=>L(e=>e.f==null?'':e.f,RKC))+'<td class="sp"></td>'+(r===0?'<td class="tg" rowspan="'+n+'">'+(+d.slice(8))+'</td>':'')+L(e=>e.v&&!e.v.clean&&e.v.f!=null?e.v.f:'',RKG)+'<td class="sp"></td>'
+    +(v?`<td class="tx">${esc(v.shp)}${v.rank?' '+v.rank:''}</td><td class="tx">${esc(v.lok)}</td><td class="v">${v.clean||v.f==null?'':v.f}</td>`:'<td></td><td></td><td></td>')+'<td class="sp"></td>'
+    +(v?`<td class="kt">${esc(v.kd)}</td>`:'<td class="kt"></td>')+'<td class="sp"></td>'+(r===0?'<td class="tg" rowspan="'+n+'">'+(+d.slice(8))+'</td>':'')+Bz;
+   rows.push('<tr'+(r===0?' class="d0"':'')+'>'+h+'</tr>')}});
+ const hd=['TGL','PAGI','SORE','MALAM','LIBUR'];
+ const head=`<tr><th colspan="5">FLOW RATE PER SHIFT</th><td class="sp"></td><th colspan="5">FLOW RATE GABUNG</th><td class="sp"></td><th>TONGKANG</th><th>LOKASI</th><th>FLOWRATE</th><td class="sp"></td><th>KETERANGAN</th><td class="sp"></td><th colspan="5">BAURAN BIOMASSA PER SHIFT</th></tr><tr>${hd.map(x=>`<th>${x}</th>`).join('')}<td class="sp"></td>${hd.map(x=>`<th>${x}</th>`).join('')}<td class="sp"></td><th></th><th></th><th></th><td class="sp"></td><th></th><td class="sp"></td>${hd.map(x=>`<th>${x}</th>`).join('')}</tr>`;
+ /* ringkasan per grup */
+ const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0,f2=x=>x?(Math.round(x*100)/100).toString().replace('.',','):'';
+ const inR=E.filter(e=>show.indexOf(e.d)>=0&&e.cl!=='pu'&&e.f!=null);
+ const gi={},gg={},gb={};GR.forEach(g=>{gi[g]=avg(inR.filter(e=>e.g===g).map(e=>e.f));gg[g]=avg(inR.filter(e=>e.g===g&&e.v&&e.v.f!=null).map(e=>e.v.f));gb[g]=0});
+ show.forEach(d=>ORD.forEach(([k])=>{const o=DB[d]&&DB[d][k];if(o){const t=rkTon(o),g=schedGrp(d,k);if(g)gb[g]+=t.b1+t.b2}}));
+ const clean=V.filter(v=>v.clean&&show.indexOf(v.last.d)>=0).length,vv=V.filter(v=>show.indexOf(v.last.d)>=0).length;
+ let TT=0,HH=0;inR.forEach(e=>{if(e.h>0){TT+=e.tot;HH+=e.h}});
+ const sm=`<div class="xsum"><table class="xs"><tr><th>FLOWRATE INDIVIDU</th><th></th></tr>${GR.map(g=>`<tr><td>${g}</td><td>${f2(gi[g])}</td></tr>`).join('')}</table>
+  <table class="xs"><tr><th>FLOWRATE GABUNG</th><th></th></tr>${GR.map(g=>`<tr><td>${g}</td><td>${f2(gg[g])}</td></tr>`).join('')}</table>
+  <table class="xs"><tr><th>FLOWRATE RATA2</th><th></th></tr>${GR.map(g=>`<tr><td>${g}</td><td>${f2((gi[g]+gg[g])/2)}</td></tr>`).join('')}</table>
+  <table class="xs w"><tr><th>JUMLAH CLEANING</th><td>${clean}</td></tr><tr><th>FLOWRATE KUMULATIF BULAN INI</th><td class="gr">${f2(HH>0?TT/HH:0)}</td></tr><tr><th>JUMLAH TONGKANG BULAN INI</th><td class="gr">${vv}</td></tr></table>
+  <table class="xs"><tr><th>TOTAL BAURAN BIOMASSA</th><th></th></tr>${GR.map(g=>`<tr><td>${g}</td><td>${nTh(gb[g])}</td></tr>`).join('')}</table></div>`;
+ const kt=[['c1','AWAL BONGKAR / COMMENCE DISCHARGE'],['c2','AKHIR BONGKAR / COMPLETE DISCHARGE / JIKA HABIS 2 SHIFT'],['c3','AKHIR BONGKAR / COMPLETE DISCHARGE / JIKA HABIS 3 SHIFT'],['pu','TIDAK IKUT PENGHITUNGAN FLOWRATE KARENA CLEANING TONGKANG < 500 T'],['bl','1 SHIFT COMPLETE 1 TONGKANG']];
+ const key=`<table class="xk"><tr><th colspan="3">KETERANGAN</th></tr>${kt.map(([c,t])=>`<tr><td style="background:${RKC[c][0]}"></td><td style="background:${RKG[c][0]}"></td><td>${t}</td></tr>`).join('')}</table>`;
+ return `<div class="xlw"><table class="xl">${head}${rows.join('')}</table>${sm}${key}</div>`}
+function rkDraw(){const b=document.getElementById('rkBody');if(!b)return;document.getElementById('rkT').textContent=rkMode==='flow'?'Flowrate Bongkar':'Pola Loading';document.getElementById('rkv').classList.toggle('xl',rkMode==='flow');b.innerHTML=rkMode==='flow'?rkFlowView():rkPolaView()}
 function rkOpen(m){rkMode=m;let v=document.getElementById('rkv');
  if(!v){v=document.createElement('div');v.id='rkv';v.innerHTML=`<div class="rkhd"><h2 id="rkT"></h2><label>Dari <input type="date" id="rkF" min="${RK_START}"></label><label>Sampai <input type="date" id="rkTo"></label><button type="button" id="rkX" aria-label="Tutup">×</button></div><div id="rkBody"></div>`;document.body.appendChild(v);
   v.querySelector('#rkF').onchange=e=>{rkFrom=e.target.value||RK_START;rkDraw()};v.querySelector('#rkTo').onchange=e=>{rkTo=e.target.value;rkDraw()};v.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-sel]');if(b){rkSel=rkSel===b.dataset.sel?'':b.dataset.sel;const bd=document.getElementById('rkBody'),y=bd.scrollTop;rkDraw();bd.scrollTop=y}});
@@ -2262,7 +2303,7 @@ setBg(bgSel);loadFix();try{tkCarry()}catch(e){}render();syncW();if(CL.on){cStart
 .rkleg button i{width:9px;height:9px;border-radius:50%;background:var(--c)}
 .rkleg button.on{background:var(--c);color:#08111f}.rkleg button.on i{background:#08111f}
 .rkleg .lg2{margin-left:auto;font:600 11px var(--fd);color:#6f82a0;display:flex;align-items:center;gap:6px}
-.rkleg .bio,.fl.bio{background-image:repeating-linear-gradient(135deg,rgba(8,17,31,.55) 0 3px,transparent 3px 7px)}
+.rkleg .rkbio,.rkfl.rkbio{background-image:repeating-linear-gradient(135deg,rgba(8,17,31,.55) 0 3px,transparent 3px 7px)}
 .rkleg .lg2 i{width:16px;height:10px;border-radius:3px;background-color:#94a3b8}
 .rkd{margin:0 0 26px}
 .rkdh{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:baseline;margin:0 0 10px;padding:0 2px}
@@ -2278,15 +2319,15 @@ setBg(bgSel);loadFix();try{tkCarry()}catch(e){}render();syncW();if(CL.on){cStart
 .rkrh b{font:800 11px var(--fd);letter-spacing:.14em;color:#7dd3fc}.rkrh span{font:600 11px var(--fd);color:#8aa0c0}.rkrh em{margin-left:auto;font:600 11px var(--fd);font-style:normal;color:#6f82a0}
 .rkrg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .rkgp small{display:block;font:700 9.5px var(--fd);letter-spacing:.14em;color:#5f7391;margin:0 0 3px}
-.tks{display:flex;gap:4px;justify-content:space-between}
-.tkw{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:0}
-.tkw.dim{opacity:.18}
-.tkw .kal{font:600 8.5px var(--fd);color:#6f82a0;height:10px}
-.tk{position:relative;width:100%;max-width:34px;height:72px;border:1px solid rgba(255,255,255,.22);border-radius:5px 5px 7px 7px;background:rgba(0,0,0,.28);overflow:hidden;display:flex;align-items:flex-end}
-.tk.sb{border-style:dashed;border-color:rgba(255,255,255,.12)}
-.tk .fl{display:block;width:100%;background-color:var(--c);box-shadow:inset 0 3px 0 rgba(255,255,255,.35)}
-.tk em{position:absolute;left:0;right:0;top:3px;text-align:center;font:800 11px var(--fd);font-style:normal;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9)}
-.tkw .bid{font:800 10px var(--fd);color:#9fb3cf}
+.rktks{display:flex;gap:4px;justify-content:space-between}
+.rktw{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:0}
+.rktw.rkdim{opacity:.18}
+.rktw .rkkal{font:600 8.5px var(--fd);color:#6f82a0;height:10px}
+.rktk{position:relative;width:100%;max-width:34px;height:72px;border:1px solid rgba(255,255,255,.22);border-radius:5px 5px 7px 7px;background:rgba(0,0,0,.28);overflow:hidden;display:flex;align-items:flex-end}
+.rktk.rksb{border-style:dashed;border-color:rgba(255,255,255,.12)}
+.rktk .rkfl{display:block;width:100%;background-color:var(--c);box-shadow:inset 0 3px 0 rgba(255,255,255,.35)}
+.rktk em{position:absolute;left:0;right:0;top:3px;text-align:center;font:800 11px var(--fd);font-style:normal;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9)}
+.rktw .rkbid{font:800 10px var(--fd);color:#9fb3cf}
 .rkton{margin:12px 12px 0}.rkton.nil{color:#6f82a0;font:600 12px var(--fd)}
 .rkbar{display:flex;height:12px;border-radius:7px;overflow:hidden;background:rgba(255,255,255,.07)}
 .rkbar i{display:block;height:100%}
@@ -2294,33 +2335,32 @@ setBg(bgSel);loadFix();try{tkCarry()}catch(e){}render();syncW();if(CL.on){cStart
 .rknum{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:6px;font:600 11px var(--fd);color:#8aa0c0}
 .rknum span{display:inline-flex;align-items:center;gap:5px}.rknum i{width:8px;height:8px;border-radius:2px}
 .rknum b{color:#fff;font-weight:800}.rknum .tt{margin-left:auto}
-.rkhero{display:grid;grid-template-columns:auto auto 1fr;gap:14px;margin:0 0 18px;align-items:stretch}
-.rkkp{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:12px 18px}
-.rkkp small{display:block;font:600 11px var(--fd);color:#8aa0c0}
-.rkkp b{display:block;font:800 34px/1.1 var(--fd);color:#fff}.rkkp b i{font:600 13px var(--fd);font-style:normal;color:#8aa0c0}
-.rkring{width:96px;height:96px}.rkring circle{fill:none;stroke-width:11}.rkring .bg{stroke:rgba(255,255,255,.1)}.rkring .fg{stroke:#4ade80;stroke-linecap:round}
-.rkring .v{fill:#fff;font:800 24px var(--fd)}.rkring .l{fill:#8aa0c0;font:600 11px var(--fd)}
-.rkrank{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:12px 18px}
-.rkrank>small{display:block;font:800 10.5px var(--fd);letter-spacing:.12em;color:#6f82a0;margin-bottom:6px}.rkrank>small u{text-decoration:none;font-weight:600;letter-spacing:0;margin-left:8px}
-.rkbr{display:grid;grid-template-columns:110px 1fr 40px 30px;gap:8px;align-items:center;margin:3px 0;font:700 12px var(--fd)}
-.rkbr .nm{color:#dbe6f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rkbr .tr{position:relative;height:10px;border-radius:6px;background:rgba(255,255,255,.07)}
-.rkbr .tr i{position:absolute;left:0;top:0;bottom:0;border-radius:6px}.rkbr .tr i.ok{background:linear-gradient(90deg,#16a34a,#4ade80)}.rkbr .tr i.no{background:linear-gradient(90deg,#b45309,#fbbf24)}
-.rkbr .tr u{position:absolute;top:-3px;bottom:-3px;width:2px;background:#fff;opacity:.7}
-.rkbr b{text-align:right;color:#fff}.rkbr small{color:#6f82a0;font-weight:600}
-.rkhmw{overflow:auto;border:1px solid rgba(255,255,255,.09);border-radius:16px}
-.rkhm{border-collapse:separate;border-spacing:3px;width:100%;min-width:760px;table-layout:fixed}
-.rkhm thead th[rowspan]{width:84px}
-.rkhm th{font:800 10.5px var(--fd);letter-spacing:.12em;color:#8aa0c0;padding:5px 4px;text-align:center}
-.rkhm th.sh.M{color:#a5b4fc}.rkhm th.sh.P{color:#7dd3fc}.rkhm th.sh.S{color:#fdba74}
-.rkhm th.u{font-size:9.5px;color:#5f7391;letter-spacing:.06em}
-.rkhm th.dt{text-align:left;color:#dbe6f5;font:700 12px var(--fd);letter-spacing:.02em;white-space:nowrap;padding-right:10px;position:sticky;left:0;background:#0b1730;width:84px}
-.hm{height:46px;text-align:center;border-radius:8px;font:600 11px var(--fd);color:#fff;vertical-align:middle;width:11%}
-.hm b{display:block;font:800 15px/1.1 var(--fd)}.hm small{display:block;font:600 9px var(--fd);opacity:.85;letter-spacing:.04em}
-.hm.g{background:rgba(34,197,94,calc(.22 + var(--q,0) * .6))}.hm.r{background:rgba(239,68,68,calc(.15 + (1 - var(--q,0)) * .5))}
-.hm.nl{background:rgba(255,255,255,.04);color:#3e5170}.hm.wip{background:rgba(250,204,21,.14);color:#fde047}
-.rkkey{display:flex;gap:16px;margin:10px 4px 0;font:600 11px var(--fd);color:#6f82a0}.rkkey i{display:inline-block;width:12px;height:10px;border-radius:3px;margin-right:5px}.rkkey i.g{background:#22c55e}.rkkey i.r{background:#ef4444}
-@media (max-width:900px){.rkhero{grid-template-columns:1fr}.rkg{grid-template-columns:1fr}}
+@media (max-width:900px){.rkg{grid-template-columns:1fr}}
+
+#rkv.xl{background:#fff;color:#000}
+#rkv.xl .rkhd{background:#217346;border-bottom:0}
+#rkv.xl .rkhd h2{background:none;-webkit-background-clip:initial;color:#fff}
+#rkv.xl .rkhd label{color:#e8f5ec}
+#rkv.xl #rkBody{background:#fff;padding:12px 16px 40px}
+.xlw{font:11px Calibri,Carlito,Arial,sans-serif;color:#000}
+.xlw table{border-collapse:collapse}
+table.xl{margin:0 0 16px}
+table.xl th{background:#A6A6A6;border:1px solid #000;padding:1px 6px;font-weight:400;text-align:center;white-space:nowrap}
+table.xl td{border:1px solid #000;padding:0 5px;height:17px;text-align:center;min-width:34px}
+table.xl td.sp{border:0;min-width:14px;width:14px;background:#fff}
+table.xl td.tg{background:#fff}
+table.xl td.lt{background:#D6DCE4}
+table.xl td.v{font-variant-numeric:tabular-nums;text-align:right;padding-right:6px}
+table.xl td.tx{min-width:104px;white-space:nowrap}
+table.xl td.kt{text-align:left;min-width:330px;max-width:430px;font-size:10.5px}
+table.xl tr.d0 td{border-top-width:2px}
+.xsum{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start;margin:6px 0 14px}
+table.xs th{background:#A6A6A6;border:1px solid #000;padding:1px 8px;font-weight:400;text-align:left}
+table.xs td{border:1px solid #000;padding:0 8px;min-width:64px;height:17px;text-align:right}
+table.xs td:first-child{text-align:center;min-width:34px}
+table.xs.w th{background:#fff;border:1px solid #000}table.xs.w td.gr{background:#92D050}
+table.xk{margin:0}table.xk th{background:#A6A6A6;border:1px solid #000;font-weight:400;text-align:left;padding:1px 6px}
+table.xk td{border:0;height:17px;padding:0 6px}table.xk td:nth-child(1),table.xk td:nth-child(2){width:46px;border:1px solid #fff}
 </style>
 <script id="srCariJs">
 (function(){
