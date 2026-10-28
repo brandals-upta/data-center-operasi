@@ -92,17 +92,6 @@ input.num{text-align:right;font-weight:600}
 .tkp .x{display:none;position:static;width:14px;height:14px;margin-left:1px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.28);color:#fff;font:700 11px/14px var(--fb);cursor:pointer}
 .tkp:hover .x{display:inline-block}
 
-/* Tongkang selesai/sandar: penanda baris + ringkas saat NIHIL */
-.tkL .tkb{min-height:0}.tkL .tkb.emp:not(:focus-within){flex:0 0 auto}
-.wab{position:relative;display:flex;flex:1;min-height:0;margin-top:4px;background:#fff;border:1px solid #D2DDEB;border-radius:8px}
-.wab:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(22,103,217,.14)}
-.wab .wbd,.wab textarea.wa{box-sizing:border-box;width:100%;margin:0;padding:10px 12px;border:0;border-radius:8px;font:500 13.5px/1.65 var(--fb);white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;text-transform:uppercase;overflow-y:auto;letter-spacing:normal}
-.wab .wbd{position:absolute;inset:0;color:transparent;pointer-events:none;overflow-y:scroll;scrollbar-width:none}.wab .wbd::-webkit-scrollbar{display:none}
-.wab textarea.wa{position:relative;z-index:1;background:transparent;resize:none;min-height:0;flex:1;scrollbar-width:none}.wab textarea.wa::-webkit-scrollbar{display:none}
-.wab .hl{outline:2px dashed;outline-offset:2px;border-radius:5px}.wab .hl.r{outline-color:#D92D20;background:rgba(217,45,32,.13)}.wab .hl.g{outline-color:#17A34A;background:rgba(23,163,74,.15)}
-.wab .nihil{color:var(--muted);font-weight:700;text-align:center;letter-spacing:.06em}.wab:focus-within .nihil{display:none}
-.col .r2 .tkL .wab .wbd,.col .r2 .tkL .wab textarea.wa{font:600 14px/1.72 var(--fb);letter-spacing:.012em;padding:12px 18px}.col .r2 .tkL .wab textarea.wa{color:#0F1B33}.tkL .tkb .wab textarea.wa{min-height:0}
-.tkL .tkb.emp:not(:focus-within) .wab{flex:none;height:40px}.tkL .tkb.emp:not(:focus-within) .wab .nihil{line-height:20px}
 #tkTip{position:fixed;z-index:99999;max-width:360px;background:#0F1B33;color:#fff;padding:9px 12px;border-radius:9px;font:600 11.5px/1.45 var(--fb);white-space:pre-line;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.35);text-transform:uppercase}
 #tkTip[hidden]{display:none}
 .tbx header{display:flex;justify-content:space-between;align-items:center;font:700 11.5px var(--fd);letter-spacing:.04em;color:var(--navy2)}
@@ -111,7 +100,7 @@ input.num{text-align:right;font-weight:600}
 .tbx ol li{display:flex;justify-content:space-between;gap:4px}
 .tbx .nil{color:var(--muted);text-align:center;margin:1px 0}
 .tbx input{font-size:11.5px!important;border-bottom-style:dashed!important}
-.tkL{gap:8px}.tkL .tkb{display:flex;flex-direction:column;flex:1;min-width:0}.tkL .tkb .wa{flex:1;min-height:90px}.tbx ol li>span{white-space:pre-line}.tbx ol li+li{margin-top:6px}.col .r2 .tkg .tbx ol{font-size:11px;line-height:1.35;padding-left:10px}.col .r2 .tkg .tbx ol li>span{font-weight:600}.col .r2 .tkL .wa{font:600 11px/1.35 var(--fb);padding:8px 10px}.col .r2 .tkL .sdr{font-size:13px;letter-spacing:.05em}
+.tkL{gap:8px}.tkL .tkb{display:flex;flex-direction:column;flex:1;min-width:0}.tkL .tkb .wa{flex:1;min-height:90px}.tbx ol li>span{white-space:pre-line}.tbx ol li+li{margin-top:6px}.col .r2 .tkg .tbx ol{font-size:11px;line-height:1.35;padding-left:10px}.col .r2 .tkg .tbx ol li>span{font-weight:600}.col .r2 .tkL .wa{font:600 11px/1.35 var(--fb);padding:8px 10px}.col .r2 .tkL .sdr{font-size:12px}
 .col.inc{position:relative}
 .incov{position:absolute;inset:0;z-index:40;pointer-events:none;border-radius:14px;background:linear-gradient(115deg,rgba(239,68,68,.10) 0%,rgba(239,68,68,.20) 30%,rgba(255,130,130,.09) 50%,rgba(239,68,68,.20) 70%,rgba(239,68,68,.10) 100%);background-size:260% 100%;animation:incSweep 5s linear infinite,incBreath 2.6s ease-in-out infinite}
 .incov::after{content:'';position:absolute;inset:0;border-radius:inherit;border:2px solid rgba(239,68,68,.55);box-shadow:inset 0 0 34px rgba(239,68,68,.38);animation:incGlow 2.6s ease-in-out infinite}
@@ -375,7 +364,7 @@ input.f,select.f{font-size:13px;font-weight:600}
 .um input.tm:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(22,103,217,.14)}
 .um select.ums{-webkit-appearance:none;appearance:none;border-radius:14px;border:1px solid #D4DFEC;background:#fff;color:#000;font:700 11.5px var(--fd);letter-spacing:.04em;cursor:pointer;width:auto;text-transform:uppercase}
 .um select.ums.g:not(.e){background:#3CB043;border-color:#2F9535;color:#fff}
-.um select.ums.b:not(.e){background:#1F5EB8;border-color:#184D9B;color:#fff}
+.um select.ums.b:not(.e),.um select.ums.g.co:not(.e){background:#1F5EB8;border-color:#184D9B;color:#fff}
 .um select.ums option{background:#0B0B0B;color:#fff}
 .ur{display:flex;align-items:center;gap:4px}
 .ur u{text-decoration:none;font:700 12px var(--fd);color:var(--ink);margin-right:2px}
@@ -1112,8 +1101,6 @@ const POLS=()=>({'1A':{s:'BA',k:'4400'},'1B':{s:'BA',k:'4400'},'1C':{s:'INDEXIM'
 function inp(k,p,o={}){const v=getP(sh(k),p);return `<input class="f${o.num?' num':''}${o.cls?(' '+o.cls):''}" id="i-${k}-${p.replace(/[^\w]/g,'_')}" data-s="${k}" data-p="${p}"${o.raw?' data-raw="1"':''} value="${esc(v)}"${o.ph?` placeholder="${o.ph}"`:''}${o.list?` list="${o.list}"`:''}${o.ro?' readonly':''}${o.pick?` data-pick="${o.pick}"`:''}${o.num?' inputmode="decimal"':''}${o.w?` style="width:${o.w}"`:''} aria-label="${esc(o.al||p)}">`}
 function chip(k,key){const v0=sh(k).st[key]||'',v=v0==='PM'?'SB':v0;return `<button class="st ${v}" data-s="${k}" data-st="${esc(key)}" title="Klik untuk ganti status">${v||'–'}</button>`}
 
-function tkHl(v,m){v=String(v||'');if(!v.trim())return '<div class="nihil">NIHIL</div>';
- return v.split('\n').map(l=>{const hit=/^\s*SHIPPER\s*:/i.test(l)||(m==='sel'?/^\s*SELESAI\b/i.test(l):/^\s*BONGKAR\b/i.test(l));return hit?'<span class="hl '+(m==='sel'?'r':'g')+'">'+esc(l)+'</span>':esc(l)}).join('\n')+'\u200b'}
 function tkBadge(o){const kp=o.kapal&&o.kapal.jam,man=o.tk&&o.tk.man;if(man)return '<span class="tkab m" title="Kartu ini sudah diubah manual"><i></i><b>MANUAL</b></span>';if(kp)return '<span class="tkab" title="Terisi otomatis dari pesan Update Lineup Energi Primer"><i></i><b>'+(o.kapal.tgl&&/^\d{4}-\d\d-\d\d$/.test(o.kapal.tgl)?(+o.kapal.tgl.slice(8))+' '+BLN[+o.kapal.tgl.slice(5,7)-1].toUpperCase()+' '+o.kapal.tgl.slice(0,4)+' ':'')+esc(String(kp).replace('.',':'))+'</b> AUTO ISI DARI ENERGI PRIMER</span>';return ''}
 function tkMan(k){const o=sh(k);o.tk=o.tk||{};if(!o.tk.man||o.tk.cr){o.tk.man=true;delete o.tk.cr;const c=document.querySelector(`.col[data-k="${k}"] [data-part="tk"]`),b=c&&c.querySelector('.tkab');if(b)b.outerHTML=tkBadge(o);else{const h=c&&c.querySelector('.sec>h3');if(h)h.insertAdjacentHTML('beforeend',tkBadge(o))}}}
 function secTongkang(k){
@@ -1122,10 +1109,10 @@ function secTongkang(k){
  const w=o.cuaca;
  return `<section class="sec"><h3>${ICS.ship}Tongkang &amp; Kegiatan Kapal${tkBadge(o)}</h3><div class="sb">
  <div class="tkg"><div class="tkL">
-  <div class="tkb${t.sel?'':' emp'}"><div class="sdr">TONGKANG SELESAI BONGKAR : <span class="cnv" aria-label="Jumlah tongkang selesai bongkar">${wBlk(t.sel)}</span></div>
-  <div class="wab" data-hl="sel"><div class="wbd" aria-hidden="true">${tkHl(t.sel,'sel')}</div><textarea class="wa" id="wa-sel-${k}" data-s="${k}" data-p="tk.sel" data-raw="1" aria-label="Keterangan tongkang selesai bongkar">${esc(t.sel)}</textarea></div></div>
-  <div class="tkb${t.txt?'':' emp'}"><div class="sdr">TONGKANG SANDAR / BONGKAR : <span class="cnv" aria-label="Jumlah tongkang sandar">${wBlk(t.txt)}</span></div>
-  <div class="wab" data-hl="sand"><div class="wbd" aria-hidden="true">${tkHl(t.txt,'sand')}</div><textarea class="wa" id="wa-${k}" data-s="${k}" data-p="tk.txt" data-raw="1" aria-label="Keterangan tongkang sandar">${esc(t.txt)}</textarea></div></div>
+  <div class="tkb"><div class="sdr">TONGKANG SELESAI BONGKAR : <span class="cnv" aria-label="Jumlah tongkang selesai bongkar">${wBlk(t.sel)}</span></div>
+  <textarea class="wa" id="wa-sel-${k}" data-s="${k}" data-p="tk.sel" data-raw="1" aria-label="Keterangan tongkang selesai bongkar">${esc(t.sel)}</textarea></div>
+  <div class="tkb"><div class="sdr">TONGKANG SANDAR / BONGKAR : <span class="cnv" aria-label="Jumlah tongkang sandar">${wBlk(t.txt)}</span></div>
+  <textarea class="wa" id="wa-${k}" data-s="${k}" data-p="tk.txt" data-raw="1" aria-label="Keterangan tongkang sandar">${esc(t.txt)}</textarea></div>
  </div><div class="tl">${lists}</div></div>
  </div></section>`;
 }
@@ -1155,7 +1142,7 @@ function tkChip(e,k,key,i){e=String(e||'');const m=e.match(/SHIPPER\s*:\s*(.*)/i
  return `<span class="tkp${un?' un':''}" data-full="${esc(tip)}"><b>${cnt}</b>${esc(code)}<button type="button" class="x" data-s="${k}" data-del="${key}" data-i="${i}" aria-label="Hapus">\u00d7</button></span>`}
 (function(){const t=document.createElement('div');t.id='tkTip';t.hidden=true;document.body.appendChild(t);
  document.addEventListener('mouseover',e=>{const p=e.target.closest&&e.target.closest('.tkp,[data-tip]');if(!p){t.hidden=true;return}const tp=p.dataset.tip!=null&&!p.classList.contains('tkp');t.style.textTransform=tp?'none':'';t.textContent=tp?p.dataset.tip:(p.dataset.full||'');t.hidden=false;const r=p.getBoundingClientRect(),w=t.offsetWidth,hh=t.offsetHeight;let x=Math.min(Math.max(6,r.left),innerWidth-w-6),y=r.bottom+6;if(y+hh>innerHeight-6)y=Math.max(6,r.top-hh-6);t.style.left=x+'px';t.style.top=y+'px'});
- document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('.tkp')))t.hidden=true},true);document.addEventListener('scroll',e=>{const a=e.target;if(a&&a.matches&&a.matches('.wab textarea.wa')){const b=a.parentNode.querySelector('.wbd');if(b)b.scrollTop=a.scrollTop}},true)})();
+ document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('.tkp')))t.hidden=true},true)})();
 function plHalf(k,f,ids){
  const qn=f.slice(-1),lp='bl.q'+qn+'.';
  return `<table class="plt"><thead><tr><th class="c">#${ids[0][0]}</th><th>Shipper</th><th class="c">Kalori</th><th class="c">Mix Biomassa</th><th class="c lvh">Level<br>${CJT[k][+qn-1]}</th></tr></thead><tbody>${ids.map(id=>`<tr>
@@ -1246,7 +1233,7 @@ function secKd(k,n){
   <button class="x" data-s="${k}" data-kdrow="${f}" data-i="${i}" title="Hapus kendala" aria-label="Hapus kendala">🗑</button></div></div>`).join('')}</div></div>`;
 }
 const UOPT1=['COMDISCH','CHANGE OVER'], UOPT2=['COMDISCH','CHANGE OVER','COMPLETED'];
-function umSel(k,p,opts,cls){const v=getP(sh(k),p)||'';return `<select class="f sel ums ${cls}${v?'':' e'}${v==='COMPLETED'?' rc':''}" data-s="${k}" data-p="${p}" data-raw="1" aria-label="Status"><option value=""${v?'':' selected'}>–</option>${(v&&opts.indexOf(v)<0?opts.concat([v]):opts).map(x=>`<option${x===v?' selected':''}>${x}</option>`).join('')}</select>`}
+function umSel(k,p,opts,cls){const v=getP(sh(k),p)||'';return `<select class="f sel ums ${cls}${v?'':' e'}${v==='COMPLETED'?' rc':''}${v==='CHANGE OVER'?' co':''}" data-s="${k}" data-p="${p}" data-raw="1" aria-label="Status"><option value=""${v?'':' selected'}>–</option>${(v&&opts.indexOf(v)<0?opts.concat([v]):opts).map(x=>`<option${x===v?' selected':''}>${x}</option>`).join('')}</select>`}
 function umTm(k,p,al){return `<input type="text" class="f tm" inputmode="numeric" maxlength="5" autocomplete="off" data-s="${k}" data-p="${p}" data-raw="1" value="${esc(getP(sh(k),p))}" aria-label="${al}">`}
 function umNum(k,p,al){return `<input class="f num" inputmode="decimal" data-s="${k}" data-p="${p}" data-raw="1" value="${esc(getP(sh(k),p))}" aria-label="${al}">`}
 function umTot(m){const n=x=>{const v=parseFloat(String(x||'').replace(',','.'));return isNaN(v)?null:v};let t=0;[['a1','k1'],['a2','k2']].forEach(([a,b])=>{const ak=n(m[b]);if(ak!=null)t+=ak-(n(m[a])||0)});return Math.round(t*100)/100}
@@ -1420,7 +1407,7 @@ function handleField(e){
  if(t.dataset.p.startsWith('bk.')&&t.dataset.p.endsWith('.l')){const bar=t.parentElement.querySelector('.bar i');const l=parseFloat(v);if(bar){bar.style.width=(isNaN(l)?0:Math.min(100,l/14*100))+'%';bar.className=!isNaN(l)&&l<=3?'lo':''}}
  if(t.dataset.p==='tk.nama'){const n=t.parentElement.querySelector('.n');if(n)n.textContent=v.trim()?1:0}
  if(t.classList.contains('shp')){t.classList.remove('dk','gy');const c=shpCls(v);if(c)t.classList.add(c)}
- if(t.tagName==='SELECT'){t.classList.toggle('e',!v);t.classList.toggle('rc',v==='COMPLETED')}
+ if(t.tagName==='SELECT'){t.classList.toggle('e',!v);t.classList.toggle('rc',v==='COMPLETED');t.classList.toggle('co',v==='CHANGE OVER')}
  const mm=t.dataset.p.match(/^(um\d)\./);if(mm){const el=t.closest('.um');const o=el&&el.querySelector('.utot');if(o)o.textContent=umTot(sh(k)[mm[1]]);const um=sh(k)[mm[1]],fb=el&&el.querySelector('.uflow b');if(fb){const f=umFlow(um);fb.textContent=f==null?'-':f}
   if(t.classList.contains('ushp')){const g=el.querySelector('.gh'),r=el.querySelector('.rcl');if(g)g.textContent=v||'SHIPPER';if(r){r.textContent=rcTxt(v);r.className='rcl '+rcCls(v)}}}
  persist();
@@ -1455,7 +1442,7 @@ document.addEventListener('keydown',e=>{const t=e.target;if(e.key!=='Enter'||!t.
 document.addEventListener('keydown',e=>{const t=e.target;if(e.key!=='Enter'||!t.matches||!t.matches('.col.eqtop input'))return;const g=t.closest('.eqc');if(!g)return;e.preventDefault();const L=[...g.querySelectorAll('input')].filter(x=>x.offsetParent&&x.type!=='checkbox'&&x.type!=='button'),i=L.indexOf(t),n=L[i+1];if(n){n.focus();if(n.select)n.select()}else t.blur()});
 addEventListener('scroll',e=>{if(!TP.hidden&&!TP.contains(e.target))tmPlace()},true);addEventListener('resize',()=>{if(!TP.hidden)tmPlace()});
 document.addEventListener('input',handleField);
-document.addEventListener('input',e=>{const t=e.target;if(t.dataset&&(t.dataset.p==='tk.txt'||t.dataset.p==='tk.sel')){const c=t.closest('.tkb'),v=wBlk(t.value);if(t.dataset.p==='tk.txt')sh(t.dataset.s).tk.n=v;tkMan(t.dataset.s);{const w=t.closest('.wab');if(w){w.querySelector('.wbd').innerHTML=tkHl(t.value,w.dataset.hl);const b=t.closest('.tkb');b&&b.classList.toggle('emp',!t.value.trim())}}const o=c&&c.querySelector('.cnv');if(o)o.textContent=v}});
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset&&(t.dataset.p==='tk.txt'||t.dataset.p==='tk.sel')){const c=t.closest('.tkb'),v=wBlk(t.value);if(t.dataset.p==='tk.txt')sh(t.dataset.s).tk.n=v;tkMan(t.dataset.s);const o=c&&c.querySelector('.cnv');if(o)o.textContent=v}});
 document.addEventListener('change',e=>{
  const t=e.target;if(t.tagName==='SELECT')handleField(e);
  if(t.dataset&&t.dataset.kdf&&t.files&&t.files[0]){const k=t.dataset.s,f=t.dataset.kdf,i=+t.dataset.i,file=t.files[0];
