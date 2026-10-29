@@ -93,7 +93,7 @@ input.num{text-align:right;font-weight:600}
 .tkp .x{display:none;position:static;width:14px;height:14px;margin-left:1px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.28);color:#fff;font:700 11px/14px var(--fb);cursor:pointer}
 .tkp:hover .x{display:inline-block}
 
-.lfpop{position:fixed;z-index:99998;background:#0F1B33;color:#fff;padding:8px 12px;border-radius:9px;font:700 12px/1.4 var(--fb);box-shadow:0 6px 20px rgba(0,0,0,.3);pointer-events:none;white-space:nowrap}.lfpop b{color:#7FE08A;font-size:15px;font-weight:800}.lfpop small{display:block;font-weight:600;opacity:.75;font-size:10.5px}.lfpop.nx b{color:#FFC24D}
+.lfpop{position:fixed;z-index:99998;background:#0F1B33;color:#fff;padding:8px 12px;border-radius:9px;font:700 12px/1.4 var(--fb);box-shadow:0 6px 20px rgba(0,0,0,.3);pointer-events:none;white-space:nowrap}.lfpop b{color:#7FE08A;font-size:15px;font-weight:800}.lfpop small{display:block;font-weight:600;opacity:.75;font-size:10.5px}.lfpop.nx b{color:#FFC24D}.lfpop .lfbp{margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.2);color:#fff;font-weight:700}.lfpop .lfbp b{color:#4DA3FF;font-size:15px;font-weight:800}
 #tkTip{position:fixed;z-index:99999;max-width:360px;background:#0F1B33;color:#fff;padding:9px 12px;border-radius:9px;font:600 11.5px/1.45 var(--fb);white-space:pre-line;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.35);text-transform:uppercase}
 #tkTip[hidden]{display:none}
 .tbx header{display:flex;justify-content:space-between;align-items:center;font:700 11.5px var(--fd);letter-spacing:.04em;color:var(--navy2)}
@@ -1278,6 +1278,7 @@ function umClosed(k,n,d){d=d||cur;const o=sh(k,d),m=o['um'+n]||{},info=umInfo(o,
   if(!(h>0)){html='Flowrate: –<small>Jam start/stop belum lengkap</small>';nx=true}
   else if(!(tot>0)){html='Flowrate: –<small>Totalizer belum diisi</small>';nx=true}
   else html=`Flowrate: <b>${Math.round(tot/h)}</b> t/h<small>${fmt(tot)} T ÷ ${fmt(h)} jam</small>`;
+  if(h>0&&tot>0){const mu=murOf(r,sh(k)),pb=tot+mu>0?mu/(tot+mu)*100:0;html+=`<div class="lfbp">Persentase Biomassa <b>${pc2(pb)} %</b></div>`}
   const ae=document.activeElement;if(ae&&ae.tagName==='SELECT')ae.blur();
   hide();pop=document.createElement('div');pop.className='lfpop'+(nx?' nx':'');pop.innerHTML=html;document.body.appendChild(pop);
   const R=tr.getBoundingClientRect(),w=pop.offsetWidth,hh=pop.offsetHeight;

@@ -2469,5 +2469,15 @@ function set(on){document.body.classList.toggle('mv',on);b.setAttribute('aria-pr
 b.addEventListener('click',function(){set(!document.body.classList.contains('mv'))});
 try{if(localStorage.getItem(K)==='1')set(true)}catch(e){}})();
 </script>
+<script>
+/* Layar penuh: tekan "=" untuk masuk, "-" untuk kembali normal */
+document.addEventListener('keydown',function(e){
+ var t=e.target&&e.target.tagName;if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT'||(e.target&&e.target.isContentEditable))return;
+ if(e.ctrlKey||e.metaKey||e.altKey)return;
+ var d=document,el=d.documentElement,fs=d.fullscreenElement||d.webkitFullscreenElement;
+ if(e.key==='='||e.key==='+'&&false){e.preventDefault();if(!fs){var f=el.requestFullscreen||el.webkitRequestFullscreen;if(f)try{var r=f.call(el);if(r&&r.catch)r.catch(function(){})}catch(x){}}}
+ else if(e.key==='-'){e.preventDefault();if(fs){var x=d.exitFullscreen||d.webkitExitFullscreen;if(x)try{var r2=x.call(d);if(r2&&r2.catch)r2.catch(function(){})}catch(y){}}}
+});
+</script>
 </body>
 </html>
