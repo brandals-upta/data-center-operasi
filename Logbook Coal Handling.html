@@ -2104,8 +2104,20 @@ function fxParse(txt){const t=String(txt||'').replace(/\*/g,''),g=r=>{const m=t.
  if(!o.comm||!o.comp||!o.cargo)return null;return o}
 function fxAll(){const m={};FXS.concat(Object.values(FXL)).forEach(x=>{if(x&&x.no&&x.comm&&x.comp&&x.cargo){x.code=fxCode(x.shp);m[x.no]=x}});
  return Object.values(m).filter(x=>x.comp.slice(0,10)>=RK_START).map(x=>{const h=(new Date(x.comp.replace(' ','T'))-new Date(x.comm.replace(' ','T')))/36e5;return Object.assign({},x,{h,f:h>0?x.cargo/h:null})}).sort((a,b)=>a.comm<b.comm?-1:1)}
-async function fxPull(){let g;try{g=await kapGviz()}catch(e){fxMsg='data bawaan';return}
- const rs=(g&&g.table&&g.table.rows)||[];let n=0;rs.forEach(r=>{const c=r.c||[],tx=c[3]&&c[3].v!=null?String(c[3].v):'';if(!/final\s*survey/i.test(tx))return;const o=fxParse(tx);if(o&&JSON.stringify(FXL[o.no])!==JSON.stringify(o)){FXL[o.no]=o;n++}});
+function fxGv(sheet,q){return new Promise((res,rej)=>{const cb='fxGv'+Date.now(),sc=document.createElement('script');const t=setTimeout(()=>{sc.remove();rej(new Error('timeout'))},20000);
+ window[cb]=x=>{clearTimeout(t);sc.remove();delete window[cb];res(x)};sc.onerror=()=>{clearTimeout(t);sc.remove();rej(new Error('blokir'))};
+ sc.src='https://docs.google.com/spreadsheets/d/'+KAPAL_SHEET+'/gviz/tq?tqx=out:json;responseHandler:'+cb+'&sheet='+encodeURIComponent(sheet)+'&tq='+encodeURIComponent(q);document.head.appendChild(sc)})}
+function fxCellDt(c){if(!c||c.v==null)return '';let v=c.v;if(v instanceof Date)return v.getFullYear()+'-'+pad(v.getMonth()+1)+'-'+pad(v.getDate())+' '+pad(v.getHours())+':'+pad(v.getMinutes());
+ const m=String(v).match(/Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+))?/);if(m)return m[1]+'-'+pad(+m[2]+1)+'-'+pad(+m[3])+' '+pad(+(m[4]||0))+':'+pad(+(m[5]||0));
+ const k=String(v).match(/^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})/);return k?k[1]+' '+k[2]:''}
+function fxFromSheet(g){const out=[];((g&&g.table&&g.table.rows)||[]).forEach(r=>{const c=r.c||[],t=i=>c[i]&&c[i].v!=null?String(c[i].v).trim():'',n=i=>c[i]&&typeof c[i].v==='number'?c[i].v:fxNum(t(i));
+ const no=t(0).replace(/\.0+$/,'');if(!/^\d+$/.test(no))return;const o={no,tb:t(2),bg:t(3),shp:t(4).replace(/\s+/g,' '),bl:n(6),ta:fxCellDt(c[7]),comm:fxCellDt(c[8]),comp:fxCellDt(c[9]),clean:fxCellDt(c[10]),cargo:n(11)};
+ o.code=t(5)||fxCode(o.shp);o.src='tab';if(o.comm&&o.comp&&o.cargo)out.push(o)});return out}
+async function fxPull(){let g,n=0,ok=0;
+ try{const gs=await fxGv('Final SURVEY','select A,B,C,D,E,F,G,H,I,J,K,L');fxFromSheet(gs).forEach(o=>{if(JSON.stringify(FXL[o.no])!==JSON.stringify(o)){FXL[o.no]=o;n++}});ok=1}catch(e){}
+ try{g=await kapGviz()}catch(e){g=null}
+ if(!g&&!ok){fxMsg='data bawaan';return}
+ const rs=(g&&g.table&&g.table.rows)||[];rs.forEach(r=>{const c=r.c||[],tx=c[3]&&c[3].v!=null?String(c[3].v):'';if(!/final\s*survey/i.test(tx))return;const o=fxParse(tx);if(o&&!(FXL[o.no]&&FXL[o.no].src==='tab')&&JSON.stringify(FXL[o.no])!==JSON.stringify(o)){FXL[o.no]=o;n++}});
  fxMsg='sheet ✓ '+new Date().toTimeString().slice(0,5);if(n){try{localStorage.setItem('logbook-fs-v1',JSON.stringify(FXL))}catch(e){}}
  const v=document.getElementById('rkv');if(v&&!v.hidden&&rkMode==='flow'&&fxKind==='dash')rkDraw()}
 const fxAbs=(d,k,t)=>{const m=toMin(t);if(m==null)return null;const dd=(k==='M'&&m>=1320)?addDay(d,-1):d;return new Date(dd+'T'+t+':00').getTime()};
