@@ -1082,6 +1082,26 @@ try{const el=document.getElementById('impOktData'),eo=document.getElementById('i
   else if(FORCE){['M','P','S'].forEach(q=>{if(!x[q])x[q]={};for(const f in IM[d][q])x[q][f]=cp(IM[d][q][f]);const b=blank();for(const f in b)if(x[q][f]==null)x[q][f]=b[f]});ch=true}
   else{['M','P','S'].forEach(q=>{if(!x[q]){x[q]=cp(IM[d][q]);ch=true}else{const b=blank();for(const f in b)if(x[q][f]==null)x[q][f]=b[f];if(syncv(x[q],(IO[d]||{})[q]||{},IM[d][q]))ch=true;EQF.forEach(f=>{const u0=x[q][f],o0=((IO[d]||{})[q]||{})[f];if(!eq(u0,IM[d][q][f])&&(em(u0)||(IO[d]&&eq(u0,o0)))){x[q][f]=cp(IM[d][q][f]||{});ch=true}})}})}
   FL[d]=sg});FL.__f='v4';
+ /* bersihkan dobel: salinan dari sheet dihapus bila sudah ada isian dashboard yang mirip (isian dashboard dipertahankan) */
+ try{const STOP=new Set(['BY','DAN','DI','KE','DARI','YANG','YG','UNTUK','PADA','NO','DG','&','-']);
+  const tok=t=>new Set(String(t||'').toUpperCase().replace(/^\s*\d{1,2}[:.]\d{2}\s*/,'').replace(/[^A-Z0-9 ]+/g,' ').split(/\s+/).filter(w=>w&&!STOP.has(w)));
+  const simT=(a,b)=>{const A=tok(a),B=tok(b);if(A.size<2||B.size<2)return false;let n=0;A.forEach(w=>{if(B.has(w))n++});return n/Math.min(A.size,B.size)>=0.6};
+  const U=t=>nz(t).toUpperCase(),mm=t=>{const m=String(t||'').match(/^(\d{1,2}):(\d{2})/);return m?+m[1]*60+ +m[2]:null};
+  const simR=(a,b)=>{const x=mm(a.start),y=mm(b.start);if(x==null||y==null)return false;let d=Math.abs(x-y);d=Math.min(d,1440-d);if(d>20)return false;const al=String(a.alat||'').toUpperCase(),bl=String(b.alat||'').toUpperCase();return !al||!bl||al===bl};
+  let dd=0;
+  Object.keys(IM).forEach(d=>{const x=DB[d];if(!x||x._seed)return;['M','P','S'].forEach(q=>{const u=x[q],n=IM[d][q];if(!u||!n)return;
+   if(Array.isArray(u.cat)&&Array.isArray(n.cat)&&n.cat.length){const NS=new Set(n.cat.map(U));const own=u.cat.filter(t=>!NS.has(U(t)));
+    const keep=u.cat.filter(t=>!(NS.has(U(t))&&own.some(o=>simT(o,t))));
+    const seen=new Set(),k2=keep.filter(t=>{const k=U(t);if(seen.has(k))return false;seen.add(k);return true});
+    if(k2.length!==u.cat.length){dd+=u.cat.length-k2.length;u.cat=k2}}
+   ['kd1','kd2'].forEach(f=>{const A=u[f],N=n[f];if(!Array.isArray(A)||!Array.isArray(N)||!N.length)return;const NS=new Set(N.map(r=>String((r&&r.t)||'')));const isN=r=>r&&NS.has(String(r.t||''))&&!r.img;
+    const own=A.filter(r=>r&&!isN(r));const keep=A.filter(r=>!(isN(r)&&own.some(o=>U(o.t||'')===U(r.t||'')||simT(o.t,r.t))));if(keep.length!==A.length){dd+=A.length-keep.length;u[f]=keep}});
+   ['ld1','ld2','ul1','ul2'].forEach(f=>{const A=u[f],N=n[f];if(!Array.isArray(A)||!Array.isArray(N)||!N.length)return;const NJ=new Set(N.map(r=>js(r)));
+    const isN=r=>{const c=cp(r);if(NJ.has(js(c)))return true;if('bk'in c){c.bk='';if(NJ.has(js(c)))return true}return false};
+    const own=A.filter(r=>rowOn(r)&&!isN(r));const keep=A.filter(r=>!(isN(r)&&own.some(o=>simR(o,r))));
+    if(keep.length!==A.length){dd+=A.length-keep.length;u[f]=keep}})})});
+  if(dd){ch=true;window.__dedupN=dd;setTimeout(()=>{try{cScan(true)}catch(e){}},4000)}
+ }catch(e){}
  if(ch)localStorage.setItem(KEY,JSON.stringify(DB));localStorage.setItem('logbook-imp-okt26-v3',JSON.stringify(FL))}}catch(e){}
 
 function pad(n){return String(n).padStart(2,'0')}
